@@ -1,17 +1,17 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
-const mnemonic = 'patient oppose cotton portion chair gentle jelly dice supply salmon blast priority';
+const MNEMONIC = 'patient oppose cotton portion chair gentle jelly dice supply salmon blast priority';
 
 module.exports = {
   networks: {
     development: {
       provider: function () {
-        return new HDWalletProvider(mnemonic, 'http://localhost:8545/');
+        return new HDWalletProvider(MNEMONIC, 'http://localhost:8545/');
       },
       network_id: '*'
     },
     development2: {
       provider: function () {
-        return new HDWalletProvider(mnemonic, 'http://localhost:8546/');
+        return new HDWalletProvider(MNEMONIC, 'http://localhost:8546/');
       },
       network_id: '*'
     }

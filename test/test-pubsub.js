@@ -6,28 +6,32 @@ contract('TestEvent-PubSub', (accounts) => {
     let dataToEmit = 123;
 
     let instance = await TestEvent.new();
-    const subscribePromise = eth_subscribePromise(instance.address);
+    const subscribePromise = ethSubscribePromise(instance.address);
     await instance.emitEvent(dataToEmit);
-    let log = await subscribePromise;
-
-
-    assert.equal(instance.address, log.address);
-    assert.equal(log.data, dataToEmit);
+    try {
+      let log = await subscribePromise;
+      assert.equal(instance.address, log.address);
+      assert.equal(log.data, dataToEmit);
+    } catch (err) {
+      assert.fail(err);
+    }
   });
-})
+});
 
-async function eth_subscribePromise(address) {
+async function ethSubscribePromise (address) {
   const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8556'));
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     web3.eth.subscribe(
       'logs',
-      { "fromBlock":"latest", "toBlock":"latest", address },
-      function(error, result) {
-        // no-op
+      { 'fromBlock': 'latest', 'toBlock': 'latest', address },
+      function (error, result) {
+        if (error) {
+          reject(error);
+        }
       }
-    ).on("data", function(log){
+    ).on('data', function (log) {
       resolve(log);
-    }).on("error", function(err){
+    }).on('error', function (err) {
       reject(err);
     });
   });
