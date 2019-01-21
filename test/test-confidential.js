@@ -77,6 +77,45 @@ contract('Confidential Contracts', async (accounts) => {
 	});
   });
 
+  it('should not retrieve contract keys from a non deployed contract address', async function() {
+    await assert.rejects(
+      async function () {
+        await web3c
+          .confidential
+          .getPublicKey('0x0000000000000000000000000000000000000000')
+      }
+    );
+  });
+
+
+  it('should estimate gas for confidential transactions the same as gas actually used', async () => {
+    let counterContract = new web3c.confidential.Contract(artifact.abi);
+    const deployMethod = counterContract.deploy({data: artifact.bytecode});
+    let estimatedGas = await deployMethod.estimateGas();
+    counterContract = await deployMethod.send({
+      from: address,
+      gasPrice: '0x3b9aca00',
+      gas: estimatedGas
+    });
+    const txHash = counterContract._requestManager.provider.outstanding[0];
+    const receipt = await web3c.eth.getTransactionReceipt(txHash);
+
+    assert.equal(estimatedGas, receipt.gasUsed);
+    assert.equal(estimatedGas, receipt.cumulativeGasUsed);
+  });
+
+  it('should yield a larger estimate for confidential transactions than non-confidential', async () => {
+    const confidentialContract = new web3c.confidential.Contract(artifact.abi);
+    const confidentialDeploy = confidentialContract.deploy({data: artifact.bytecode});
+    const confidentialEstimatedGas = await confidentialDeploy.estimateGas();
+
+    const contract = new web3c.eth.Contract(artifact.abi);
+    const deploy = contract.deploy({data: artifact.bytecode});
+    const estimatedGas = await deploy.estimateGas();
+
+    assert.equal(confidentialEstimatedGas-estimatedGas > 0, true);
+  });
+
 });
 
 /**
