@@ -6,7 +6,6 @@ const Builtins = artifacts.require('./Builtins.sol');
  * for each test, exercising both the gateway and the compute nodes.
  */
 contract('Builtins', async (accounts) => {
-
   let instance;
   const expectedSha256 = '0xdbc1b4c900ffe48d575b5da5c638040125f65db0fe3e24494b76ea986457d986';
 
@@ -43,33 +42,32 @@ contract('Builtins', async (accounts) => {
   });
 
   it('calls modexp', async () => {
-	// n^0 mod z == 1.
-	let result = await instance._modexp.call('0x012345', '0x00', '0x0789');
-	assert.equal(web3.utils.hexToNumber(result), 1);
-	// 0^m mod z == 0
-	result = await instance._modexp.call('0x00', '0x0789', '0x078');
-	assert.equal(web3.utils.hexToNumber(result), 0);
-	// n^m mod 1 == 0
-	result = await instance._modexp.call('0x012345', '0x0789', '0x01');
-	assert.equal(web3.utils.hexToNumber(result), 0);
-	// 2^10 mod 1000 == 24
-	result = await instance._modexp.call('0x02', '0x0a', '0x03e8');
-	assert.equal(web3.utils.hexToNumber(result), 24);
+    // n^0 mod z == 1.
+    let result = await instance._modexp.call('0x012345', '0x00', '0x0789');
+    assert.equal(web3.utils.hexToNumber(result), 1);
+    // 0^m mod z == 0
+    result = await instance._modexp.call('0x00', '0x0789', '0x078');
+    assert.equal(web3.utils.hexToNumber(result), 0);
+    // n^m mod 1 == 0
+    result = await instance._modexp.call('0x012345', '0x0789', '0x01');
+    assert.equal(web3.utils.hexToNumber(result), 0);
+    // 2^10 mod 1000 == 24
+    result = await instance._modexp.call('0x02', '0x0a', '0x03e8');
+    assert.equal(web3.utils.hexToNumber(result), 24);
   });
 
-  it ('calls modexp event', async () => {
-	// n^0 mod z == 1.
-	let result = await instance._modexpEvent('0x012345', '0x00', '0x0789');
-	assert.equal(web3.utils.hexToNumber(result.logs[0].args.modexp), 1);
-	// 0^m mod z == 0
-	result = await instance._modexpEvent('0x00', '0x0789', '0x078');
-	assert.equal(web3.utils.hexToNumber(result.logs[0].args.modexp), 0);
-	// n^m mod 1 == 0
-	result = await instance._modexpEvent('0x012345', '0x0789', '0x01');
-	assert.equal(web3.utils.hexToNumber(result.logs[0].args.modexp), 0);
-	// 2^10 mod 1000 == 24
-	result = await instance._modexpEvent('0x02', '0x0a', '0x03e8');
-	assert.equal(web3.utils.hexToNumber(result.logs[0].args.modexp), 24);
+  it('calls modexp event', async () => {
+    // n^0 mod z == 1.
+    let result = await instance._modexpEvent('0x012345', '0x00', '0x0789');
+    assert.equal(web3.utils.hexToNumber(result.logs[0].args.modexp), 1);
+    // 0^m mod z == 0
+    result = await instance._modexpEvent('0x00', '0x0789', '0x078');
+    assert.equal(web3.utils.hexToNumber(result.logs[0].args.modexp), 0);
+    // n^m mod 1 == 0
+    result = await instance._modexpEvent('0x012345', '0x0789', '0x01');
+    assert.equal(web3.utils.hexToNumber(result.logs[0].args.modexp), 0);
+    // 2^10 mod 1000 == 24
+    result = await instance._modexpEvent('0x02', '0x0a', '0x03e8');
+    assert.equal(web3.utils.hexToNumber(result.logs[0].args.modexp), 24);
   });
-
 });

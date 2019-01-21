@@ -1,29 +1,26 @@
-const web3 = require('web3');
+const Web3 = require('web3');
 const utils = require('./utils');
 
 describe('New accounts', async () => {
-
   const provider = utils.provider();
 
   it('transfers eth to an account that does not exist', async () => {
-	let w3 = new web3(provider.provider);
-	let account = w3.eth.accounts.create()
+    let web3 = new Web3(provider.provider);
+    let account = web3.eth.accounts.create();
 
-	const transferAmount = 100;
+    const transferAmount = 100;
 
-	const providerBeforeBalance = await w3.eth.getBalance(provider.address);
-	const newAccountBeforeBalance = await w3.eth.getBalance(account.address);
+    const newAccountBeforeBalance = await web3.eth.getBalance(account.address);
 
-	await w3.eth.sendTransaction({
-	  from: provider.address,
-	  to: account.address,
-	  value: 100
-	});
+    await web3.eth.sendTransaction({
+      from: provider.address,
+      to: account.address,
+      value: 100
+    });
 
-	const newAccountAfterBalance = await w3.eth.getBalance(account.address);
-	const newAccountDiff = newAccountAfterBalance - newAccountBeforeBalance;
+    const newAccountAfterBalance = await web3.eth.getBalance(account.address);
+    const newAccountDiff = newAccountAfterBalance - newAccountBeforeBalance;
 
-	assert.equal(newAccountDiff, transferAmount);
+    assert.equal(newAccountDiff, transferAmount);
   });
-
 });

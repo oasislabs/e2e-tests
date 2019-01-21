@@ -1,0 +1,17 @@
+{
+  "extends": "standard",
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
+  "globals": {
+    "it": true,
+    "assert": true,
+    "artifacts": true,
+    "contract": true,
+    "before": true,
+    "describe": true
+  },
+  "rules": {
+    "semi": ["error", "always"]
+  }
+}

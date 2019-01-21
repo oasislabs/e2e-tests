@@ -5,8 +5,8 @@ contract('TestEvent', (accounts) => {
     let instance = await TestEvent.new();
     let emitEventTransaction = await instance.emitEvent(123);
     let event = emitEventTransaction.logs.find(
-      e => e.event == 'MyEvent'
+      e => e.event === 'MyEvent'
     );
     assert.equal(event.args._value.toNumber(), 123, 'Event argument is incorrect');
   });
-})
+});
