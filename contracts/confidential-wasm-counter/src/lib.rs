@@ -17,6 +17,6 @@ trait ConfidentialWasmCounter {
     }
 
     fn incrementCounter(&mut self) {
-        owasm_ethereum::write(&COUNTER_KEY, &(self.count() + 1).into());
+        owasm_ethereum::write(&COUNTER_KEY, &(self.getCounter() + 1).into());
     }
 }

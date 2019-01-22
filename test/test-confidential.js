@@ -1,10 +1,11 @@
+const Counter = artifacts.require('Counter');
+const _assert = require('assert');
 const Web3c = require('web3c');
 const utils = require('./utils');
 
 contract('Confidential Contracts', async (accounts) => {
-  const provider = utils.provider();
-  const web3c = new Web3c(provider.provider);
-  const artifact = utils.readArtifact('Counter');
+  const web3c = new Web3c(Counter.web3.currentProvider);
+
   // Timestamp is expected to be the the maximum u64, which is 18446744073709551615.
   // However, javascript represents all numbers as double precision floats with 52
   // bits of mantissa, and so one can only compare numbers in the safe zone, i.e.,
@@ -13,12 +14,12 @@ contract('Confidential Contracts', async (accounts) => {
   // of 2^64-1 and thus conversion into it's less precise double precision.
   const expectedTimestamp = '18446744073709552000';
 
-  let counterContract = new web3c.confidential.Contract(artifact.abi, undefined, {
+  let counterContract = new web3c.confidential.Contract(Counter.abi, undefined, {
     from: accounts[0]
   });
 
   it('stores the long term public key in the deploy logs', async () => {
-    counterContract = await counterContract.deploy({ data: artifact.bytecode })
+    counterContract = await counterContract.deploy({ data: Counter.bytecode })
       .send()
       .on('receipt', (receipt) => {
         assert.equal(Object.keys(receipt.events).length, 1);
@@ -35,7 +36,8 @@ contract('Confidential Contracts', async (accounts) => {
   it('retrieves a public key with a max timestamp', async () => {
     publicKeyPayload = (await utils.makeRpc(
       'confidential_getPublicKey',
-      [counterContract.options.address]
+      [counterContract.options.address],
+      utils.providerUrl(web3c)
     )).result;
     assert.equal(publicKeyPayload.timestamp + '', expectedTimestamp);
     validatePublicKey(publicKeyPayload.public_key);
@@ -62,7 +64,11 @@ contract('Confidential Contracts', async (accounts) => {
     }
     // Now check all nonces are incremented by one.
     const txHash = decryptedReceipt.transactionHash;
-    const encryptedReceipt = (await utils.makeRpc('eth_getTransactionReceipt', [txHash])).result;
+    const encryptedReceipt = (await utils.makeRpc(
+      'eth_getTransactionReceipt',
+      [txHash],
+      utils.providerUrl(web3c)
+    )).result;
     let last;
     encryptedReceipt.logs.forEach((log) => {
       let nonce = utils.fromHexStr(log.data.substr(2, 32));
@@ -70,13 +76,13 @@ contract('Confidential Contracts', async (accounts) => {
         last = nonce;
       } else {
         let lastPlusOne = utils.incrementByteArray(last);
-        assert.deepEqual(lastPlusOne, nonce);
+        assert.deepStrictEqual(lastPlusOne, nonce);
       }
     });
   });
 
   it('should not retrieve contract keys from a non deployed contract address', async function () {
-    await assert.rejects(
+    await _assert.rejects(
       async function () {
         await web3c
           .confidential
@@ -86,8 +92,8 @@ contract('Confidential Contracts', async (accounts) => {
   });
 
   it('should estimate gas for confidential transactions the same as gas actually used', async () => {
-    let counterContract = new web3c.confidential.Contract(artifact.abi);
-    const deployMethod = counterContract.deploy({ data: artifact.bytecode });
+    let counterContract = new web3c.confidential.Contract(Counter.abi);
+    const deployMethod = counterContract.deploy({ data: Counter.bytecode });
     let estimatedGas = await deployMethod.estimateGas();
     counterContract = await deployMethod.send({
       from: accounts[0],
@@ -102,12 +108,12 @@ contract('Confidential Contracts', async (accounts) => {
   });
 
   it('should yield a larger estimate for confidential transactions than non-confidential', async () => {
-    const confidentialContract = new web3c.confidential.Contract(artifact.abi);
-    const confidentialDeploy = confidentialContract.deploy({ data: artifact.bytecode });
+    const confidentialContract = new web3c.confidential.Contract(Counter.abi);
+    const confidentialDeploy = confidentialContract.deploy({ data: Counter.bytecode });
     const confidentialEstimatedGas = await confidentialDeploy.estimateGas();
 
-    const contract = new web3c.eth.Contract(artifact.abi);
-    const deploy = contract.deploy({ data: artifact.bytecode });
+    const contract = new web3c.eth.Contract(Counter.abi);
+    const deploy = contract.deploy({ data: Counter.bytecode });
     const estimatedGas = await deploy.estimateGas();
 
     assert.equal(confidentialEstimatedGas - estimatedGas > 0, true);

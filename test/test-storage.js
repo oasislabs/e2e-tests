@@ -11,7 +11,11 @@ contract('Storage', (accounts) => {
     let instance = await contract.deploy({ data: Storage.bytecode }).send({
       from: accounts[0]
     });
-    await utils.makeRpc('oasis_storeBytes', [[1, 2, 3, 4, 5], 9223372036854775807]);
+    await utils.makeRpc(
+      'oasis_storeBytes',
+      [[1, 2, 3, 4, 5], 9223372036854775807],
+      utils.providerUrl(web3)
+    );
     const bytes = await instance.methods.get().call();
     assert.equal(bytes, '0x0102030405');
   });
