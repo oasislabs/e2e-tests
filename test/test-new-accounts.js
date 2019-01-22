@@ -1,11 +1,9 @@
+const _Counter = artifacts.require('Counter');
 const Web3 = require('web3');
-const utils = require('./utils');
 
-describe('New accounts', async () => {
-  const provider = utils.provider();
-
+contract('New accounts', async (accounts) => {
   it('transfers eth to an account that does not exist', async () => {
-    let web3 = new Web3(provider.provider);
+    const web3 = new Web3(_Counter.web3.currentProvider);
     let account = web3.eth.accounts.create();
 
     const transferAmount = 100;
@@ -13,7 +11,7 @@ describe('New accounts', async () => {
     const newAccountBeforeBalance = await web3.eth.getBalance(account.address);
 
     await web3.eth.sendTransaction({
-      from: provider.address,
+      from: accounts[0],
       to: account.address,
       value: 100
     });

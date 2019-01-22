@@ -29,7 +29,7 @@ contract('Counter Contracts', function (accounts) {
 
     it('should increment the count to 1', async function () {
       await contract.methods.incrementCounter().send();
-      const count = await contract.methods.count().call();
+      const count = await contract.methods.getCounter().call();
       assert.equal(count, 1);
     });
   });

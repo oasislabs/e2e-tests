@@ -1,31 +1,9 @@
-const fs = require('fs');
 const request = require('request-promise');
-const HDWalletProvider = require('truffle-hdwallet-provider');
+const truffleConfig = require('../truffle-config');
 
 const GAS_PRICE = '0x3b9aca00';
 const GAS_LIMIT = '0x100000';
 const _CONFIDENTIAL_PREFIX = '00656e63';
-const _GATEWAY_URL = 'http://localhost:8545';
-
-/**
- * Returns a contract build artifact containing the abi and bytecode.
- * Assumes all files are compiled with truffle compile before hand.
- */
-function readArtifact (contractName) {
-  const path = './build/contracts/' + contractName + '.json';
-  return JSON.parse(fs.readFileSync(path).toString());
-}
-
-function provider () {
-  let mnemonic = 'patient oppose cotton portion chair gentle jelly dice supply salmon blast priority';
-  let provider = new HDWalletProvider(mnemonic, _GATEWAY_URL);
-  let address = Object.keys(provider.wallets)[0];
-  return {
-    provider,
-    address,
-    privateKey: provider.wallets[address]._privKey
-  };
-}
 
 /**
  * Returns a confidential version of the initcode such that, if it's used in a
@@ -39,7 +17,7 @@ async function fetchNonce (address) {
   return makeRpc('eth_getTransactionCount', [address, 'latest']);
 }
 
-async function makeRpc (method, params) {
+async function makeRpc (method, params, uri) {
   let body = {
     'method': method,
     'id': 1,
@@ -51,7 +29,7 @@ async function makeRpc (method, params) {
       'Content-type': 'application/json'
     },
     method: 'POST',
-    uri: _GATEWAY_URL,
+    uri: uri,
     body: JSON.stringify(body)
   };
   return JSON.parse(await request(options));
@@ -80,14 +58,34 @@ function incrementByteArray (byteArray) {
   return byteArray;
 }
 
+/**
+ * Get the current provider url to make raw RPC requests against.
+ * Truffle's HDWalletProvider doesn't provide an api to get it so manually do so.
+ */
+function providerUrl (web3) {
+  return web3.currentProvider.engine._providers[3].provider.host;
+}
+
+function wsProviderUrl (web3) {
+  // Special case Devnet because the wsProviderUrl is constant and doesn't require
+  // definition by a client running the tests.
+  if (providerUrl(web3) === truffleConfig.DEVNET_HTTPS_PROVIDER_URL) {
+    return truffleConfig.DEVNET_WS_PROVIDER_URL;
+  }
+  if (truffleConfig.WS_PROVIDER_URL === undefined) {
+    throw new Error('You must define the WS_PROVIDER_URL environment variable.');
+  }
+  return truffleConfig.WS_PROVIDER_URL;
+}
+
 module.exports = {
-  readArtifact,
-  provider,
   fetchNonce,
   fromHexStr,
   incrementByteArray,
   makeRpc,
   makeConfidential,
+  providerUrl,
+  wsProviderUrl,
   GAS_LIMIT,
   GAS_PRICE
 };

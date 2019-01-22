@@ -1,0 +1,18 @@
+# Mac things
+.DS_Store
+
+# Build.
+target/
+build/
+**/generated
+Cargo.lock
+.oasis-build
+.web3c
+
+# IDE.
+.idea/*
+*.iml
+
+# Node mess.
+node_modules
+package-lock.json

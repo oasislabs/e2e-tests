@@ -1,5 +1,6 @@
 const TestEvent = artifacts.require('./Event.sol');
 const Web3 = require('web3');
+const utils = require('./utils');
 
 contract('TestEvent-PubSub', (accounts) => {
   it('should subscribe to logs', async () => {
@@ -19,7 +20,7 @@ contract('TestEvent-PubSub', (accounts) => {
 });
 
 async function ethSubscribePromise (address) {
-  const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8556'));
+  const web3 = new Web3(new Web3.providers.WebsocketProvider(utils.wsProviderUrl(TestEvent.web3)));
   return new Promise(function (resolve, reject) {
     web3.eth.subscribe(
       'logs',
