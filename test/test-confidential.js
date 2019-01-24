@@ -91,22 +91,6 @@ contract('Confidential Contracts', async (accounts) => {
     );
   });
 
-  it('should estimate gas for confidential transactions the same as gas actually used', async () => {
-    let counterContract = new web3c.confidential.Contract(Counter.abi);
-    const deployMethod = counterContract.deploy({ data: Counter.bytecode });
-    let estimatedGas = await deployMethod.estimateGas();
-    counterContract = await deployMethod.send({
-      from: accounts[0],
-      gasPrice: '0x3b9aca00',
-      gas: estimatedGas
-    });
-    const txHash = counterContract._requestManager.provider.outstanding[0];
-    const receipt = await web3c.eth.getTransactionReceipt(txHash);
-
-    assert.equal(estimatedGas, receipt.gasUsed);
-    assert.equal(estimatedGas, receipt.cumulativeGasUsed);
-  });
-
   it('should yield a larger estimate for confidential transactions than non-confidential', async () => {
     const confidentialContract = new web3c.confidential.Contract(Counter.abi);
     const confidentialDeploy = confidentialContract.deploy({ data: Counter.bytecode });
