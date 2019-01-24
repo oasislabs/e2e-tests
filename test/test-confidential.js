@@ -6,6 +6,14 @@ const utils = require('./utils');
 contract('Confidential Contracts', async (accounts) => {
   const web3c = new Web3c(Counter.web3.currentProvider);
 
+  // Timestamp is expected to be the the maximum u64, which is 18446744073709551615.
+  // However, javascript represents all numbers as double precision floats with 52
+  // bits of mantissa, and so one can only compare numbers in the safe zone, i.e.,
+  // -(2^53 - 1) and 2^53 - 1, which is more than necessary to represent a unix
+  // timestamp. We use the given timestamp, here, as it's javascript's representation
+  // of 2^64-1 and thus conversion into it's less precise double precision.
+  const expectedTimestamp = '18446744073709552000';
+
   let counterContract = new web3c.confidential.Contract(Counter.abi, undefined, {
     from: accounts[0]
   });
@@ -25,13 +33,13 @@ contract('Confidential Contracts', async (accounts) => {
 
   let publicKeyPayload = null;
 
-  it('retrieves a public key with a timestamp', async () => {
+  it('retrieves a public key with a max timestamp', async () => {
     publicKeyPayload = (await utils.makeRpc(
       'confidential_getPublicKey',
       [counterContract.options.address],
       utils.providerUrl(web3c)
     )).result;
-    assert.equal(publicKeyPayload.timestamp > 0, true);
+    assert.equal(publicKeyPayload.timestamp + '', expectedTimestamp);
     validatePublicKey(publicKeyPayload.public_key);
   });
 
@@ -43,6 +51,36 @@ contract('Confidential Contracts', async (accounts) => {
     assert.equal(/0x[a-z0-9]+/.test(publicKeyPayload.signature), true);
   });
 
+  it('uses an auto incrementing nonce when encrypting many logs', async () => {
+    // Ensure we overflow at least one byte in the counter.
+    const numEvents = 256 + 1;
+    // Execute a transaction to trigger a bunch of logs to be encrypted.
+    const decryptedReceipt = await counterContract.methods.incrementCounterManyTimes(numEvents).send();
+    // First check the decrypted data is as expected (web3c will decrypt  automatically).
+    const events = decryptedReceipt.events.Incremented;
+    assert.equal(events.length, numEvents);
+    for (let k = 0; k < numEvents; k += 1) {
+      assert.equal(events[k].returnValues.newCounter, k + 1);
+    }
+    // Now check all nonces are incremented by one.
+    const txHash = decryptedReceipt.transactionHash;
+    const encryptedReceipt = (await utils.makeRpc(
+      'eth_getTransactionReceipt',
+      [txHash],
+      utils.providerUrl(web3c)
+    )).result;
+    let last;
+    encryptedReceipt.logs.forEach((log) => {
+      let nonce = utils.fromHexStr(log.data.substr(2, 32));
+      if (last === undefined) {
+        last = nonce;
+      } else {
+        let lastPlusOne = utils.incrementByteArray(last);
+        assert.deepStrictEqual(lastPlusOne, nonce);
+      }
+    });
+  });
+
   it('should not retrieve contract keys from a non deployed contract address', async function () {
     await _assert.rejects(
       async function () {
@@ -51,6 +89,22 @@ contract('Confidential Contracts', async (accounts) => {
           .getPublicKey('0x0000000000000000000000000000000000000000');
       }
     );
+  });
+
+  it('should estimate gas for confidential transactions the same as gas actually used', async () => {
+    let counterContract = new web3c.confidential.Contract(Counter.abi);
+    const deployMethod = counterContract.deploy({ data: Counter.bytecode });
+    let estimatedGas = await deployMethod.estimateGas();
+    counterContract = await deployMethod.send({
+      from: accounts[0],
+      gasPrice: '0x3b9aca00',
+      gas: estimatedGas
+    });
+    const txHash = counterContract._requestManager.provider.outstanding[0];
+    const receipt = await web3c.eth.getTransactionReceipt(txHash);
+
+    assert.equal(estimatedGas, receipt.gasUsed);
+    assert.equal(estimatedGas, receipt.cumulativeGasUsed);
   });
 
   it('should yield a larger estimate for confidential transactions than non-confidential', async () => {
