@@ -84,12 +84,7 @@ function deployContract (deployMethod, estimatedGas, from) {
     deployMethod.send({
       gasPrice: '0x3b9aca00',
       gas: estimatedGas
-    }).on('error', (error) => {
-      console.log(`Error deploying contract ${error}`);
-    }).on('receipt', (receipt) => {
-      resolve(receipt);
-    }).on('error', (err) => {
-      reject(err);
-    });
+    }).on('error', reject)
+      .on('receipt', resolve);
   });
 }
