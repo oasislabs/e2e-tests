@@ -10,7 +10,7 @@
     "lint": "eslint *.js test/",
     "lint:fix": "eslint *.js test/ --fix",
     "test:development": "./node_modules/.bin/truffle test --network development",
-    "test:devnet": "./node_modules/.bin/truffle test --network devnet"
+    "test:devnet": "DEVNET=1 ./node_modules/.bin/truffle test --network devnet"
   },
   "devDependencies": {
     "eslint": "^5.12.1",

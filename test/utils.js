@@ -62,14 +62,17 @@ function incrementByteArray (byteArray) {
  * Get the current provider url to make raw RPC requests against.
  * Truffle's HDWalletProvider doesn't provide an api to get it so manually do so.
  */
-function providerUrl (web3) {
-  return web3.currentProvider.engine._providers[3].provider.host;
+function providerUrl () {
+  if (truffleConfig.DEVNET) {
+    return truffleConfig.DEVNET_HTTPS_PROVIDER_URL;
+  }
+  return truffleConfig.HTTPS_PROVIDER_URL;
 }
 
-function wsProviderUrl (web3) {
+function wsProviderUrl () {
   // Special case Devnet because the wsProviderUrl is constant and doesn't require
   // definition by a client running the tests.
-  if (providerUrl(web3) === truffleConfig.DEVNET_HTTPS_PROVIDER_URL) {
+  if (providerUrl() === truffleConfig.DEVNET_HTTPS_PROVIDER_URL) {
     return truffleConfig.DEVNET_WS_PROVIDER_URL;
   }
   if (truffleConfig.WS_PROVIDER_URL === undefined) {

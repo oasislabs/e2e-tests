@@ -20,7 +20,7 @@ contract('TestEvent-PubSub', (accounts) => {
 });
 
 async function ethSubscribePromise (address) {
-  const web3 = new Web3(new Web3.providers.WebsocketProvider(utils.wsProviderUrl(TestEvent.web3)));
+  const web3 = new Web3(new Web3.providers.WebsocketProvider(utils.wsProviderUrl()));
   return new Promise(function (resolve, reject) {
     web3.eth.subscribe(
       'logs',
