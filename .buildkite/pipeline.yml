@@ -1,0 +1,33 @@
+################
+# Build pipeline
+################
+docker_plugin: &docker_plugin_configuration
+  oasislabs/docker#v2.1.0-oasis4:
+    image: "oasislabs/testing:0.2.0"
+    always_pull: true
+    workdir: /workdir
+    volumes:
+      - .:/workdir
+      - /var/lib/buildkite-agent/.ssh:/root/.ssh
+      # Shared Rust artifacts cache.
+      - /tmp/cargo_cache:/cargo_cache
+      # Shared Rust package checkouts directory.
+      - /tmp/cargo_pkg/git:/root/.cargo/git
+      - /tmp/cargo_pkg/registry:/root/.cargo/registry
+    environment:
+      - "LC_ALL=C.UTF-8"
+      - "LANG=C.UTF-8"
+      - "CARGO_INCREMENTAL=/cargo_cache"
+      - "CARGO_INSTALL_ROOT=/root/.cargo"
+    propagate-environment: true
+    unconfined: true
+
+steps:
+  - label: Lint and Compile Contracts
+    command:
+      - .buildkite/scripts/setup_gitconfig.sh
+      - .buildkite/scripts/run_build.sh /tmp/artifacts
+      - cd /tmp/artifacts
+      - buildkite-agent artifact upload build.zip
+    plugins:
+      <<: *docker_plugin_configuration
