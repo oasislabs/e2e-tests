@@ -37,7 +37,7 @@ contract('Confidential Contracts', async (accounts) => {
     publicKeyPayload = (await utils.makeRpc(
       'confidential_getPublicKey',
       [counterContract.options.address],
-      utils.providerUrl(web3c)
+      utils.providerUrl()
     )).result;
     assert.equal(publicKeyPayload.timestamp + '', expectedTimestamp);
     validatePublicKey(publicKeyPayload.public_key);
@@ -67,7 +67,7 @@ contract('Confidential Contracts', async (accounts) => {
     const encryptedReceipt = (await utils.makeRpc(
       'eth_getTransactionReceipt',
       [txHash],
-      utils.providerUrl(web3c)
+      utils.providerUrl()
     )).result;
     let last;
     encryptedReceipt.logs.forEach((log) => {

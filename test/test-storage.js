@@ -14,7 +14,7 @@ contract('Storage', (accounts) => {
     await utils.makeRpc(
       'oasis_storeBytes',
       [[1, 2, 3, 4, 5], 9223372036854775807],
-      utils.providerUrl(web3)
+      utils.providerUrl()
     );
     const bytes = await instance.methods.get().call();
     assert.equal(bytes, '0x0102030405');

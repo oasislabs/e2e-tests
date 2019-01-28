@@ -15,4 +15,3 @@ Cargo.lock
 
 # Node mess.
 node_modules
-package-lock.json
