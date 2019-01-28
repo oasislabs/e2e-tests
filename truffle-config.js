@@ -13,7 +13,7 @@ const WS_PROVIDER_URL = process.env.WS_PROVIDER_URL;
 /**
  * True iff we're using the Devnet.
  */
-const DEVNET = process.env.DEVNET;
+const DEVNET = process.argv.indexOf('devnet') > -1;
 /**
  * Devnet constants used if one wants to run the tests against the public Devnet.
  */
