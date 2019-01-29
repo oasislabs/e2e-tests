@@ -1,6 +1,6 @@
 # End to end tests
 
-[![CircleCI](https://circleci.com/gh/oasislabs/e2e-tests.svg?style=svg&circle-token=6d5d9f0eaa3291f8dbcecc39f9807286d7cb2d59)](https://circleci.com/gh/oasislabs/e2e-tests)
+[![Build status](https://badge.buildkite.com/58730a2be16848255387f3c8fe708465d09e699794fff0fae4.svg)](https://buildkite.com/oasislabs/e2e-tests)
 
 A set of Truffle based acceptance tests covering changes to the Ethereum runtime on the Oasis platform.
 
