@@ -1,36 +1,53 @@
 const Counter = artifacts.require('Counter');
 const _assert = require('assert');
+const hash = require('js-sha512').sha512_256;
+const nacl = require('tweetnacl');
 const Web3c = require('web3c');
 const utils = require('./utils');
 
 contract('Confidential Contracts', async (accounts) => {
   const web3c = new Web3c(Counter.web3.currentProvider);
 
-  // Timestamp is expected to be the the maximum u64, which is 18446744073709551615.
-  // However, javascript represents all numbers as double precision floats with 52
-  // bits of mantissa, and so one can only compare numbers in the safe zone, i.e.,
-  // -(2^53 - 1) and 2^53 - 1, which is more than necessary to represent a unix
-  // timestamp. We use the given timestamp, here, as it's javascript's representation
-  // of 2^64-1 and thus conversion into it's less precise double precision.
-  const expectedTimestamp = '18446744073709552000';
-
+  // Timestamp is expected to be 2^53-1, the maximum safe integer in javascript.
+  const expectedTimestamp = '9007199254740991';
+  // Uint8Array representation when interpreting expectedTimestamp as a u64.
+  const expectedTimestamp8Array = new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]);
+  // Contract we will be testing against.
   let counterContract = new web3c.confidential.Contract(Counter.abi, undefined, {
     from: accounts[0]
   });
+  // System log output by the confidential vm. Expect the log to be of the
+  // form public_key || sign(public_key).
+  let deployLog;
 
   it('stores the long term public key in the deploy logs', async () => {
     counterContract = await counterContract.deploy({ data: Counter.bytecode })
       .send()
       .on('receipt', (receipt) => {
+        // The Counter contract does not itself define any logs.
         assert.equal(Object.keys(receipt.events).length, 1);
-
-        let log = receipt.events['0'];
-        assert.equal(log.raw.topics[0], '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
-        validatePublicKey(log.raw.data);
-        assert.equal(log.transactionLogIndex, '0x0');
+        // Save the log for use by other tests.
+        deployLog = receipt.events['0'];
+        // Validate the log came from 0xff...f address.
+        assert.equal(deployLog.raw.topics[0], '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
+        // Validate it is the very first log in the transaction.
+        assert.equal(deployLog.transactionLogIndex, '0x0');
+        // Chop off 0x.
+        let publicKey = deployLog.raw.data.substr(0, 2 + utils.PUBLIC_KEY_LENGTH);
+        // Should start with 0x.
+        assert.equal(publicKey.substr(0, 2), '0x');
+        // Validate the public key is valid.
+        validatePublicKey(publicKey.substr(2));
       });
   });
 
+  it('stores a key manager signature of the long term key in the deploy logs', async () => {
+    let publicKey = deployLog.raw.data.substr(2, utils.PUBLIC_KEY_LENGTH);
+    let signature = deployLog.raw.data.substr(2 + utils.PUBLIC_KEY_LENGTH);
+    validateSignature(utils.fromHexStr(signature), utils.fromHexStr(publicKey));
+  });
+
+  // Response from the web3c rpc confidential_getPublicKey.
   let publicKeyPayload = null;
 
   it('retrieves a public key with a max timestamp', async () => {
@@ -39,8 +56,18 @@ contract('Confidential Contracts', async (accounts) => {
       [counterContract.options.address],
       utils.providerUrl()
     )).result;
-    assert.equal(publicKeyPayload.timestamp + '', expectedTimestamp);
-    validatePublicKey(publicKeyPayload.public_key);
+
+    validatePublicKey(publicKeyPayload.public_key.substr(2));
+
+    assert.equal(publicKeyPayload.timestamp, expectedTimestamp);
+  });
+
+  it('retrieves a public key signed by the key manager', async () => {
+    validateSignature(
+      utils.fromHexStr(publicKeyPayload.signature.substr(2)),
+      utils.fromHexStr(publicKeyPayload.public_key.substr(2)),
+      expectedTimestamp8Array
+    );
   });
 
   // Note we don't do validation of the signature here. See ekiden or web3c.js for
@@ -109,7 +136,28 @@ contract('Confidential Contracts', async (accounts) => {
  * '0x9385b8391e06d67c3de1675a58cffc3ad16bcf7cc56ab35d7db1fc03fb227a54'.
  */
 function validatePublicKey (publicKey) {
-  assert.equal(publicKey.length, 66);
-  assert.equal(publicKey.substr(0, 2), '0x');
-  assert.equal(/0x[a-z0-9]+/.test(publicKey), true);
+  assert.equal(publicKey.length, 64);
+  assert.equal(/[a-z0-9]+/.test(publicKey), true);
+}
+
+/**
+ * Asserts signature is Sign_{key_manager}(hash(longTermKey || timestamp)).
+ * Assumes signature, longTermKey, and timestamp are of type Uint8Array.
+ * Timestamp is optional.
+ */
+function validateSignature (signature, longTermKey, timestamp) {
+  let predigest;
+  if (timestamp !== undefined) {
+    predigest = new Uint8Array(longTermKey.length + timestamp.length);
+    predigest.set(longTermKey);
+    predigest.set(timestamp, longTermKey.length);
+  } else {
+    predigest = longTermKey;
+  }
+  const digest = utils.fromHexStr(hash(predigest));
+  let keyManagerPk = utils.fromHexStr(utils.KEY_MANAGER_PUBLIC_KEY);
+  assert.equal(
+    nacl.sign.detached.verify(digest, signature, keyManagerPk),
+    true
+  );
 }
