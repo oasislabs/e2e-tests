@@ -1,6 +1,8 @@
 const request = require('request-promise');
 const truffleConfig = require('../truffle-config');
 
+// Global key manager public key for the dummy key manager. 
+// See https://github.com/oasislabs/ekiden/blob/master/key-manager/dummy/enclave/src/lib.rs#L89
 const KEY_MANAGER_PUBLIC_KEY = '51d5e24342ae2c4a951e24a2ba45a68106bcb7986198817331889264fd10f1bf';
 const PUBLIC_KEY_LENGTH = 64;
 const GAS_PRICE = '0x3b9aca00';
