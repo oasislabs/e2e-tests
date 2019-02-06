@@ -1,5 +1,5 @@
 #![no_std]
-#![feature(proc_macro_gen)]
+#![feature(proc_macro_hygiene)]
 
 extern crate deployed_abi;
 extern crate owasm_std;
