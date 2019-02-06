@@ -1,14 +1,10 @@
-#![no_std]
-#![feature(proc_macro_hygiene)]
-
 extern crate deployed_abi;
-extern crate owasm_std;
 
 use deployed_abi::*;
 
-static ADDRESS_KEY: H256 = H256([
+static ADDRESS_KEY: [u8; 32] = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-]);
+];
 
 #[owasm_abi_derive::contract]
 trait ExistingRust {
@@ -16,7 +12,7 @@ trait ExistingRust {
     /// Saves it in storage so that we can call it in methods.
     fn constructor(&mut self, deployed_address: Address) {
         let value = H256::from(deployed_address);
-        owasm_ethereum::write(&ADDRESS_KEY, &value.into());
+        owasm_ethereum::write(&ADDRESS_KEY.into(), &value.into());
     }
 
     #[constant]

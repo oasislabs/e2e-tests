@@ -2,13 +2,14 @@
 name = "existing"
 version = "0.1.0"
 authors = ["Oasis Labs Inc. <info@oasislabs.com>"]
+edition = "2018"
 
 [dependencies]
-owasm-ethereum = "0.7"
+oasis = { git = "https://github.com/oasislabs/oasis-rs", features = ["user-alloc"] }
+deployed-abi = { path = "../../../../abis/deployed_abi" }
 owasm-abi = "0.1"
 owasm-abi-derive = "0.1"
-owasm-std = "0.13"
-deployed-abi = { path = "../../../../abis/deployed_abi" }
+owasm-ethereum = "0.7"
 
 [lib]
 crate-type = ["cdylib"]

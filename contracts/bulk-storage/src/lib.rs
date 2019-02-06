@@ -1,5 +1,3 @@
-#![no_std]
-
 #[owasm_abi_derive::contract]
 trait BulkStorage {
     fn constructor(&mut self) {}
