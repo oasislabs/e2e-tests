@@ -81,13 +81,12 @@ contract('BulkStorage', (accounts) => {
       });
     });
 
-    it(`${contract.label}: retrieves a default bulk storage of 0 for storage that has never been set`, async () => {
+    it(`${contract.label}: retrieves an empty bulk storage for storage that has never been set`, async () => {
       let key = [
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
       ];
       let storage = await instance.methods.get_bulk_storage(key).call();
-      assert.equal(storage, 0);
-      assert.equal(storage.length, 66);
+      assert.equal(storage, null);
     });
   });
 });
