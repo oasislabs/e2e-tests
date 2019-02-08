@@ -4,18 +4,18 @@ version = "0.1.0"
 authors = ["Oasis Labs<info@oasislabs.com>"]
 
 [dependencies]
-hex = "0.3"
-rand = { version = "0.5" }
-num = { git = "https://github.com/rust-num/num", version = "0.2" }
-rulinalg = { git = "https://github.com/AtheMathmo/rulinalg", version = "0.4.2" }
-rusty-machine = { git = "https://github.com/AtheMathmo/rusty-machine", version = "0.5.4" }
 dpmlrust = { git = "https://github.com/oasislabs/dpml-rs" }
+hex = "0.3"
 ml-reader = { git = "https://github.com/oasislabs/ml-reader" }
+num = { git = "https://github.com/rust-num/num", version = "0.2" }
+oasis-std = "0.1"
+owasm-abi = "0.2"
+owasm-abi-derive = "0.2"
+owasm-ethereum = "0.8"
+rand = { version = "0.5" }
+rulinalg = { git = "https://github.com/AtheMathmo/rulinalg", version = "0.4.2" }
 rusty-libsvm = { git = "https://github.com/oasislabs/ml-reader" }
-owasm-ethereum = "0.7"
-owasm-abi = "0.1"
-owasm-abi-derive = "0.1"
-owasm-std = "0.13"
+rusty-machine = { git = "https://github.com/AtheMathmo/rusty-machine", version = "0.5.4" }
 
 [lib]
 crate-type = ["cdylib"]
@@ -24,6 +24,7 @@ crate-type = ["cdylib"]
 panic = "abort"
 lto = true
 opt-level = "z"
+incremental = false
 
 [package.metadata.oasis]
 max-mem = 262144

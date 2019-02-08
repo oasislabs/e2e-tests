@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Oasis Labs Inc. <info@oasislabs.com>"]
 
 [dependencies]
-owasm-abi = "0.1"
-owasm-abi-derive = "0.1"
-owasm-ethereum = "0.7"
-owasm-std = "0.13"
+oasis-std = "0.1"
+owasm-abi = "0.2"
+owasm-abi-derive = "0.2"
+owasm-ethereum = "0.8"
