@@ -2,6 +2,8 @@ const Deployed = artifacts.require('./cross_contract/solidity/Deployed.sol');
 const Existing = artifacts.require('./cross_contract/solidity/Existing.sol');
 const DeployedRust = artifacts.require('DeployedRust');
 const ExistingRust = artifacts.require('ExistingRust');
+const Web3 = require('web3');
+const web3 = new Web3(Deployed.web3.currentProvider);
 
 contract('CrossContractCall', (accounts) => {
   let testCases = [
@@ -14,18 +16,27 @@ contract('CrossContractCall', (accounts) => {
       let deployedArtifact = test[0];
       let existingArtifact = test[1];
 
-      let deployed = await deployedArtifact.new();
-      let prevA = await deployed.a();
-      assert.equal(prevA.toNumber(), 1, 'Previous value is incorrect');
+      let deployed = await new web3.eth.Contract(deployedArtifact.abi, undefined, {
+        from: accounts[0]
+      }).deploy({
+        data: deployedArtifact.bytecode
+      }).send();
+      let prevA = await deployed.methods.a().call();
+      assert.equal(prevA, 1, 'Previous value is incorrect');
 
-      let existing = await existingArtifact.new(deployed.address);
+      let existing = await new web3.eth.Contract(existingArtifact.abi, undefined, {
+        from: accounts[0]
+      }).deploy({
+        data: existingArtifact.bytecode,
+        arguments: [deployed.options.address]
+      }).send();
 
-      prevA = await existing.get_a();
-      assert.equal(prevA.toNumber(), 1, 'Previous value is incorrect');
+      prevA = await existing.methods.get_a().call();
+      assert.equal(prevA, 1, 'Previous value is incorrect');
 
-      await existing.set_a(2);
-      let newA = await deployed.a();
-      assert.equal(newA.toNumber(), 2, 'Contract value was not updated');
+      await existing.methods.set_a(2).send();
+      let newA = await deployed.methods.a().call();
+      assert.equal(newA, 2, 'Contract value was not updated');
     });
   });
 });

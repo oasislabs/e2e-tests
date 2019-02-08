@@ -5,6 +5,10 @@ const HDWalletProvider = require('truffle-hdwallet-provider');
  */
 const MNEMONIC = process.env.MNEMONIC;
 /**
+ * True iff we're using the Devnet.
+ */
+const DEVNET = process.argv.indexOf('devnet') > -1;
+/**
  * Constants that should be defined as environment variables if one wants to
  * run the tests against a custom gateway.
  */
@@ -44,5 +48,6 @@ module.exports = {
   },
   DEVNET_HTTPS_PROVIDER_URL,
   DEVNET_WS_PROVIDER_URL,
+  DEVNET,
   WS_PROVIDER_URL
 };
