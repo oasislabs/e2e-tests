@@ -39,7 +39,6 @@ since they will be used by the contracts.
 ## Compile
 
 ```
-export CARGO_INCREMENTAL=0
 npm run compile
 ```
 
