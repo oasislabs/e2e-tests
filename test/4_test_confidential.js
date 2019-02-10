@@ -3,7 +3,7 @@ const _assert = require('assert');
 const hash = require('js-sha512').sha512_256;
 const nacl = require('tweetnacl');
 const Web3c = require('web3c');
-const utils = require('./utils');
+const utils = require('../src/utils');
 
 const truffleConfig = require('../truffle-config');
 

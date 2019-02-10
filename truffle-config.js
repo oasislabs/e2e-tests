@@ -1,4 +1,5 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
+const fs = require('fs');
 const path = require('path');
 /**
  * Mnemonic associated with the wallet with which the tests are run.
@@ -31,10 +32,7 @@ const PARALLELISM = process.env.E2E_PARALLELISM || 1;
  * The current parallel bucket number being executed.
  */
 const PARALLELISM_BUCKET = process.env.E2E_PARALLELISM_BUCKET || 0;
-/**
- * Total number of test files. Increment this number when a new test file is added.
- */
-const TEST_FILES_COUNT = 9;
+
 /**
  * @returns true iff the test with fillename should be run under the given
  *          parallelism parameters. Assumes all filenames are of the form
@@ -47,12 +45,18 @@ function shouldRun (filename) {
 }
 /**
  * Returns the numerical buckets expressing the parallel groups the test should run with.
- * E.g., if PARALLELISM is 5 and TEST_FILES_COUNT is 10, returns
+ * E.g., if PARALLELISM is 5 and we have 10 tests, returns
  * [[0,1], [2,3], [4,5], [6,7], [8, 9]].
  */
 function makeBuckets () {
+  // Total number of tests.
+  let testsCount;
+  fs.readdir('./test', (err, files) => {
+	testsCountt = files.length;
+  });
+
   // Create an array [0, 1,..., TEST_FILES_COUNT-1].
-  let tests = []; for (let k = 0; k < TEST_FILES_COUNT; k += 1) { tests.push(k); };
+  let tests = []; for (let k = 0; k < testsCount; k += 1) { tests.push(k); };
   // No parallelism.
   if (PARALLELISM < 2) {
     return [tests];

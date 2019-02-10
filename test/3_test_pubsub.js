@@ -1,6 +1,6 @@
 const TestEvent = artifacts.require('./Event.sol');
 const Web3 = require('web3');
-const utils = require('./utils');
+const utils = require('../src/utils');
 
 const truffleConfig = require('../truffle-config');
 
