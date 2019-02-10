@@ -23,7 +23,7 @@ const DEVNET_WS_PROVIDER_URL = 'wss://web3.oasiscloud.io/ws';
  * The amount of parallelism with which to run the tests. When the tests are run in
  * parallel, we assign each test file a number and divide up the tests into the "bucket"
  * corresponding with its number. For example, TEST_FILES_COUNT of 10 and PARALLELISM
- * of 2 would correspond into 2 buckets. When PARALLELISM_BUCKET==1, all tests with a
+ * of 2 would correspond into 2 buckets. When PARALLELISM_BUCKET==0, all tests with a
  * number [0, 4] would be executed and all tests with a number [5, 9] would be skipped.
  */
 const PARALLELISM = process.env.E2E_PARALLELISM || 1;
