@@ -58,7 +58,7 @@ function shouldRun (filename) {
  * [[0,1], [2,3], [4,5], [6,7], [8, 9]].
  */
 function makeBuckets () {
-  // Create an array [0, 1,...,  TEST_FILES_COUNT-1].
+  // Create an array [0, 1,..., TEST_FILES_COUNT-1].
   let tests = []; for (let k = 0; k < TEST_FILES_COUNT; k += 1) { tests.push(k); };
   // No parallelism.
   if (PARALLELISM < 2) {
