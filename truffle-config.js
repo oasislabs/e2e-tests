@@ -33,6 +33,16 @@ const PARALLELISM = process.env.E2E_PARALLELISM || 1;
  */
 const PARALLELISM_BUCKET = process.env.E2E_PARALLELISM_BUCKET || 0;
 /**
+ * The total number of test files to run.
+ */
+let TEST_FILES_COUNT;
+fs.readdir('./test', (err, files) => {
+  if (err) {
+    throw Error('umable to read test files');
+  }
+  TEST_FILES_COUNT = files.length;
+});
+/**
  * @returns true iff the test with fillename should be run under the given
  *          parallelism parameters. Assumes all filenames are of the form
  *          [NUMBER]_[TESTNAME].
@@ -48,14 +58,8 @@ function shouldRun (filename) {
  * [[0,1], [2,3], [4,5], [6,7], [8, 9]].
  */
 function makeBuckets () {
-  // Total number of tests.
-  let testsCount;
-  fs.readdir('./test', (err, files) => {
-	testsCount = files.length;
-  });
-
-  // Create an array [0, 1,..., TEST_FILES_COUNT-1].
-  let tests = []; for (let k = 0; k < testsCount; k += 1) { tests.push(k); };
+  // Create an array [0, 1,...,  TEST_FILES_COUNT-1].
+  let tests = []; for (let k = 0; k <  TEST_FILES_COUNT; k += 1) { tests.push(k); };
   // No parallelism.
   if (PARALLELISM < 2) {
     return [tests];
