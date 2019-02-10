@@ -32,7 +32,6 @@ const PARALLELISM = process.env.E2E_PARALLELISM || 1;
  * The current parallel bucket number being executed.
  */
 const PARALLELISM_BUCKET = process.env.E2E_PARALLELISM_BUCKET || 0;
-
 /**
  * @returns true iff the test with fillename should be run under the given
  *          parallelism parameters. Assumes all filenames are of the form
@@ -52,7 +51,7 @@ function makeBuckets () {
   // Total number of tests.
   let testsCount;
   fs.readdir('./test', (err, files) => {
-	testsCountt = files.length;
+	testsCount = files.length;
   });
 
   // Create an array [0, 1,..., TEST_FILES_COUNT-1].
