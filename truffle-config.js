@@ -54,12 +54,12 @@ function shouldRun (filename) {
 }
 /**
  * Returns the numerical buckets expressing the parallel groups the test should run with.
- * E.g., if PARALLELISM is 5 and we have 10 tests, returns
+ * E.g., if PARALLELISM is 5 and TEST_FILES_COUNT is 10, returns
  * [[0,1], [2,3], [4,5], [6,7], [8, 9]].
  */
 function makeBuckets () {
   // Create an array [0, 1,...,  TEST_FILES_COUNT-1].
-  let tests = []; for (let k = 0; k <  TEST_FILES_COUNT; k += 1) { tests.push(k); };
+  let tests = []; for (let k = 0; k < TEST_FILES_COUNT; k += 1) { tests.push(k); };
   // No parallelism.
   if (PARALLELISM < 2) {
     return [tests];
