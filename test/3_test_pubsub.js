@@ -2,22 +2,28 @@ const TestEvent = artifacts.require('./Event.sol');
 const Web3 = require('web3');
 const utils = require('./utils');
 
-contract('TestEvent-PubSub', (accounts) => {
-  it('should subscribe to logs', async () => {
-    let dataToEmit = 123;
+const truffleConfig = require('../truffle-config');
 
-    let instance = await TestEvent.new();
-    const subscribePromise = ethSubscribePromise(instance.address);
-    await instance.emitEvent(dataToEmit);
-    try {
-      let log = await subscribePromise;
-      assert.equal(instance.address, log.address);
-      assert.equal(log.data, dataToEmit);
-    } catch (err) {
-      assert.fail(err);
-    }
+const TEST_NUMBER = 3;
+
+if (truffleConfig.shouldRun(TEST_NUMBER)) {
+  contract('TestEvent-PubSub', (accounts) => {
+    it('should subscribe to logs', async () => {
+      let dataToEmit = 123;
+
+      let instance = await TestEvent.new();
+      const subscribePromise = ethSubscribePromise(instance.address);
+      await instance.emitEvent(dataToEmit);
+      try {
+        let log = await subscribePromise;
+        assert.equal(instance.address, log.address);
+        assert.equal(log.data, dataToEmit);
+      } catch (err) {
+        assert.fail(err);
+      }
+    });
   });
-});
+}
 
 async function ethSubscribePromise (address) {
   const web3 = new Web3(new Web3.providers.WebsocketProvider(utils.wsProviderUrl()));
