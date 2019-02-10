@@ -2,9 +2,7 @@ const TestEvent = artifacts.require('./Event.sol');
 
 const truffleConfig = require('../truffle-config');
 
-const TEST_NUMBER = 6;
-
-if (truffleConfig.shouldRun(TEST_NUMBER)) {
+if (truffleConfig.shouldRun(__filename)) {
   contract('TestEvent', (accounts) => {
     it('should emit a log', async () => {
       let instance = await TestEvent.new();

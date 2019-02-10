@@ -7,9 +7,7 @@ const utils = require('./utils');
 
 const truffleConfig = require('../truffle-config');
 
-const TEST_NUMBER = 4;
-
-if (truffleConfig.shouldRun(TEST_NUMBER)) {
+if (truffleConfig.shouldRun(__filename)) {
   contract('Confidential Contracts', async (accounts) => {
     const web3c = new Web3c(Counter.web3.currentProvider);
 

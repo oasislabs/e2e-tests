@@ -3,9 +3,7 @@ const Builtins = artifacts.require('./Builtins.sol');
 
 const truffleConfig = require('../truffle-config');
 
-const TEST_NUMBER = 1;
-
-if (truffleConfig.shouldRun(TEST_NUMBER)) {
+if (truffleConfig.shouldRun(__filename)) {
   /**
    * Tests EVM builtin precompiles using a readonly call and a transaction
    * for each test, exercising both the gateway and the compute nodes.

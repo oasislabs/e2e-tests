@@ -5,9 +5,7 @@ const ExistingRust = artifacts.require('ExistingRust');
 
 const truffleConfig = require('../truffle-config');
 
-const TEST_NUMBER = 5;
-
-if (truffleConfig.shouldRun(TEST_NUMBER)) {
+if (truffleConfig.shouldRun(__filename)) {
   contract('CrossContractCall', (accounts) => {
     let testCases = [
       [Deployed, Existing, 'should update value in other solidity contract'],

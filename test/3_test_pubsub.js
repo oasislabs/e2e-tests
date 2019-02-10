@@ -4,9 +4,7 @@ const utils = require('./utils');
 
 const truffleConfig = require('../truffle-config');
 
-const TEST_NUMBER = 3;
-
-if (truffleConfig.shouldRun(TEST_NUMBER)) {
+if (truffleConfig.shouldRun(__filename)) {
   contract('TestEvent-PubSub', (accounts) => {
     it('should subscribe to logs', async () => {
       let dataToEmit = 123;
