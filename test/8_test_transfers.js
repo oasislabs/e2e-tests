@@ -5,7 +5,7 @@ const truffleConfig = require('../truffle-config');
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Transfers', async (accounts) => {
-	const web3 = new Web3(_Counter.web3.currentProvider);
+    const web3 = new Web3(_Counter.web3.currentProvider);
     const account = web3.eth.accounts.create();
     const transferAmount = 100;
 
