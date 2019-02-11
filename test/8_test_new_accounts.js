@@ -3,9 +3,7 @@ const Web3 = require('web3');
 
 const truffleConfig = require('../truffle-config');
 
-const TEST_NUMBER = 8;
-
-if (truffleConfig.shouldRun(TEST_NUMBER)) {
+if (truffleConfig.shouldRun(__filename)) {
   contract('New accounts', async (accounts) => {
     it('transfers eth to an account that does not exist', async () => {
       const web3 = new Web3(_Counter.web3.currentProvider);

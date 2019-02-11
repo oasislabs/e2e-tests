@@ -5,9 +5,7 @@ const web3 = new Web3(Logistic.web3.currentProvider);
 
 const truffleConfig = require('../truffle-config');
 
-const TEST_NUMBER = 7;
-
-if (truffleConfig.shouldRun(TEST_NUMBER)) {
+if (truffleConfig.shouldRun(__filename)) {
   contract('Logistic', (accounts) => {
     it('should perform logistic regression', async () => {
       const contract = new web3.eth.Contract(Logistic.abi);

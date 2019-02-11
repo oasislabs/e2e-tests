@@ -8,9 +8,7 @@ const web3c = new Web3c(Counter.web3.currentProvider);
 
 const truffleConfig = require('../truffle-config');
 
-const TEST_NUMBER = 0;
-
-if (truffleConfig.shouldRun(TEST_NUMBER)) {
+if (truffleConfig.shouldRun(__filename)) {
   /**
    * Tests all combinations of contract types with one test suite. The actual tests are
    * exactly the same whether the contract is Rust, Solidity, confidential or not.

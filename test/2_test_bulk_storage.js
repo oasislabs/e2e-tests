@@ -4,9 +4,7 @@ const web3c = new Web3c(BulkStorage.web3.currentProvider);
 
 const truffleConfig = require('../truffle-config');
 
-const TEST_NUMBER = 2;
-
-if (truffleConfig.shouldRun(TEST_NUMBER)) {
+if (truffleConfig.shouldRun(__filename)) {
   contract('BulkStorage', (accounts) => {
     // Run the tests against both a confidential and non confidential contract.
     let contracts = [

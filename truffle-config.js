@@ -1,5 +1,6 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
-
+const fs = require('fs');
+const path = require('path');
 /**
  * Mnemonic associated with the wallet with which the tests are run.
  */
@@ -32,14 +33,22 @@ const PARALLELISM = process.env.E2E_PARALLELISM || 1;
  */
 const PARALLELISM_BUCKET = process.env.E2E_PARALLELISM_BUCKET || 0;
 /**
- * Total number of test files. Increment this number when a new test file is added.
+ * The total number of test files to run.
  */
-const TEST_FILES_COUNT = 9;
+let TEST_FILES_COUNT;
+fs.readdir('./test', (err, files) => {
+  if (err) {
+    throw Error('umable to read test files');
+  }
+  TEST_FILES_COUNT = files.length;
+});
 /**
- * @returns true iff the test with testNumber should be run under the given
- *          parallelism parameters.
+ * @returns true iff the test with fillename should be run under the given
+ *          parallelism parameters. Assumes all filenames are of the form
+ *          [NUMBER]_[TESTNAME].
  */
-function shouldRun (testNumber) {
+function shouldRun (filename) {
+  let testNumber = parseInt(path.basename(filename).split('_')[0]);
   let testsToRun = makeBuckets()[PARALLELISM_BUCKET];
   return testsToRun.includes(testNumber);
 }
