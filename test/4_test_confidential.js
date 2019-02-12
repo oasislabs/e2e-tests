@@ -2,7 +2,7 @@ const Counter = artifacts.require('Counter');
 const _assert = require('assert');
 const hash = require('js-sha512').sha512_256;
 const nacl = require('tweetnacl');
-const Web3c = require('web3c');
+const Web3c = require('web3c.js');
 const utils = require('../src/utils');
 
 const truffleConfig = require('../truffle-config');
