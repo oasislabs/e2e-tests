@@ -3,6 +3,8 @@ const Web3c = require('web3c');
 const assert = require('assert');
 const truffleConfig = require('../truffle-config');
 
+// TODO: contracts with eth, non-confidential .
+
 if (truffleConfig.shouldRun(__filename)) {
   contract('Deploy Header', async (accounts) => {
 
@@ -28,7 +30,7 @@ if (truffleConfig.shouldRun(__filename)) {
       assert.equal(expectedExpiry, resultantExpiry);
 
       // Bonus: Sanity check other api.
-      resultantExpiry = await counterContract.expiry(instance.options.address);
+      resultantExpiry = await web3c.oasis.expiry(instance.options.address);
       assert.equal(expectedExpiry, resultantExpiry);
     });
 
