@@ -1,5 +1,5 @@
 const Counter = artifacts.require('Counter');
-const Web3c = require('../../web3c.js/');
+const Web3c = require('web3c');
 const _assert = require('assert');
 const truffleConfig = require('../truffle-config');
 
