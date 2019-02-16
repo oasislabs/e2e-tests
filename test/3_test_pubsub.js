@@ -1,5 +1,5 @@
 const TestEvent = artifacts.require('./Event.sol');
-const Web3 = require('web3');
+const Web3c = require('web3c');
 const utils = require('../src/utils');
 
 const truffleConfig = require('../truffle-config');
@@ -24,7 +24,7 @@ if (truffleConfig.shouldRun(__filename)) {
 }
 
 async function ethSubscribePromise (address) {
-  const web3 = new Web3(new Web3.providers.WebsocketProvider(utils.wsProviderUrl()));
+  const web3 = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()));
   return new Promise(function (resolve, reject) {
     web3.eth.subscribe(
       'logs',

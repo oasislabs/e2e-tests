@@ -1,14 +1,14 @@
 const Logistic = artifacts.require('Logistic');
 
-const Web3 = require('web3');
-const web3 = new Web3(Logistic.web3.currentProvider);
+const Web3c = require('web3');
+const web3c = new Web3c(Logistic.web3.currentProvider);
 
 const truffleConfig = require('../truffle-config');
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Logistic', (accounts) => {
     it('should perform logistic regression', async () => {
-      const contract = new web3.eth.Contract(Logistic.abi);
+      const contract = new web3c.eth.Contract(Logistic.abi);
       let instance = await contract.deploy({ data: Logistic.bytecode }).send({
         from: accounts[0]
       });
