@@ -16,13 +16,16 @@ if (truffleConfig.shouldRun(__filename)) {
     ];
 
     contracts.forEach((contract) => {
+
+	  let instance;
+
       it('creates a confidential contract that expires tomorrow with success', async () => {
         // Given
         let counterContract = contract;
 
         // When
         let expectedExpiry = Math.floor(Date.now() / 1000 + 60 * 60 * 24);
-        let instance = await counterContract.deploy({
+        instance = await counterContract.deploy({
           data: Counter.bytecode,
           header: {
             expiry: expectedExpiry
@@ -37,6 +40,14 @@ if (truffleConfig.shouldRun(__filename)) {
         resultantExpiry = await web3c.oasis.expiry(instance.options.address);
         assert.equal(expectedExpiry, resultantExpiry);
       });
+
+	  it('can execute transactions and calls on a contract with expiry', async () => {
+		let count = await instance.methods.getCounter().call();
+		assert.equal(count, 0);
+		await instance.methods.incrementCounter().send();
+        count = await instance.methods.getCounter().call();
+		assert.equal(count, 1);
+	  });
 
       it('creates a confidential contract that expires yesterday with failure', async () => {
         _assert.rejects(
