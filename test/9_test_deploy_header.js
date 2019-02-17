@@ -7,19 +7,27 @@ if (truffleConfig.shouldRun(__filename)) {
   contract('Deploy Header', async (accounts) => {
     const web3c = new Web3c(Counter.web3.currentProvider);
     let contracts = [
-      new web3c.eth.Contract(Counter.abi, undefined, {
-        from: accounts[0]
-      }),
-      new web3c.confidential.Contract(Counter.abi, undefined, {
-        from: accounts[0]
-      })
+      {
+        contract: new web3c.eth.Contract(Counter.abi, undefined, {
+          from: accounts[0]
+        }),
+        label: 'eth'
+      },
+      {
+        contract: new web3c.confidential.Contract(Counter.abi, undefined, {
+          from: accounts[0]
+        }),
+        label: 'confidential'
+      }
     ];
 
-    contracts.forEach((contract) => {
+    contracts.forEach((contractTypes) => {
 
-	  let instance;
+      let instance;
+      let contract = contractTypes.contract;
+      let label = contractTypes.label;
 
-      it('creates a confidential contract that expires tomorrow with success', async () => {
+      it(`${label}: creates a confidential contract that expires tomorrow with success`, async () => {
         // Given
         let counterContract = contract;
 
@@ -41,15 +49,15 @@ if (truffleConfig.shouldRun(__filename)) {
         assert.equal(expectedExpiry, resultantExpiry);
       });
 
-	  it('can execute transactions and calls on a contract with expiry', async () => {
-		let count = await instance.methods.getCounter().call();
-		assert.equal(count, 0);
-		await instance.methods.incrementCounter().send();
+      it(`${label}: can execute transactions and calls on a contract with expiry`, async () => {
+        let count = await instance.methods.getCounter().call();
+        assert.equal(count, 0);
+        await instance.methods.incrementCounter().send();
         count = await instance.methods.getCounter().call();
-		assert.equal(count, 1);
-	  });
+        assert.equal(count, 1);
+      });
 
-      it('creates a confidential contract that expires yesterday with failure', async () => {
+      it(`${label}: creates a confidential contract that expires yesterday with failure`, async () => {
         _assert.rejects(
           async function () {
             // Given
