@@ -22,7 +22,6 @@ if (truffleConfig.shouldRun(__filename)) {
     ];
 
     contracts.forEach((contractTypes) => {
-
       let instance;
       let contract = contractTypes.contract;
       let label = contractTypes.label;
