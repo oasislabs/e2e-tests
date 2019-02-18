@@ -9,12 +9,6 @@ if (truffleConfig.shouldRun(__filename)) {
     const web3c = new Web3c(Counter.web3.currentProvider);
     let contracts = [
       {
-        contract: new web3c.eth.Contract(Counter.abi, undefined, {
-          from: accounts[0]
-        }),
-        label: 'eth'
-      },
-      {
         contract: new web3c.confidential.Contract(Counter.abi, undefined, {
           from: accounts[0]
         }),
