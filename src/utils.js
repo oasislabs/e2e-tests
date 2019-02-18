@@ -89,7 +89,7 @@ function wsProviderUrl () {
   return truffleConfig.WS_PROVIDER_URL;
 }
 
-function sleep(ms) {
+function sleep (ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 

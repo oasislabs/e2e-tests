@@ -77,9 +77,7 @@ if (truffleConfig.shouldRun(__filename)) {
         );
       });
 
-	  /*
-      // this should fail but currently doesn't
-      it(`${label}: calls a contract that has expired with failure`, async() => {
+      it(`${label}: calls a contract that has expired with failure`, async () => {
         // Given.
         instance = await contract.deploy({
           data: Counter.bytecode,
@@ -89,19 +87,20 @@ if (truffleConfig.shouldRun(__filename)) {
         }).send();
 
         let block = await web3c.eth.getBlock('latest');
-        console.log('bloc = ', block);
+        console.log('block = ', block);
         // When.
-        await utils.sleep(30*1000);
+        await utils.sleep(30 * 1000);
 
         let receipt = await instance.methods.incrementCounter().send();
         block = await web3c.eth.getBlock(receipt.blockHash);
 
-        console.log('r = ', receipt);
-        console.log('bloc = ', block);
+        console.log('receipt = ', receipt);
+        console.log('block = ', block);
 
         // Then.
+
+        // this should fail but currently doesn't
       });
-	  */
     });
   });
 }
