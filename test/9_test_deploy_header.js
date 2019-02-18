@@ -94,7 +94,7 @@ if (truffleConfig.shouldRun(__filename)) {
           value: 100
         });
         // Then.
-        _assert.rejects(async function() {
+        _assert.rejects(async function () {
           await instance.methods.incrementCounter().send();
         });
       });
