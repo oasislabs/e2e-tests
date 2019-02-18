@@ -2,6 +2,7 @@ const Counter = artifacts.require('Counter');
 const Web3c = require('web3c');
 const _assert = require('assert');
 const truffleConfig = require('../truffle-config');
+const utils = require('../src/utils');
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Deploy Header', async (accounts) => {
@@ -27,10 +28,10 @@ if (truffleConfig.shouldRun(__filename)) {
       let label = contractTypes.label;
 
       it(`${label}: creates a confidential contract that expires tomorrow with success`, async () => {
-        // Given
+        // Given.
         let counterContract = contract;
 
-        // When
+        // When.
         let expectedExpiry = Math.floor(Date.now() / 1000 + 60 * 60 * 24);
         instance = await counterContract.deploy({
           data: Counter.bytecode,
@@ -39,7 +40,7 @@ if (truffleConfig.shouldRun(__filename)) {
           }
         }).send();
 
-        // Then
+        // Then.
         let resultantExpiry = await instance.expiry();
         assert.equal(expectedExpiry, resultantExpiry);
 
@@ -56,14 +57,14 @@ if (truffleConfig.shouldRun(__filename)) {
         assert.equal(count, 1);
       });
 
-      it(`${label}: creates a confidential contract that expires yesterday with failure`, async () => {
+      it(`${label}: creates a contract that expires yesterday with failure`, async () => {
         _assert.rejects(
           async function () {
-            // Given
+            // Given.
             let counterContract = contract;
 
+            // When.
             let expectedExpiry = Math.floor(Date.now() / 1000 - 60 * 60 * 24);
-            // When
             await counterContract.deploy({
               data: Counter.bytecode,
               header: {
@@ -71,10 +72,36 @@ if (truffleConfig.shouldRun(__filename)) {
               }
             }).send();
 
-            // Then reject
+            // Then reject.
           }
         );
       });
+
+	  /*
+      // this should fail but currently doesn't
+      it(`${label}: calls a contract that has expired with failure`, async() => {
+        // Given.
+        instance = await contract.deploy({
+          data: Counter.bytecode,
+          header: {
+            expiry: Math.floor(Date.now() / 1000 + 5)
+          }
+        }).send();
+
+        let block = await web3c.eth.getBlock('latest');
+        console.log('bloc = ', block);
+        // When.
+        await utils.sleep(30*1000);
+
+        let receipt = await instance.methods.incrementCounter().send();
+        block = await web3c.eth.getBlock(receipt.blockHash);
+
+        console.log('r = ', receipt);
+        console.log('bloc = ', block);
+
+        // Then.
+      });
+	  */
     });
   });
 }

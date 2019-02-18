@@ -89,6 +89,10 @@ function wsProviderUrl () {
   return truffleConfig.WS_PROVIDER_URL;
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 module.exports = {
   fetchNonce,
   fromHexStr,
@@ -98,6 +102,7 @@ module.exports = {
   makeConfidential,
   providerUrl,
   wsProviderUrl,
+  sleep,
   KEY_MANAGER_PUBLIC_KEY,
   PUBLIC_KEY_LENGTH,
   GAS_LIMIT,
