@@ -85,21 +85,18 @@ if (truffleConfig.shouldRun(__filename)) {
             expiry: Math.floor(Date.now() / 1000 + 5)
           }
         }).send();
-
-        let block = await web3c.eth.getBlock('latest');
-        console.log('block = ', block);
         // When.
         await utils.sleep(30 * 1000);
-
-        let receipt = await instance.methods.incrementCounter().send();
-        block = await web3c.eth.getBlock(receipt.blockHash);
-
-        console.log('receipt = ', receipt);
-        console.log('block = ', block);
-
+        // Send dummy transaction to make the tendermint clock tick.
+        await web3c.eth.sendTransaction({
+          from: accounts[0],
+          to: web3c.eth.accounts.create().address,
+          value: 100
+        });
         // Then.
-
-        // this should fail but currently doesn't
+        _assert.rejects(async function() {
+          await instance.methods.incrementCounter().send();
+        });
       });
     });
   });
