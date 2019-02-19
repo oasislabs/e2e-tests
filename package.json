@@ -22,12 +22,12 @@
     "ethereumjs-tx": "1.3.7",
     "ethereumjs-wallet": "0.6.0",
     "js-sha512": "^0.8.0",
-    "oasis-compile": "git+https://github.com/oasislabs/oasis-compile.git#armani/header",
+    "oasis-compile": "git+https://github.com/oasislabs/oasis-compile.git",
     "request-promise": "4.2.2",
     "truffle-hdwallet-provider": "^1.0.0-web3one.0",
     "truffle-oasis": "^5.0.0",
     "tweetnacl": "^1.0.1",
     "web3": "1.0.0-beta.36",
-    "web3c": "git+https://github.com/oasislabs/web3c.js.git#armani/header"
+    "web3c": "git+https://github.com/oasislabs/web3c.js.git"
   }
 }
