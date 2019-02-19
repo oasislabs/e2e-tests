@@ -114,7 +114,7 @@ if (truffleConfig.shouldRun(__filename)) {
       publicKeyPayload = await web3c
         .confidential
         .getPublicKey('0x0000000000000000000000000000000000000000');
-      assert.equal(publicKeyPayload.result, null);
+      assert.equal(publicKeyPayload, null);
     });
 
     it('should yield a larger estimate for confidential transactions than non-confidential', async () => {
