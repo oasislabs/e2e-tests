@@ -111,14 +111,11 @@ if (truffleConfig.shouldRun(__filename)) {
       });
     });
 
-    it('should not retrieve contract keys from a non deployed contract address', async function () {
-      await _assert.rejects(
-        async function () {
-          await web3c
-            .confidential
-            .getPublicKey('0x0000000000000000000000000000000000000000');
-        }
-      );
+    it('should not retrieve contract keys from a non deployed contract address', async () => {
+      publicKeyPayload = await web3c
+        .confidential
+        .getPublicKey('0x0000000000000000000000000000000000000000');
+      assert.equal(publicKeyPayload.result, null);
     });
 
     it('should yield a larger estimate for confidential transactions than non-confidential', async () => {
