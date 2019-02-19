@@ -1,25 +1,19 @@
 const Counter = artifacts.require('Counter');
 const Web3c = require('web3c');
+const web3c = new Web3c(Counter.web3.currentProvider);
 const _assert = require('assert');
 const truffleConfig = require('../truffle-config');
 const utils = require('../src/utils');
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Deploy Header', async (accounts) => {
-    const web3c = new Web3c(Counter.web3.currentProvider);
-    let contracts = [
-      {
-        contract: new web3c.confidential.Contract(Counter.abi, undefined, {
-          from: accounts[0]
-        }),
-        label: 'confidential'
-      }
-    ];
-
-    contracts.forEach((contractTypes) => {
+    let contract = new web3c.oasis.Contract(Counter.abi, undefined, {
+      from: accounts[0]
+    });
+    let labels = ['confidential', 'eth'];
+    labels.forEach((label) => {
       let instance;
-      let contract = contractTypes.contract;
-      let label = contractTypes.label;
+      let confidential = label === 'confidential';
 
       it(`${label}: creates a confidential contract that expires tomorrow with success`, async () => {
         // Given.
@@ -30,7 +24,8 @@ if (truffleConfig.shouldRun(__filename)) {
         instance = await counterContract.deploy({
           data: Counter.bytecode,
           header: {
-            expiry: expectedExpiry
+            expiry: expectedExpiry,
+            confidential
           }
         }).send();
 
@@ -62,7 +57,8 @@ if (truffleConfig.shouldRun(__filename)) {
             await counterContract.deploy({
               data: Counter.bytecode,
               header: {
-                expiry: expectedExpiry
+                expiry: expectedExpiry,
+                confidential
               }
             }).send();
 
@@ -76,7 +72,8 @@ if (truffleConfig.shouldRun(__filename)) {
         instance = await contract.deploy({
           data: Counter.bytecode,
           header: {
-            expiry: Math.floor(Date.now() / 1000 + 5)
+            expiry: Math.floor(Date.now() / 1000 + 5),
+            confidential
           }
         }).send();
         // When.
