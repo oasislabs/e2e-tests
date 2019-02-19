@@ -1,5 +1,4 @@
 const Counter = artifacts.require('Counter');
-const _assert = require('assert');
 const hash = require('js-sha512').sha512_256;
 const nacl = require('tweetnacl');
 const Web3c = require('web3c');
@@ -111,14 +110,11 @@ if (truffleConfig.shouldRun(__filename)) {
       });
     });
 
-    it('should not retrieve contract keys from a non deployed contract address', async function () {
-      await _assert.rejects(
-        async function () {
-          await web3c
-            .confidential
-            .getPublicKey('0x0000000000000000000000000000000000000000');
-        }
-      );
+    it('should not retrieve contract keys from a non deployed contract address', async () => {
+      const payload = await web3c
+        .confidential
+        .getPublicKey('0x0000000000000000000000000000000000000000');
+      assert.equal(payload, null);
     });
 
     it('should yield a larger estimate for confidential transactions than non-confidential', async () => {
