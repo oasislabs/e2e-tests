@@ -111,10 +111,10 @@ if (truffleConfig.shouldRun(__filename)) {
     });
 
     it('should not retrieve contract keys from a non deployed contract address', async () => {
-      publicKeyPayload = await web3c
+      const payload = await web3c
         .confidential
         .getPublicKey('0x0000000000000000000000000000000000000000');
-      assert.equal(publicKeyPayload, null);
+      assert.equal(payload, null);
     });
 
     it('should yield a larger estimate for confidential transactions than non-confidential', async () => {
