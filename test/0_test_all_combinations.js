@@ -18,28 +18,32 @@ if (truffleConfig.shouldRun(__filename)) {
     const options = { from: accounts[0] };
     const contracts = [
       [
-        new web3c.eth.Contract(Counter.abi, Counter.address, options),
-        new web3c.eth.Contract(Counter.abi, undefined, options),
+        new web3c.oasis.Contract(Counter.abi, Counter.address, options),
+        new web3c.oasis.Contract(Counter.abi, undefined, options),
         Counter.bytecode,
-        'Solidity contract'
+        'Solidity contract',
+        false // Not confidential.
       ],
       [
-        new web3c.confidential.Contract(ConfidentialCounter.abi, ConfidentialCounter.address, options),
-        new web3c.confidential.Contract(ConfidentialCounter.abi, undefined, options),
+        new web3c.oasis.Contract(ConfidentialCounter.abi, ConfidentialCounter.address, options),
+        new web3c.oasis.Contract(ConfidentialCounter.abi, undefined, options),
         ConfidentialCounter.bytecode,
-        'confidential Solidity contract'
+        'confidential Solidity contract',
+        true // Confidential.
       ],
       [
-        new web3c.eth.Contract(WasmCounter.abi, WasmCounter.address, options),
-        new web3c.eth.Contract(WasmCounter.abi, undefined, options),
+        new web3c.oasis.Contract(WasmCounter.abi, WasmCounter.address, options),
+        new web3c.oasis.Contract(WasmCounter.abi, undefined, options),
         WasmCounter.bytecode,
-        'Rust contract'
+        'Rust contract',
+        false
       ],
       [
-        new web3c.confidential.Contract(ConfidentialWasmCounter.abi, ConfidentialWasmCounter.address, options),
-        new web3c.confidential.Contract(ConfidentialWasmCounter.abi, undefined, options),
+        new web3c.oasis.Contract(ConfidentialWasmCounter.abi, ConfidentialWasmCounter.address, options),
+        new web3c.oasis.Contract(ConfidentialWasmCounter.abi, undefined, options),
         ConfidentialWasmCounter.bytecode,
-        'confidential Rust contract'
+        'confidential Rust contract',
+        true
       ]
     ];
 
@@ -48,6 +52,7 @@ if (truffleConfig.shouldRun(__filename)) {
       const counterContract = testCase[1];
       const bytecode = testCase[2];
       const description = testCase[3];
+      const confidential = testCase[4];
 
       it('should have a starting count of 0 for a ' + description, async function () {
         const count = await deployedContract.methods.getCounter().call();
@@ -61,7 +66,7 @@ if (truffleConfig.shouldRun(__filename)) {
       });
 
       it('should estimate gas for deploy transactions the same as gas used for a ' + description, async () => {
-        const deployMethod = counterContract.deploy({ data: bytecode });
+        const deployMethod = counterContract.deploy({ data: bytecode, header: { confidential } });
         const estimatedGas = await deployMethod.estimateGas();
         const receipt = await deployContract(deployMethod, estimatedGas, accounts[0]);
         assert.equal(estimatedGas, receipt.gasUsed);
@@ -69,7 +74,7 @@ if (truffleConfig.shouldRun(__filename)) {
       });
 
       it('should estimate gas for call transactions the same as gas used for a ' + description, async () => {
-        const deployMethod = counterContract.deploy({ data: bytecode });
+        const deployMethod = counterContract.deploy({ data: bytecode, header: { confidential } });
         const contract = await deployMethod.send();
         let estimatedGas = await contract.methods.incrementCounter().estimateGas();
         let receipt = await contract.methods.incrementCounter().send({

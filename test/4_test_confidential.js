@@ -15,7 +15,7 @@ if (truffleConfig.shouldRun(__filename)) {
     // Uint8Array representation when interpreting expectedTimestamp as a u64.
     const expectedTimestamp8Array = new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]);
     // Contract we will be testing against.
-    let counterContract = new web3c.confidential.Contract(Counter.abi, undefined, {
+    let counterContract = new web3c.oasis.Contract(Counter.abi, undefined, {
       from: accounts[0]
     });
     // System log output by the confidential vm. Expect the log to be of the
@@ -54,7 +54,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('retrieves a public key with a max timestamp', async () => {
       publicKeyPayload = (await utils.makeRpc(
-        'confidential_getPublicKey',
+        'oasis_getPublicKey',
         [counterContract.options.address],
         utils.providerUrl()
       )).result;
@@ -112,13 +112,13 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('should not retrieve contract keys from a non deployed contract address', async () => {
       const payload = await web3c
-        .confidential
+        .oasis
         .getPublicKey('0x0000000000000000000000000000000000000000');
       assert.equal(payload, null);
     });
 
     it('should yield a larger estimate for confidential transactions than non-confidential', async () => {
-      const confidentialContract = new web3c.confidential.Contract(Counter.abi);
+      const confidentialContract = new web3c.oasis.Contract(Counter.abi);
       const confidentialDeploy = confidentialContract.deploy({ data: Counter.bytecode });
       const confidentialEstimatedGas = await confidentialDeploy.estimateGas();
 

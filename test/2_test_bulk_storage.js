@@ -15,7 +15,7 @@ if (truffleConfig.shouldRun(__filename)) {
         label: 'eth'
       },
       {
-        storage: new web3c.confidential.Contract(BulkStorage.abi, undefined, {
+        storage: new web3c.oasis.Contract(BulkStorage.abi, undefined, {
           from: accounts[0]
         }),
         label: 'confidential'
