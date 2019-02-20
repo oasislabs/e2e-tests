@@ -70,7 +70,6 @@ if (truffleConfig.shouldRun(__filename)) {
         const estimatedGas = await deployMethod.estimateGas();
         const receipt = await deployContract(deployMethod, estimatedGas, accounts[0]);
         assert.equal(estimatedGas, receipt.gasUsed);
-        assert.equal(estimatedGas, receipt.cumulativeGasUsed);
       });
 
       it('should estimate gas for call transactions the same as gas used for a ' + description, async () => {
@@ -82,7 +81,6 @@ if (truffleConfig.shouldRun(__filename)) {
           gas: estimatedGas
         });
         assert.equal(estimatedGas, receipt.gasUsed);
-        assert.equal(estimatedGas, receipt.cumulativeGasUsed);
       });
     });
   });
