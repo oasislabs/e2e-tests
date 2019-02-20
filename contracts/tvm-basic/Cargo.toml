@@ -16,6 +16,7 @@ tvm-runtime = { git = "https://github.com/dmlc/tvm" }
 crate-type = ["cdylib"]
 
 [profile.release]
-panic = "abort"
+incremental = false
 lto = true
 opt-level = 3
+panic = "abort"
