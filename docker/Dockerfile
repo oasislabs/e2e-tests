@@ -1,7 +1,7 @@
 FROM oasislabs/testing:0.2.0
 
 # Install TVM
-RUN apt-get install -y llvm-7 python3-pip
+RUN apt-get install -y llvm-7 lld-7 python3-pip
 
 RUN git clone --recursive https://github.com/dmlc/tvm.git /tmp/tvm && \
     cd /tmp/tvm && \
