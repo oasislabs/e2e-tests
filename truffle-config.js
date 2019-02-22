@@ -43,6 +43,11 @@ fs.readdir('./test', (err, files) => {
   TEST_FILES_COUNT = files.length;
 });
 /**
+ * Current time in seconds.
+ */
+const TEST_TIMESTAMP = Math.floor(Date.now()/1000);
+
+/**
  * @returns true iff the test with fillename should be run under the given
  *          parallelism parameters. Assumes all filenames are of the form
  *          [NUMBER]_[TESTNAME].
@@ -119,6 +124,7 @@ module.exports = {
   DEVNET_HTTPS_PROVIDER_URL,
   DEVNET_WS_PROVIDER_URL,
   HTTPS_PROVIDER_URL,
+  TEST_TIMESTAMP,
   WS_PROVIDER_URL,
   shouldRun
 };
