@@ -45,7 +45,7 @@ fs.readdir('./test', (err, files) => {
 /**
  * Current time in seconds.
  */
-const TEST_TIMESTAMP = Math.floor(Date.now()/1000);
+const TEST_TIMESTAMP = Math.floor(Date.now() / 1000);
 
 /**
  * @returns true iff the test with fillename should be run under the given

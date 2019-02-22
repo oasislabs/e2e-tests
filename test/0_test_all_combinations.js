@@ -25,7 +25,7 @@ if (truffleConfig.shouldRun(__filename)) {
       const expiry = await contract.expiry();
       assert.equal(counter1, 1);
       assert.equal(counter2, 2);
-      assert.equal(expiry, truffleConfig.TEST_TIMESTAMP + 24*60*60);
+      assert.equal(expiry, truffleConfig.TEST_TIMESTAMP + 24 * 60 * 60);
     });
 
     const contracts = [
