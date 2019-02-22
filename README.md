@@ -1,6 +1,6 @@
 # End to end tests
 
-[![CircleCI](https://circleci.com/gh/oasislabs/e2e-tests.svg?style=svg&circle-token=6d5d9f0eaa3291f8dbcecc39f9807286d7cb2d59)](https://circleci.com/gh/oasislabs/e2e-tests)
+[![Build status](https://badge.buildkite.com/58730a2be16848255387f3c8fe708465d09e699794fff0fae4.svg)](https://buildkite.com/oasislabs/e2e-tests)
 
 A set of Truffle based acceptance tests covering changes to the Ethereum runtime on the Oasis platform.
 
@@ -27,6 +27,14 @@ In order to compile to WASM, also run
 `rustup target add wasm32-unknown-unknown`
 
 `cargo install owasm-utils-cli --bin wasm-build`
+
+Lastly, ensure you have access to the following repos
+
+- https://github.com/oasislabs/dpml-rs
+- https://github.com/oasislabs/ml-reader
+- https://github.com/oasislabs/pwasm-ethereum-private
+
+since they will be used by the contracts.
 
 ## Compile
 
@@ -57,3 +65,10 @@ Then, similar to before, run the command
 this time specifiying your `MNEMONIC`, `development` and optionally the test file to run.
 
 As with any Truffle project, one can add custom networks by modifying `truffle-config.js`. Note that we use a custom version of truffle so that we can work with Rust and Solidity in the same workspace. It will be downloaded when running `npm install` and located in your local `node_modules/`.
+
+## WARNING
+
+Some of the tests here test new or changing features that are in a beta version of the Devnet not yet released. These tests will fail until Devnet is upgraded. Specifically,
+
+- `test/test-confidential.js`
+- `test/test-storage.js`
