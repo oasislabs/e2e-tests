@@ -1,9 +1,10 @@
 const Counter = artifacts.require('Counter');
 const ConfidentialCounter = artifacts.require('ConfidentialCounter');
+const ConfidentialStartCounter = artifacts.require('ConfidentialStartCounter');
 const WasmCounter = artifacts.require('WasmCounter');
 const ConfidentialWasmCounter = artifacts.require('ConfidentialWasmCounter');
 const Web3c = require('web3c');
-// use the provider set in our truffle-config.js
+// Use the provider set in our truffle-config.js.
 const web3c = new Web3c(Counter.web3.currentProvider);
 
 const truffleConfig = require('../truffle-config');
@@ -16,6 +17,17 @@ if (truffleConfig.shouldRun(__filename)) {
    */
   contract('Counter Contracts', function (accounts) {
     const options = { from: accounts[0] };
+
+    it('should deploy through truffle with expiry and an expiry of 24 hours ', async function () {
+      let contract = new web3c.oasis.Contract(ConfidentialStartCounter.abi, ConfidentialStartCounter.address, options);
+      const counter1 = await contract.methods._counter1().call();
+      const counter2 = await contract.methods._counter2().call();
+      const expiry = await contract.expiry();
+      assert.equal(counter1, 1);
+      assert.equal(counter2, 2);
+      assert.equal(expiry, truffleConfig.TEST_TIMESTAMP + 24 * 60 * 60);
+    });
+
     const contracts = [
       [
         new web3c.oasis.Contract(Counter.abi, Counter.address, options),
