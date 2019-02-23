@@ -10,7 +10,7 @@ owasm-abi = "0.1"
 owasm-abi-derive = "0.1"
 owasm-ethereum = "0.7"
 owasm-std = "0.13"
-tvm-runtime = { git = "https://github.com/dmlc/tvm" }
+tvm-runtime = { git = "https://github.com/dmlc/tvm", tag = "v0.5" }
 
 [lib]
 crate-type = ["cdylib"]
