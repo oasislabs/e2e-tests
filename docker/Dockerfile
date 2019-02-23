@@ -11,6 +11,6 @@ RUN git clone --recursive https://github.com/dmlc/tvm.git /tmp/tvm && \
     cd /tmp/tvm && \
     git checkout v0.5 && \
     mkdir build && cd build && \
-    cmake .. -DUSE_LLVM=ON && \
+    cmake .. -DUSE_LLVM=llvm-config-8 && \
     make -j4 && cd ../nnvm && make -j4 && cd .. && \
     pip3 install -e python -e nnvm/python -e topi/python
