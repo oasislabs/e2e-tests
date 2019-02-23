@@ -20,3 +20,6 @@ incremental = false
 lto = true
 opt-level = 3
 panic = "abort"
+
+[package.metadata.oasis]
+max-mem = 2097152

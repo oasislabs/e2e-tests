@@ -19,22 +19,8 @@ fn main() {
         String::from_utf8(output.stderr).unwrap()
     );
 
-    let output = Command::new("ld.lld-7")
-        .args(&[
-            "-flavor",
-            "wasm",
-            "-o",
-            &format!("{}.o.o", obj_path_str),
-            "--no-entry",
-            "--allow-undefined",
-            "--export=__wasm_call_ctors",
-            obj_path_str,
-        ])
-        .output()
-        .expect("Failed to export symbols");
-
     let lib_path = std::path::PathBuf::from(format!("{}/libtest.a", out_dir));
-    let output = Command::new("llvm-ar-7")
+    let output = Command::new("llvm-ar-8")
         .args(&["r", lib_path.to_str().unwrap(), obj_path_str])
         .output()
         .expect("Failed to create library archive");

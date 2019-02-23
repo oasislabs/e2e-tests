@@ -10,10 +10,11 @@ if (truffleConfig.shouldRun(__filename)) {
     it('should add two vectors', async () => {
       const contract = new web3.eth.Contract(BasicTVM.abi);
       let instance = await contract.deploy({ data: BasicTVM.bytecode }).send({
-        from: accounts[0]
+        from: accounts[0],
+        gas: '0xf00000', // XXX: works around estimateGas producing 2^51
       });
       const bytes = await instance.methods.test().call();
-      assert.equal(bytes, '0x0000000000000000000000000000000000000000000001');
+      assert.equal(bytes, '1');
     });
   });
 }
