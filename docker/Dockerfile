@@ -8,7 +8,7 @@ RUN rustup target add wasm32-unknown-unknown && \
 RUN echo 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-8 main' >> /etc/apt/sources.list && \
     wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     apt-get update && \
-    apt-get install -y llvm-8 python3-pip
+    apt-get install -y llvm-8 python3-pip zip
 
 # Install TVM
 RUN git clone --recursive https://github.com/dmlc/tvm.git /tmp/tvm && \
