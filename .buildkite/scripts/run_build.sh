@@ -42,15 +42,10 @@ npm install
 # Lint Check.
 npm run lint
 
-# Install Rust dependencies.
-rustup target add wasm32-unknown-unknown
-cargo install owasm-utils-cli --bin wasm-build
-
 # Compile the contracts.
 npm run compile
 
 # Finally move the build to the out directory.
-apt-get install zip
 zip -r build.zip build
 mkdir -p $out_dir
 mv build.zip $out_dir
