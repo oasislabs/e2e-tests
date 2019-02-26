@@ -1,6 +1,6 @@
 const TestEvent = artifacts.require('./Event.sol');
 const ConfidentialCounter = artifacts.require('ConfidentialCounter');
-const Web3c = require('../../web3c.js');
+const Web3c = require('web3c');
 const utils = require('../src/utils');
 
 const truffleConfig = require('../truffle-config');
