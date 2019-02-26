@@ -24,9 +24,9 @@ if (truffleConfig.shouldRun(__filename)) {
 }
 
 async function ethSubscribePromise (address) {
-  const web3 = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()));
+  const web3c = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()));
   return new Promise(function (resolve, reject) {
-    web3.eth.subscribe(
+    web3c.oasis.subscribe(
       'logs',
       { 'fromBlock': 'latest', 'toBlock': 'latest', address },
       function (error, result) {
