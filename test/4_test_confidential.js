@@ -8,7 +8,9 @@ const truffleConfig = require('../truffle-config');
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Confidential Contracts', async (accounts) => {
-    const web3c = new Web3c(Counter.web3.currentProvider);
+    const web3c = new Web3c(Counter.web3.currentProvider, undefined, {
+      keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+    });
 
     // Timestamp is expected to be 2^53-1, the maximum safe integer in javascript.
     const expectedTimestamp = '9007199254740991';
@@ -155,7 +157,7 @@ function validateSignature (signature, longTermKey, timestamp) {
     predigest = longTermKey;
   }
   const digest = utils.fromHexStr(hash(predigest));
-  let keyManagerPk = utils.fromHexStr(utils.KEY_MANAGER_PUBLIC_KEY);
+  let keyManagerPk = utils.fromHexStr(truffleConfig.KEY_MANAGER_PUBLIC_KEY.substr(2));
   assert.equal(
     nacl.sign.detached.verify(digest, signature, keyManagerPk),
     true

@@ -21,6 +21,10 @@ const DEVNET = process.argv.indexOf('devnet') > -1;
 const DEVNET_HTTPS_PROVIDER_URL = 'https://web3.oasiscloud.io';
 const DEVNET_WS_PROVIDER_URL = 'wss://web3.oasiscloud.io/ws';
 /**
+ * The remote key manager's public key to use for validating signatures in web3c.js.
+ */
+const KEY_MANAGER_PUBLIC_KEY = process.env.KEY_MANAGER_PUBLIC_KEY;
+/**
  * The amount of parallelism with which to run the tests. When the tests are run in
  * parallel, we assign each test file a number and divide up the tests into the "bucket"
  * corresponding with its number. For example, TEST_FILES_COUNT of 10 and PARALLELISM
@@ -123,6 +127,7 @@ module.exports = {
   DEVNET,
   DEVNET_HTTPS_PROVIDER_URL,
   DEVNET_WS_PROVIDER_URL,
+  KEY_MANAGER_PUBLIC_KEY,
   HTTPS_PROVIDER_URL,
   TEST_TIMESTAMP,
   WS_PROVIDER_URL,
