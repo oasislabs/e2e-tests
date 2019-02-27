@@ -65,10 +65,3 @@ Then, similar to before, run the command
 this time specifiying your `MNEMONIC`, `development` and optionally the test file to run.
 
 As with any Truffle project, one can add custom networks by modifying `truffle-config.js`. Note that we use a custom version of truffle so that we can work with Rust and Solidity in the same workspace. It will be downloaded when running `npm install` and located in your local `node_modules/`.
-
-## WARNING
-
-Some of the tests here test new or changing features that are in a beta version of the Devnet not yet released. These tests will fail until Devnet is upgraded. Specifically,
-
-- `test/test-confidential.js`
-- `test/test-storage.js`
