@@ -100,7 +100,6 @@ module.exports = {
   providerUrl,
   wsProviderUrl,
   sleep,
-  KEY_MANAGER_PUBLIC_KEY,
   PUBLIC_KEY_LENGTH,
   GAS_LIMIT,
   GAS_PRICE
