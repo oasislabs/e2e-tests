@@ -157,7 +157,7 @@ function validateSignature (signature, longTermKey, timestamp) {
     predigest = longTermKey;
   }
   const digest = utils.fromHexStr(hash(predigest));
-  let keyManagerPk = utils.fromHexStr(utils.KEY_MANAGER_PUBLIC_KEY);
+  let keyManagerPk = utils.fromHexStr(truffleConfig.KEY_MANAGER_PUBLIC_KEY.substr(2));
   assert.equal(
     nacl.sign.detached.verify(digest, signature, keyManagerPk),
     true
