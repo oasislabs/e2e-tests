@@ -7,7 +7,7 @@ const Web3c = require('web3c');
 const truffleConfig = require('../truffle-config');
 // Use the provider set in our truffle-config.js.
 const web3c = new Web3c(Counter.web3.currentProvider, undefined, {
-  truffleConfig.KEY_MANAGER_PUBLIC_KEY
+  keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
 });
 
 if (truffleConfig.shouldRun(__filename)) {

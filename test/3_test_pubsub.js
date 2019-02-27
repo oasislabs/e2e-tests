@@ -32,7 +32,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
       it(`${c.label}: should subscribe to logs of a confidential contract`, async () => {
         let web3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
-          truffleConfig.KEY_MANAGER_PUBLIC_KEY
+          keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
         });
         let contract = new web3c.oasis.Contract(ConfidentialCounter.abi, ConfidentialCounter.address, {
           from: accounts[0]
@@ -53,7 +53,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
 async function ethSubscribePromise (address) {
   const web3c = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()), undefined, {
-    truffleConfig.KEY_MANAGER_PUBLIC_KEY
+    keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
   });
 
   return new Promise(function (resolve, reject) {
@@ -70,7 +70,7 @@ async function ethSubscribePromise (address) {
 
 async function ethSubscribeCallbackPromise (address) {
   const web3c = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()), undefined, {
-    truffleConfig.KEY_MANAGER_PUBLIC_KEY
+    keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
   });
 
   return new Promise(function (resolve, reject) {

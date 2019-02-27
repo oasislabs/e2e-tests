@@ -9,7 +9,7 @@ const truffleConfig = require('../truffle-config');
 if (truffleConfig.shouldRun(__filename)) {
   contract('Confidential Contracts', async (accounts) => {
     const web3c = new Web3c(Counter.web3.currentProvider, undefined, {
-      truffleConfig.KEY_MANAGER_PUBLIC_KEY
+      keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
     });
 
     // Timestamp is expected to be 2^53-1, the maximum safe integer in javascript.
@@ -114,8 +114,8 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('should not retrieve contract keys from a non deployed contract address', async () => {
       const payload = await web3c
-            .oasis
-            .getPublicKey('0x0000000000000000000000000000000000000000');
+        .oasis
+        .getPublicKey('0x0000000000000000000000000000000000000000');
       assert.equal(payload, null);
     });
 

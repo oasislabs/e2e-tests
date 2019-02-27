@@ -2,7 +2,7 @@ const Counter = artifacts.require('Counter');
 const truffleConfig = require('../truffle-config');
 const Web3c = require('web3c');
 const web3c = new Web3c(Counter.web3.currentProvider, undefined, {
-  truffleConfig.KEY_MANAGER_PUBLIC_KEY
+  keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
 });
 const _assert = require('assert');
 const utils = require('../src/utils');

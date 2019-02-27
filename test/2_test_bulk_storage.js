@@ -2,7 +2,7 @@ const BulkStorage = artifacts.require('BulkStorage');
 const truffleConfig = require('../truffle-config');
 const Web3c = require('web3c');
 const web3c = new Web3c(BulkStorage.web3.currentProvider, undefined, {
-  truffleConfig.KEY_MANAGER_PUBLIC_KEY
+  keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
 });
 
 if (truffleConfig.shouldRun(__filename)) {
