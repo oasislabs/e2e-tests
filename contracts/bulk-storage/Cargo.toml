@@ -6,18 +6,18 @@ edition = "2018"
 
 [dependencies]
 oasis-std = "0.1"
-owasm-abi = "0.2"
-owasm-abi-derive = "0.2"
-owasm-ethereum = "0.8"
 
 [lib]
 crate-type = ["cdylib"]
 
 [profile.release]
-panic = "abort"
+incremental = false
 lto = true
 opt-level = "z"
-incremental = false
+panic = "abort"
 
 [package.metadata.oasis]
 max-mem = 4194304
+
+[patch.crates-io]
+oasis-std = { path = "/oasis/Projects/platform/oasis-std" }

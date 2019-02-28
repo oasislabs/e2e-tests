@@ -68,7 +68,7 @@ if (truffleConfig.shouldRun(__filename)) {
           assert.equal(test.value, storage);
         });
 
-        it(`${contract.label}: retrieves H256::zero() when reading the same key (from previously set bulk storage with data ${test.description}) from the owasm_ethereum::read interface`, async () => {
+        it(`${contract.label}: retrieves H256::zero() when reading the same key (from previously set bulk storage with data ${test.description}) from the oasis_std::ext::read interface`, async () => {
           let storage = await instance.methods.read_h256_storage(test.key).call();
           assert.equal(storage, 0);
         });

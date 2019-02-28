@@ -6,13 +6,14 @@ extern crate tvm_runtime as tvm;
 use std::convert::TryInto;
 
 use ndarray::Array;
+use oasis_std::prelude::*;
 use tvm::{DLTensor, Module, SystemLibModule};
 
 extern "C" {
     fn __tvm_module_startup();
 }
 
-#[owasm_abi_derive::contract]
+#[contract]
 trait BasicTVM {
     fn constructor(&mut self) {}
 

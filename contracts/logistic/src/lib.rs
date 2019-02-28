@@ -6,7 +6,7 @@ extern crate rulinalg;
 extern crate dpmlrust;
 extern crate ml_reader;
 extern crate num as libnum;
-extern crate owasm_std;
+extern crate oasis_std;
 extern crate rusty_libsvm;
 extern crate rusty_machine;
 
@@ -24,24 +24,18 @@ use std::vec::Vec;
 use dpmlrust::logistic::{accuracy, add_normal_noise, compute_grad, learn, predict, update_model};
 use ml_reader::rusty::Dataset;
 use ml_reader::rusty::Reader;
-use owasm_std::logger::debug;
+use oasis_std::prelude::*;
 use rulinalg::matrix::{Axes, BaseMatrix, BaseMatrixMut, Matrix, MatrixSlice, MatrixSliceMut};
 use rulinalg::norm;
 use rulinalg::vector::Vector;
 use rusty_libsvm::Libsvm;
 
-#[owasm_abi_derive::contract]
+#[contract]
 trait Logistic {
     fn constructor(&mut self) {}
 
     fn regression(&mut self) -> Vec<u8> {
-        panic::set_hook(Box::new(|panic_info| {
-            if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
-                owasm_std::logger::debug(s);
-            }
-        }));
-
-        debug("In call...");
+        println!("In call...");
 
         // dataset in a buffer for now
         let buffer = "0	0:5.1 1:3.5 2:1.4 3:0.2
@@ -146,14 +140,14 @@ trait Logistic {
                           1	0:5.7 1:2.8 2:4.1 3:1.3
                           ";
 
-        debug("About to read from buffer");
+        println!("About to read from buffer");
 
         let mut dataset = Libsvm::read_from_buffer(&buffer.to_string(), false, 4);
 
-        debug("Done reading from buffer");
+        println!("Done reading from buffer");
 
-        debug(&format!("{}", dataset.data()));
-        debug(&format!("{:?}", dataset.target()));
+        println!("{:?}", dataset.data());
+        println!("{:?}", dataset.target());
 
         let model = learn(&dataset, 1);
 
@@ -167,7 +161,7 @@ trait Logistic {
         let mut result = predict(model, samples);
 
         for i in result.mut_data().into_iter() {
-            debug(&format!("{}", i));
+            println!("{}", i);
         }
         let classes = result
             .into_iter()
@@ -185,8 +179,7 @@ trait Logistic {
             .filter(|(a, b)| a == *b)
             .count();
 
-        let result = format!("Matching classes is {}", matching);
-        debug(&result);
+        println!("Matching classes is {}", matching);
         result.as_bytes().to_vec()
     }
 }

@@ -2,6 +2,7 @@
 name = "rust-logistic"
 version = "0.1.0"
 authors = ["Oasis Labs<info@oasislabs.com>"]
+edition = "2018"
 
 [dependencies]
 dpmlrust = { git = "https://github.com/oasislabs/dpml-rs" }
@@ -9,22 +10,22 @@ hex = "0.3"
 ml-reader = { git = "https://github.com/oasislabs/ml-reader" }
 num = { git = "https://github.com/rust-num/num", version = "0.2" }
 oasis-std = "0.1"
-owasm-abi = "0.2"
-owasm-abi-derive = "0.2"
-owasm-ethereum = "0.8"
 rand = { version = "0.5" }
-rulinalg = { git = "https://github.com/AtheMathmo/rulinalg", version = "0.4.2" }
+rulinalg = { git = "https://github.com/AtheMathmo/rulinalg", version = "0.4" }
 rusty-libsvm = { git = "https://github.com/oasislabs/ml-reader" }
-rusty-machine = { git = "https://github.com/AtheMathmo/rusty-machine", version = "0.5.4" }
+rusty-machine = { git = "https://github.com/AtheMathmo/rusty-machine", version = "0.5" }
 
 [lib]
 crate-type = ["cdylib"]
 
 [profile.release]
-panic = "abort"
+incremental = false
 lto = true
 opt-level = "z"
-incremental = false
+panic = "abort"
 
 [package.metadata.oasis]
 max-mem = 262144
+
+[patch.crates-io]
+oasis-std = { path = "/oasis/Projects/platform/oasis-std" }
