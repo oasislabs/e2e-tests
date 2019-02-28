@@ -2,7 +2,8 @@
 /// See runtime-ethereum/contracts/cross_contract/rust/deployed for the
 /// associated contract.
 
-use oasis_std::prelude::*;
+use oasis_std::{derive::eth_abi, prelude::*};
+
 #[eth_abi(DeployedRustEndpoint, DeployedRustClient)]
 pub trait DeployedRust {
     fn constructor(&mut self);
