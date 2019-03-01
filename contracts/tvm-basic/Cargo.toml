@@ -20,6 +20,3 @@ panic = "abort"
 
 [package.metadata.oasis]
 max-mem = 2097152
-
-[patch.crates-io]
-oasis-std = { git = "https://github.com/oasislabs/oasis-std" }

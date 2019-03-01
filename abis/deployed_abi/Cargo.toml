@@ -6,6 +6,3 @@ edition = "2018"
 
 [dependencies]
 oasis-std = "0.1"
-
-[patch.crates-io]
-oasis-std = { git = "https://github.com/oasislabs/oasis-std" }

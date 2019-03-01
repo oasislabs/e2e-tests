@@ -15,6 +15,3 @@ incremental = false
 lto = true
 opt-level = "z"
 panic = "abort"
-
-[patch.crates-io]
-oasis-std = { git = "https://github.com/oasislabs/oasis-std" }
