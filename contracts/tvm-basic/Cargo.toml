@@ -5,11 +5,8 @@ authors = ["Oasis Labs Inc. <info@oasislabs.com>"]
 edition = "2018"
 
 [dependencies]
-ndarray = "0.11.2"
-owasm-abi = "0.1"
-owasm-abi-derive = "0.1"
-owasm-ethereum = "0.7"
-owasm-std = "0.13"
+ndarray = "0.11"
+oasis-std = "0.1"
 tvm-runtime = { git = "https://github.com/dmlc/tvm", tag = "v0.5" }
 
 [lib]
