@@ -22,4 +22,4 @@ panic = "abort"
 max-mem = 2097152
 
 [patch.crates-io]
-oasis-std = { path = "/oasis/Projects/platform/oasis-std" }
+oasis-std = { git = "https://github.com/oasislabs/oasis-std" }

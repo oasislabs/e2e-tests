@@ -8,4 +8,4 @@ edition = "2018"
 oasis-std = "0.1"
 
 [patch.crates-io]
-oasis-std = { path = "/oasis/Projects/platform/oasis-std" }
+oasis-std = { git = "https://github.com/oasislabs/oasis-std" }
