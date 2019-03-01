@@ -32,5 +32,5 @@ fn deployed_rust_client() -> DeployedRustClient {
 fn get_deployed_address() -> Address {
     let value: [u8; 32] = read(&ADDRESS_KEY.into());
     // slice starting from 12 since we store the 20 byte Address into the 32 byte storage
-    Address::from(&value[12..])
+    Address::from_slice(&value[12..])
 }
