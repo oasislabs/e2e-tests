@@ -55,6 +55,7 @@ if (truffleConfig.shouldRun(__filename)) {
         await subscribePromise;
         assert.fail('subscribe request shold not have succeeded');
       } catch (err) {
+        console.log(err);
         assert.equal(err.message.indexOf('not implemented yet') > -1, true);
       }
     });
