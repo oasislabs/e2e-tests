@@ -62,7 +62,7 @@ if (truffleConfig.shouldRun(__filename)) {
 }
 
 function ethSubscribePromisePendingTransactions (address) {
-  return ethSubscribePromise('pendingTransactions');
+  return ethSubscribePromise('newPendingTransactions');
 }
 
 function ethSubscribePromiseLogs (address) {
