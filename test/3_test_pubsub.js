@@ -10,8 +10,8 @@ if (truffleConfig.shouldRun(__filename)) {
     // Want to test both the callback subscription type and the "on"
     // subscription type for both confidential and non-confidential.
     const cases = [
-      { subscription: ethSubscribePromise, label: 'on', expectedCounter: 1 },
-      { subscription: ethSubscribeCallbackPromise, label: 'callback', expectedCounter: 2 }
+      { subscription: ethSubscribePromiseLogs, label: 'on', expectedCounter: 1 },
+      { subscription: ethSubscribeCallbackLogs, label: 'callback', expectedCounter: 2 }
     ];
 
     cases.forEach((c) => {
@@ -48,35 +48,64 @@ if (truffleConfig.shouldRun(__filename)) {
         }
       });
     });
-  });
-}
 
-async function ethSubscribePromise (address) {
-  const web3c = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()), undefined, {
-    keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-  });
-
-  return new Promise(function (resolve, reject) {
-    web3c.oasis.subscribe(
-      'logs',
-      { 'fromBlock': 'latest', 'toBlock': 'latest', address }
-    ).on('data', function (log) {
-      resolve(log);
-    }).on('error', function (err) {
-      reject(err);
+    it('should fail to subscribe to pending transactions', async () => {
+      try {
+        const subscribePromise = ethSubscribePromisePendingTransactions(ConfidentialCounter.address);
+        await subscribePromise;
+        assert.fail('subscribe request shold not have succeeded');
+      } catch (err) {
+        assert.equal(err.message.indexOf('not implemented yet') > -1, true);
+      }
     });
   });
 }
 
-async function ethSubscribeCallbackPromise (address) {
+function ethSubscribePromisePendingTransactions (address) {
+  return ethSubscribePromise('newPendingTransactions');
+}
+
+function ethSubscribePromiseLogs (address) {
+  return ethSubscribePromise('logs', { fromBlock: 'latest', toBlock: 'latest', address });
+}
+
+function ethSubscribeCallbackLogs (address) {
+  return ethSubscribeCallback('logs', { fromBlock: 'latest', toBlock: 'latest', address });
+}
+
+function subscribePromise (web3c, type, filter) {
+  const args = [type];
+
+  if (filter !== undefined) {
+    args.push(filter);
+  }
+
+  return new Promise(function (resolve, reject) {
+    web3c.oasis.subscribe.apply(web3c.oasis, args)
+      .on('data', function (log) {
+        resolve(log);
+      }).on('error', function (err) {
+        reject(err);
+      });
+  });
+}
+
+function ethSubscribePromise (type, filter) {
+  const web3c = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()), undefined, {
+    keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+  });
+
+  return subscribePromise(web3c, type, filter);
+}
+
+function ethSubscribeCallback (type, filter) {
   const web3c = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()), undefined, {
     keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
   });
 
   return new Promise(function (resolve, reject) {
     web3c.oasis.subscribe(
-      'logs',
-      { 'fromBlock': 'latest', 'toBlock': 'latest', address },
+      type, filter,
       (err, result) => {
         if (err) {
           reject(err);
