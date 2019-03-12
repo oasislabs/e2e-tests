@@ -50,17 +50,10 @@ if (truffleConfig.shouldRun(__filename)) {
     });
 
     it('should fail to subscribe to pending transactions', async () => {
-      let web3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
-        keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-      });
-      let contract = new web3c.oasis.Contract(ConfidentialCounter.abi, ConfidentialCounter.address, {
-        from: accounts[0]
-      });
       try {
         const subscribePromise = ethSubscribePromisePendingTransactions(ConfidentialCounter.address);
         await subscribePromise;
         assert.fail('subscribe request shold not have succeeded');
-
       } catch (err) {
         assert.equal(err.message.indexOf('not implemented yet') > -1, true);
       }
@@ -73,14 +66,14 @@ function ethSubscribePromisePendingTransactions (address) {
 }
 
 function ethSubscribePromiseLogs (address) {
-  return ethSubscribePromise('logs', { 'fromBlock': 'latest', 'toBlock': 'latest', address });
+  return ethSubscribePromise('logs', { fromBlock: 'latest', toBlock: 'latest', address });
 }
 
 function ethSubscribeCallbackLogs (address) {
-  return ethSubscribeCallback('logs', { 'fromBlock': 'latest', 'toBlock': 'latest', address });
+  return ethSubscribeCallback('logs', { fromBlock: 'latest', toBlock: 'latest', address });
 }
 
-function subscribePromise(web3c, type, filter) {
+function subscribePromise (web3c, type, filter) {
   const args = [type];
 
   if (filter !== undefined) {
