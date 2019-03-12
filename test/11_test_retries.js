@@ -24,8 +24,8 @@ if (truffleConfig.shouldRun(__filename)) {
       }
 
       // send multiple transactions in parallel with gas == block gas limit
-      return await Promise.all(wallets.map(function (wallet) {
-        return sendBigTxn(wallet)
+      await Promise.all(wallets.map(function (wallet) {
+        return sendBigTxn(wallet);
       }));
     });
   });
