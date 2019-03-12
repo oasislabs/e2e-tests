@@ -9,11 +9,11 @@ if (truffleConfig.shouldRun(__filename)) {
   contract('Retries', async (accounts) => {
     const web3c = new Web3c(_Counter.web3.currentProvider);
 
-    // create three soft wallets
+    // Create three soft wallets.
     const wallets = Array.from(new Array(3), () => newWallet());
 
     it("retries transactions that don't fit in current block", async () => {
-      // fund the soft wallets
+      // Fund the soft wallets.
       const transferAmount = 100000000000000000; // 0.1 DEV
       for (const wallet of wallets) {
         await web3c.eth.sendTransaction({
@@ -23,7 +23,7 @@ if (truffleConfig.shouldRun(__filename)) {
         });
       }
 
-      // send multiple transactions in parallel with gas == block gas limit
+      // Send multiple transactions in parallel with gas == block gas limit.
       await Promise.all(wallets.map(function (wallet) {
         return sendBigTxn(wallet);
       }));
