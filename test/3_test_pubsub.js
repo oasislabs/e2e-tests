@@ -1,4 +1,3 @@
-const Tx = require('ethereumjs-tx');
 const TestEvent = artifacts.require('./Event.sol');
 const ConfidentialCounter = artifacts.require('ConfidentialCounter');
 const Web3c = require('web3c');
@@ -60,7 +59,7 @@ if (truffleConfig.shouldRun(__filename)) {
       }
     });
 
-    async function sendSignedIncrementAndGet() {
+    async function sendSignedIncrementAndGet () {
       const web3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
         keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
       });
@@ -75,12 +74,12 @@ if (truffleConfig.shouldRun(__filename)) {
         gasPrice: '0x3b9aca00',
         to: ConfidentialCounter.address,
         data: contract.methods.incrementAndGetCounter().encodeABI(),
-        gas: '0x141234',
+        gas: '0x141234'
       };
 
       const account = web3c.eth.accounts.privateKeyToAccount(privateKey);
       const signed = await account.signTransaction(tx);
-      const transactionHash = web3c.utils.sha3(signed.rawTransaction, { encoding: "hex" });
+      const transactionHash = web3c.utils.sha3(signed.rawTransaction, { encoding: 'hex' });
       const subargs = {
         transactionHash: transactionHash,
         address: ConfidentialCounter.address
@@ -97,7 +96,6 @@ if (truffleConfig.shouldRun(__filename)) {
         let result = await sendSignedIncrementAndGet();
         assert.equal('0x0000000000000000000000000000000000000000000000000000000000000003', result.returnData);
         assert.equal(result.transactionHash.length, 66);
-
       } catch (err) {
         assert.fail(err);
       }
@@ -149,7 +147,6 @@ function ethSubscribeCallback (type, filter) {
       (err, result) => {
         if (err) {
           reject(err);
-
         } else {
           resolve(result);
         }
