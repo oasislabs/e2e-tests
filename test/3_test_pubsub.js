@@ -51,18 +51,56 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('should fail to subscribe to pending transactions', async () => {
       try {
-        const subscribePromise = ethSubscribePromisePendingTransactions(ConfidentialCounter.address);
+        const subscribePromise = ethSubscribePromise('pendingTransactions');
         await subscribePromise;
         assert.fail('subscribe request shold not have succeeded');
       } catch (err) {
         assert.equal(err.message.indexOf('not implemented yet') > -1, true);
       }
     });
-  });
-}
 
-function ethSubscribePromisePendingTransactions (address) {
-  return ethSubscribePromise('pendingTransactions');
+    async function sendSignedIncrementAndGet () {
+      const web3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
+        keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+      });
+      const contract = new web3c.oasis.Contract(ConfidentialCounter.abi, ConfidentialCounter.address, {
+        from: accounts[0]
+      });
+      const hdWalletProvider = ConfidentialCounter.web3.currentProvider;
+      const address = Object.keys(hdWalletProvider.wallets)[0];
+      const privateKey = '0x' + hdWalletProvider.wallets[address]._privKey.toString('hex');
+      const tx = {
+        from: Object.keys(hdWalletProvider.wallets)[0],
+        gasPrice: '0x3b9aca00',
+        to: ConfidentialCounter.address,
+        data: contract.methods.incrementAndGetCounter().encodeABI(),
+        gas: '0x141234'
+      };
+
+      const account = web3c.eth.accounts.privateKeyToAccount(privateKey);
+      const signed = await account.signTransaction(tx);
+      const transactionHash = web3c.utils.sha3(signed.rawTransaction, { encoding: 'hex' });
+      const subargs = {
+        transactionHash: transactionHash,
+        address: ConfidentialCounter.address
+      };
+
+      let subscribePromise = ethSubscribePromise('completedTransaction', subargs);
+      await web3c.eth.sendSignedTransaction(signed.rawTransaction);
+
+      return subscribePromise;
+    }
+
+    it('should fail to subscribe to completed transaction', async () => {
+      try {
+        let result = await sendSignedIncrementAndGet();
+        assert.equal('0x0000000000000000000000000000000000000000000000000000000000000003', result.returnData);
+        assert.equal(result.transactionHash.length, 66);
+      } catch (err) {
+        assert.fail(err);
+      }
+    });
+  });
 }
 
 function ethSubscribePromiseLogs (address) {
@@ -109,8 +147,9 @@ function ethSubscribeCallback (type, filter) {
       (err, result) => {
         if (err) {
           reject(err);
+        } else {
+          resolve(result);
         }
-        resolve(result);
       });
   });
 }
