@@ -59,7 +59,7 @@ if (truffleConfig.shouldRun(__filename)) {
       }
     });
 
-    async function getSubset (properties, filter) {
+    function getSubset (properties, filter) {
       const result = {};
 
       if (!filter || typeof filter !== 'object') {
@@ -121,7 +121,7 @@ if (truffleConfig.shouldRun(__filename)) {
     it('should subscribe to completed transaction with fromAddress', async () => {
       try {
         let result = await sendSignedIncrementAndGet({ fromAddress: true, address: true });
-        assert.equal('0x0000000000000000000000000000000000000000000000000000000000000003', result.returnData);
+        assert.equal('0x0000000000000000000000000000000000000000000000000000000000000004', result.returnData);
         assert.equal(result.transactionHash.length, 66);
       } catch (err) {
         assert.fail(err);
