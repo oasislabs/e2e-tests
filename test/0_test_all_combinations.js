@@ -85,6 +85,16 @@ if (truffleConfig.shouldRun(__filename)) {
         assert.equal(estimatedGas, receipt.gasUsed);
       });
 
+      it('should invoke a method and receive the return value for a ' + description, async () => {
+        const deployMethod = counterContract.deploy({ data: bytecode, header: { confidential } });
+        const contract = await deployMethod.send();
+        const result = await contract.methods.incrementAndGetCounter().invoke({
+          gasPrice: '0x3b9aca00'
+        });
+
+        assert.equal(result, 1);
+      });
+
       it('should estimate gas for call transactions the same as gas used for a ' + description, async () => {
         const deployMethod = counterContract.deploy({ data: bytecode, header: { confidential } });
         const contract = await deployMethod.send();
