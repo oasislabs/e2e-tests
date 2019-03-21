@@ -59,7 +59,23 @@ if (truffleConfig.shouldRun(__filename)) {
       }
     });
 
-    async function sendSignedIncrementAndGet () {
+    function getSubset (properties, filter) {
+      const result = {};
+
+      if (!filter || typeof filter !== 'object') {
+        return properties;
+      }
+
+      Object.keys(properties).forEach(key => {
+        if (filter[key] === true) {
+          result[key] = properties[key];
+        }
+      });
+
+      return result;
+    }
+
+    async function sendSignedIncrementAndGet (filterIncludeParams) {
       const web3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
         keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
       });
@@ -80,10 +96,11 @@ if (truffleConfig.shouldRun(__filename)) {
       const account = web3c.eth.accounts.privateKeyToAccount(privateKey);
       const signed = await account.signTransaction(tx);
       const transactionHash = web3c.utils.sha3(signed.rawTransaction, { encoding: 'hex' });
-      const subargs = {
+      const subargs = getSubset({
         transactionHash: transactionHash,
+        fromAddress: tx.from,
         address: ConfidentialCounter.address
-      };
+      }, filterIncludeParams);
 
       let subscribePromise = ethSubscribePromise('completedTransaction', subargs);
       await web3c.eth.sendSignedTransaction(signed.rawTransaction);
@@ -91,10 +108,20 @@ if (truffleConfig.shouldRun(__filename)) {
       return subscribePromise;
     }
 
-    it('should fail to subscribe to completed transaction', async () => {
+    it('should subscribe to completed transaction with transactionHash', async () => {
       try {
-        let result = await sendSignedIncrementAndGet();
+        let result = await sendSignedIncrementAndGet({ transactionHash: true, address: true });
         assert.equal('0x0000000000000000000000000000000000000000000000000000000000000003', result.returnData);
+        assert.equal(result.transactionHash.length, 66);
+      } catch (err) {
+        assert.fail(err);
+      }
+    });
+
+    it('should subscribe to completed transaction with fromAddress', async () => {
+      try {
+        let result = await sendSignedIncrementAndGet({ fromAddress: true, address: true });
+        assert.equal('0x0000000000000000000000000000000000000000000000000000000000000004', result.returnData);
         assert.equal(result.transactionHash.length, 66);
       } catch (err) {
         assert.fail(err);
