@@ -18,4 +18,9 @@ trait WasmCounter {
     fn incrementCounter(&mut self) {
         write(&COUNTER_KEY.into(), &(self.getCounter() + 1).into());
     }
+
+    fn incrementAndGetCounter(&mut self) -> U256 {
+        write(&COUNTER_KEY.into(), &(self.getCounter() + 1).into());
+        self.getCounter()
+    }
 }
