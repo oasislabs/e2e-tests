@@ -117,7 +117,6 @@ if (truffleConfig.shouldRun(__filename)) {
             assert.equal(count, counter + 2);
           });
         }
-        
         it('should estimate gas for deploy transactions the same as gas used for a ' + description + ' with [provider=' + providerName + ']', async () => {
           const deployMethod = counterContract.deploy({ data: bytecode, header: { confidential } });
           const estimatedGas = await deployMethod.estimateGas();
