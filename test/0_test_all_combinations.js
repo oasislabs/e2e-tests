@@ -103,6 +103,21 @@ if (truffleConfig.shouldRun(__filename)) {
           assert.equal(count, counter + 1);
         });
 
+        if (web3c === web3cWebsocket) {
+          // invoke is only implemented for websockets
+          it('should increment the count to ' + (counter + 2) + ' and get value for a ' + ' with [provider=' + providerName + ']', async () => {
+            const deployMethod = counterContract.deploy({ data: bytecode, header: { confidential } });
+            const deployEstimatedGas = await deployMethod.estimateGas();
+            const contract = await deployMethod.send({ gas: deployEstimatedGas });
+            const incrementEstimatedGas = await contract.methods.incrementCounter().estimateGas();
+            const count = await contract.methods.incrementAndGetCounter().invoke({
+              gasPrice: '0x3b9aca00',
+              gas: incrementEstimatedGas
+            });
+            assert.equal(count, counter + 2);
+          });
+        }
+        
         it('should estimate gas for deploy transactions the same as gas used for a ' + description + ' with [provider=' + providerName + ']', async () => {
           const deployMethod = counterContract.deploy({ data: bytecode, header: { confidential } });
           const estimatedGas = await deployMethod.estimateGas();
@@ -121,21 +136,6 @@ if (truffleConfig.shouldRun(__filename)) {
           });
           assert.equal(incrementEstimatedGas, receipt.gasUsed);
         });
-
-        if (web3c === web3cWebsocket) {
-          // invoke is only implemented for websockets
-          it('should increment the count to ' + (counter + 2) + ' and get value for a ' + ' with [provider=' + providerName + ']', async () => {
-            const deployMethod = counterContract.deploy({ data: bytecode, header: { confidential } });
-            const deployEstimatedGas = await deployMethod.estimateGas();
-            const contract = await deployMethod.send({ gas: deployEstimatedGas });
-            const incrementEstimatedGas = await contract.methods.incrementCounter().estimateGas();
-            const count = await contract.methods.incrementAndGetCounter().invoke({
-              gasPrice: '0x3b9aca00',
-              gas: incrementEstimatedGas
-            });
-            assert.equal(count, counter + 2);
-          });
-        }
       });
     });
   });
