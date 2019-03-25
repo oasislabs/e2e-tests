@@ -12,14 +12,23 @@ const MNEMONIC = process.env.MNEMONIC;
 const HTTPS_PROVIDER_URL = process.env.HTTPS_PROVIDER_URL;
 const WS_PROVIDER_URL = process.env.WS_PROVIDER_URL;
 /**
- * True iff we're using the Devnet.
+ * Get network name from args.
  */
-const DEVNET = process.argv.indexOf('devnet') > -1;
+let networkIndex = process.argv.indexOf('--network');
+let NETWORK;
+if (networkIndex > -1) {
+  NETWORK = process.argv[networkIndex + 1];
+}
 /**
  * Devnet constants used if one wants to run the tests against the public Devnet.
  */
 const DEVNET_HTTPS_PROVIDER_URL = 'https://web3.oasiscloud.io';
 const DEVNET_WS_PROVIDER_URL = 'wss://web3.oasiscloud.io/ws';
+/**
+ * Devnet constants used if one wants to run the tests against the staging Devnet.
+ */
+const STAGING_HTTPS_PROVIDER_URL = 'https://web3.oasiscloud-staging.net';
+const STAGING_WS_PROVIDER_URL = 'wss://web3.oasiscloud-staging.net/ws';
 /**
  * The remote key manager's public key to use for validating signatures in web3c.js.
  */
@@ -106,6 +115,12 @@ module.exports = {
       },
       network_id: '*'
     },
+    staging: {
+      provider: function () {
+        return new HDWalletProvider(MNEMONIC, STAGING_HTTPS_PROVIDER_URL);
+      },
+      network_id: '*'
+    },
     devnet: {
       provider: function () {
         return new HDWalletProvider(MNEMONIC, DEVNET_HTTPS_PROVIDER_URL);
@@ -124,7 +139,9 @@ module.exports = {
   mocha: {
     enableTimeouts: false
   },
-  DEVNET,
+  NETWORK,
+  STAGING_HTTPS_PROVIDER_URL,
+  STAGING_WS_PROVIDER_URL,
   DEVNET_HTTPS_PROVIDER_URL,
   DEVNET_WS_PROVIDER_URL,
   KEY_MANAGER_PUBLIC_KEY,
