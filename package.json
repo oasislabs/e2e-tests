@@ -10,6 +10,7 @@
     "lint": "eslint *.js test/ src/ truffle-config.js",
     "lint:fix": "eslint *.js test/ src/ truffle-config.js --fix",
     "test:development": "./node_modules/.bin/truffle test --network development",
+    "test:staging": "./node_modules/.bin/truffle test --network staging",
     "test:devnet": "./node_modules/.bin/truffle test --network devnet"
   },
   "devDependencies": {
