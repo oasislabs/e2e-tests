@@ -68,10 +68,10 @@ function incrementByteArray (byteArray) {
  * Truffle's HDWalletProvider doesn't provide an api to get it so manually do so.
  */
 function providerUrl () {
-  if (truffleConfig.network === 'devnet') {
+  if (truffleConfig.NETWORK === 'devnet') {
     return truffleConfig.DEVNET_HTTPS_PROVIDER_URL;
   }
-  if (truffleConfig.network === 'staging') {
+  if (truffleConfig.NETWORK === 'staging') {
     return truffleConfig.STAGING_HTTPS_PROVIDER_URL;
   }
   return truffleConfig.HTTPS_PROVIDER_URL;

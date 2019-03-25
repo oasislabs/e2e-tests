@@ -12,6 +12,14 @@ const MNEMONIC = process.env.MNEMONIC;
 const HTTPS_PROVIDER_URL = process.env.HTTPS_PROVIDER_URL;
 const WS_PROVIDER_URL = process.env.WS_PROVIDER_URL;
 /**
+ * Get network name from args.
+ */
+let networkIndex = process.argv.indexOf('--network');
+let NETWORK;
+if (networkIndex > -1) {
+  NETWORK = process.argv[networkIndex + 1];
+}
+/**
  * Devnet constants used if one wants to run the tests against the public Devnet.
  */
 const DEVNET_HTTPS_PROVIDER_URL = 'https://web3.oasiscloud.io';
@@ -131,6 +139,7 @@ module.exports = {
   mocha: {
     enableTimeouts: false
   },
+  NETWORK,
   STAGING_HTTPS_PROVIDER_URL,
   STAGING_WS_PROVIDER_URL,
   DEVNET_HTTPS_PROVIDER_URL,
