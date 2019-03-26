@@ -38,6 +38,5 @@ steps:
     # TODO: master only
     #branches: master
     command:
-      - .buildkite/scripts/setup_gitconfig.sh
       - buildkite-agent artifact download build.zip .
       - .buildkite/scripts/build_tag_push_runner_image.sh
