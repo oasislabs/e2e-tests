@@ -31,3 +31,13 @@ steps:
       - buildkite-agent artifact upload build.zip
     plugins:
       <<: *docker_plugin_configuration
+
+  - wait
+
+  - label: Build & publish test-runner docker image (master branches only)
+    # TODO: master only
+    #branches: master
+    command:
+      - .buildkite/scripts/setup_gitconfig.sh
+      - buildkite-agent artifact download build.zip .
+      - .buildkite/scripts/build_tag_push_runner_image.sh
