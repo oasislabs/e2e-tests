@@ -12,7 +12,7 @@ RUN npm install
 
 COPY . .
 
-# unzip prebuilt contracts
+# Unzip prebuilt contracts.
 RUN unzip build.zip -d . && rm build.zip
 
-CMD [ "npm", "run", "test:development" ]
+ENTRYPOINT [ "scripts/runner.sh" ]
