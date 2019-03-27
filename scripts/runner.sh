@@ -27,7 +27,7 @@ export WS_PROVIDER_URL=$2
 
 # Generate a mnemonic and request funds from the API faucet.
 mnemonic=`node src/funder.js $HTTPS_PROVIDER_URL $3`
-export $MNEMONIC=$mnemonic
+export MNEMONIC=$mnemonic
 
 # Run truffle tests.
 npm run test:development
