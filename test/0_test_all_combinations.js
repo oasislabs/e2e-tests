@@ -43,6 +43,101 @@ if (truffleConfig.shouldRun(__filename)) {
       assert.equal(expiry, truffleConfig.TEST_TIMESTAMP + 24 * 60 * 60);
     });
 
+    it('should fail to send transaction with web3c with no default account', async function () {
+      const web3c = new Web3c(new (new Web3c()).providers.HttpProvider(utils.providerUrl()), undefined, {
+        keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+      });
+      const contract = new web3c.oasis.Contract(Counter.abi, Counter.address, options);
+
+      try {
+        await contract.methods.incrementCounter().send({
+          gasPrice: '0x3b9aca00',
+          gas: '0x141234'
+        });
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        assert.equal(e.message, 'Returned error: eth_sendTransaction is not implemented because the gateway cannot sign transactions. Make sure that the wallet is setup correctly in the client in case transaction signing is expected to happen transparently');
+      }
+    });
+
+    it('should fail to deploy contract without bytecode', async function () {
+      const contract = new web3c.oasis.Contract(Counter.abi, undefined, options);
+      try {
+        await contract.deploy().send();
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        assert.equal(e.message, 'No "data" specified in neither the given options, nor the default options.');
+      }
+    });
+
+    it('should fail to deploy an expired contract', async function () {
+      const contract = new web3c.oasis.Contract(Counter.abi, undefined, options);
+
+      try {
+        await contract.deploy({
+          data: Counter.bytecode,
+          header: { expiry: 0, confidential: false }
+        }).send();
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        assert.equal(e.message, 'Transaction execution error with cause Error { message: "Transaction execution error (Contract Expired)." }');
+      }
+    });
+
+    it('should fail if not enough gas', async function () {
+      const contract = new web3c.oasis.Contract(Counter.abi, Counter.address, options);
+
+      try {
+        await contract.methods.incrementCounter().send({
+          gasPrice: '0x3b9aca00',
+          gas: '0x987654321'
+        });
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        assert.equal(e.message, 'Transaction execution error with cause Error { message: "Requested gas greater than block gas limit." }');
+      }
+    });
+
+    it('should fail to execute transaction with malformed headers', async function () {
+      const contract = new web3c.oasis.Contract(Counter.abi, undefined, options);
+      try {
+        await contract.deploy({
+          data: Counter.bytecode,
+          header: { expiry: 0.1 }
+        }).send();
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        assert.equal(e.message, 'Transaction execution error with cause Error { message: "Malformed header" }');
+      }
+    });
+
+    it('should fail to execute not existing method', async () => {
+      const contract = new web3c.oasis.Contract(Counter.abi, Counter.address, options);
+      const invalidMethodABI = '0x8ada066f';
+
+      const hdWalletProvider = Counter.web3.currentProvider;
+      const address = Object.keys(hdWalletProvider.wallets)[0];
+      const privateKey = '0x' + hdWalletProvider.wallets[address]._privKey.toString('hex');
+      const tx = {
+        from: Object.keys(hdWalletProvider.wallets)[0],
+        gasPrice: '0x3b9aca00',
+        to: contract.address,
+        data: invalidMethodABI,
+        gas: '0x141234'
+      };
+
+      const account = web3c.eth.accounts.privateKeyToAccount(privateKey);
+      const signed = await account.signTransaction(tx);
+
+      try {
+        await web3c.eth.sendSignedTransaction(signed.rawTransaction);
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        console.log(e.message);
+        assert.equal(e.message.includes('Transaction has been reverted by the EVM'), true);
+      }
+    });
+
     let expectedCounterValue = -1;
     web3Instances.forEach(inst => {
       const web3c = inst.provider;
