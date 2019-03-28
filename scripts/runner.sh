@@ -4,13 +4,14 @@
 # Get funds from API faucet and run e2e tests against a specified gateway.
 # Only works in-cluster, as the API faucet is not exposed externally.
 #
-# ./runner.sh <HTTPS_PROVIDER_URL> <WS_PROVIDER_URL> <FAUCET_URL>
+# ./runner.sh <HTTPS_PROVIDER_URL> <WS_PROVIDER_URL> <FAUCET_URL> [...]
 #
 # Required Args:
 #
 # - HTTPS_PROVIDER_URL: The gateway http endpoint (e.g., https://web3.oasiscloud.io).
 # - WS_PROVIDER_URL:    Gateway's websocket endpoint (e.g., wss://web.oasiscloud.io/ws).
 # - FAUCET_URL:         Faucet API endpoint.
+# - Optional extra args are passed to truffle test.
 #
 ################################################################################
 
@@ -30,4 +31,5 @@ mnemonic=`node src/funder.js $HTTPS_PROVIDER_URL $3`
 export MNEMONIC=$mnemonic
 
 # Run truffle tests.
-npm run test:development
+shift 3
+npm run test:development $*
