@@ -7,7 +7,6 @@ const web3c = new Web3c(Counter.web3.currentProvider, undefined, {
   keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
 });
 
-
 if (truffleConfig.shouldRun(__filename)) {
   /**
    * Tests all combinations of contract types with one test suite. The actual tests are
@@ -112,7 +111,5 @@ if (truffleConfig.shouldRun(__filename)) {
         assert.equal(e.message.includes('Transaction has been reverted by the EVM'), true);
       }
     });
-
   });
-
 }
