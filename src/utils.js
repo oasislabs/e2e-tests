@@ -1,5 +1,7 @@
+const Counter = artifacts.require('Counter');
 const request = require('request-promise');
 const truffleConfig = require('../truffle-config');
+const Web3c = require('web3c');
 
 const PUBLIC_KEY_LENGTH = 64;
 const GAS_PRICE = '0x3b9aca00';
@@ -92,6 +94,35 @@ function wsProviderUrl () {
   return truffleConfig.WS_PROVIDER_URL;
 }
 
+/**
+ * @returns a web3c instance with softwallet setup.
+ */
+function web3cSoftWallet(websocket = true) {
+  let provider = undefined;
+  if (websocket)  {
+	provider = new (new Web3c()).providers.WebsocketProvider(wsProviderUrl());
+  } else {
+	provider = new (new Web3c()).providers.HttpProvider(providerUrl());
+  }
+
+  const web3c = new Web3c(provider, undefined, {
+	keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+  });
+
+
+  let hdWalletProvider = Counter.web3.currentProvider;
+  let addr = hdWalletProvider.addresses[0];
+  let privKey = '0x' + hdWalletProvider.wallets[addr]._privKey.toString('hex');
+  let acct = web3c.eth.accounts.privateKeyToAccount(privKey);
+  web3c.eth.defaultAccount = acct.address;
+  web3c.eth.accounts.wallet.add(acct);
+
+  web3c.oasis.defaultAccount = acct.address;
+  web3c.oasis.accounts.wallet.add(acct);
+
+  return web3c
+}
+
 function sleep (ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -105,6 +136,7 @@ module.exports = {
   makeConfidential,
   providerUrl,
   wsProviderUrl,
+  web3cSoftWallet,
   sleep,
   PUBLIC_KEY_LENGTH,
   GAS_LIMIT,

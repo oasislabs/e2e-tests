@@ -75,7 +75,7 @@ contract CallableCounter {
     require(status);
   }
 
-  function incrementTailCounterDelegatecall() public {
+  function incrementTailDelegatecallDelegatecall() public {
     require(msg.sender == _expectedDelegatecallSender);
 
     _sender = msg.sender;
@@ -85,11 +85,30 @@ contract CallableCounter {
     require(status);
   }
 
-  function incrementDelegatecallProxy() public {
+  function incrementTailDelegatecallCall() public {
+    require(msg.sender == _expectedDelegatecallSender);
+
+    _sender = msg.sender;
+
+    bool status = address(_peer).delegatecall(bytes4(keccak256("incrementCallProxy()")));
+    emit Status(status);
+    require(status);
+  }
+
+  function incrementCallProxy() public {
     require(msg.sender == _expectedDelegatecallSender);
 
     _sender = msg.sender;
     _peer.receiveDelegatecallIncrementCounter();
+  }
+
+  function incrementDelegatecallProxy() public {
+    require(msg.sender == _expectedDelegatecallSender);
+
+    _sender = msg.sender;
+    bool status = address(_peer).delegatecall(bytes4(keccak256("receiveDelegatecallIncrementCounter()")));
+    emit Status(status);
+    require(status);
   }
 
   /// Receives a message call through a delegatecall.
