@@ -12,7 +12,7 @@ const web3cHttp = new Web3c(Counter.web3.currentProvider, undefined, {
   keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
 });
 
-const web3cWebsocket = setupWebsocketProvider();
+const web3cWebsocket = utils.setupWebsocketProvider(ConfidentialCounter.web3.currentProvider);
 
 const web3c = web3cHttp;
 
@@ -138,25 +138,6 @@ if (truffleConfig.shouldRun(__filename)) {
       });
     });
   });
-}
-
-function setupWebsocketProvider () {
-  const web3cWebsocket = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()), undefined, {
-    keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-  });
-
-  let hdWalletProvider = ConfidentialCounter.web3.currentProvider;
-  let addr = Object.keys(hdWalletProvider.wallets)[0];
-  let privKey = '0x' + hdWalletProvider.wallets[addr]._privKey.toString('hex');
-  let acct = web3cWebsocket.eth.accounts.privateKeyToAccount(privKey);
-
-  web3cWebsocket.eth.defaultAccount = acct.address;
-  web3cWebsocket.eth.accounts.wallet.add(acct);
-
-  web3cWebsocket.oasis.defaultAccount = acct.address;
-  web3cWebsocket.oasis.accounts.wallet.add(acct);
-
-  return web3cWebsocket;
 }
 
 function deployContract (deployMethod, estimatedGas, from) {

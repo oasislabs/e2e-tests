@@ -1,5 +1,6 @@
 const request = require('request-promise');
 const truffleConfig = require('../truffle-config');
+const Web3c = require('web3c');
 
 const PUBLIC_KEY_LENGTH = 64;
 const GAS_PRICE = '0x3b9aca00';
@@ -96,6 +97,24 @@ function sleep (ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function setupWebsocketProvider (hdWalletProvider) {
+  const web3cWebsocket = new Web3c(new (new Web3c()).providers.WebsocketProvider(wsProviderUrl()), undefined, {
+    keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+  });
+
+  let addr = Object.keys(hdWalletProvider.wallets)[0];
+  let privKey = '0x' + hdWalletProvider.wallets[addr]._privKey.toString('hex');
+  let acct = web3cWebsocket.eth.accounts.privateKeyToAccount(privKey);
+
+  web3cWebsocket.eth.defaultAccount = acct.address;
+  web3cWebsocket.eth.accounts.wallet.add(acct);
+
+  web3cWebsocket.oasis.defaultAccount = acct.address;
+  web3cWebsocket.oasis.accounts.wallet.add(acct);
+
+  return web3cWebsocket;
+}
+
 module.exports = {
   fetchNonce,
   fromHexStr,
@@ -106,6 +125,7 @@ module.exports = {
   providerUrl,
   wsProviderUrl,
   sleep,
+  setupWebsocketProvider,
   PUBLIC_KEY_LENGTH,
   GAS_LIMIT,
   GAS_PRICE
