@@ -76,9 +76,7 @@ if (truffleConfig.shouldRun(__filename)) {
     }
 
     async function sendSignedIncrementAndGet (filterIncludeParams) {
-      const web3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
-        keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-      });
+      const web3c = utils.setupWebsocketProvider(ConfidentialCounter.web3.currentProvider);
       const contract = new web3c.oasis.Contract(ConfidentialCounter.abi, ConfidentialCounter.address, {
         from: accounts[0]
       });
@@ -102,10 +100,9 @@ if (truffleConfig.shouldRun(__filename)) {
         address: ConfidentialCounter.address
       }, filterIncludeParams);
 
-      let subscribePromise = ethSubscribePromise('completedTransaction', subargs);
+      const promise = subscribePromise(web3c, 'completedTransaction', subargs);
       await web3c.eth.sendSignedTransaction(signed.rawTransaction);
-
-      return subscribePromise;
+      return promise;
     }
 
     it('should subscribe to completed transaction with transactionHash', async () => {
@@ -145,13 +142,10 @@ function subscribePromise (web3c, type, filter) {
     args.push(filter);
   }
 
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     web3c.oasis.subscribe.apply(web3c.oasis, args)
-      .on('data', function (log) {
-        resolve(log);
-      }).on('error', function (err) {
-        reject(err);
-      });
+      .on('data', resolve)
+      .on('error', reject);
   });
 }
 
@@ -172,11 +166,8 @@ function ethSubscribeCallback (type, filter) {
     web3c.oasis.subscribe(
       type, filter,
       (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
+        if (err) reject(err);
+        else resolve(result);
       });
   });
 }
