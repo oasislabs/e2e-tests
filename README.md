@@ -85,32 +85,36 @@ root@5c00abbf9761 /workdir# use_kube_env staging/aws/us-west-2
 Setting environment staging/aws/us-west-2
 kops has set your kubectl context to us-west-2.staging.oasiscloud.io
 (k8s: us-west-2.staging.oasiscloud.io) root@5c00abbf9761 /workdir# kubectl --namespace="$k8s_namespace" create --filename=- <<EOF
-> apiVersion: batch/v1
-> kind: Job
-> metadata:
->   name: e2e-tests-$(date +%s)
-> spec:
->   template:
->     spec:
->       containers:
->         - name: runner
->           image: oasislabs/e2e-test-runner:latest
->           args:
->             - http://\$(WEB3_GATEWAY_SERVICE_HOST):\$(WEB3_GATEWAY_SERVICE_PORT_WEB3)
->             - ws://\$(WEB3_GATEWAY_WEBSOCKET_SERVICE_HOST):\$(WEB3_GATEWAY_WEBSOCKET_SERVICE_PORT_WEB3_WEBSOCKET)
->             - http://faucet-internal.us-west-2.staging.oasiscloud-private.io
->             - test/3_test_pubsub.js
->             - --
->             - --verbose-rpc
->       imagePullSecrets:
->         - name: docker-registry-creds
->       restartPolicy: Never
-> EOF
-job.batch/e2e-tests-1554140623 created
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: e2e-tests-$(date +%s)
+spec:
+  template:
+    spec:
+      containers:
+        - name: runner
+          image: oasislabs/e2e-test-runner:latest
+          args:
+            - http://\$(WEB3_GATEWAY_SERVICE_HOST):\$(WEB3_GATEWAY_SERVICE_PORT_WEB3)
+            - ws://\$(WEB3_GATEWAY_WEBSOCKET_SERVICE_HOST):\$(WEB3_GATEWAY_WEBSOCKET_SERVICE_PORT_WEB3_WEBSOCKET)
+            - http://faucet-internal.us-west-2.staging.oasiscloud-private.io
+            - test/3_test_pubsub.js
+            - --
+            - --verbose-rpc
+      imagePullSecrets:
+        - name: docker-registry-creds
+      restartPolicy: Never
+EOF
+```
+
+The output should be something like:
+```
+job.batch/e2e-tests-1554141983 created
 ```
 
 To clean up the job after it finishes (or hangs):
 ```
-(k8s: us-west-2.staging.oasiscloud.io) root@5c00abbf9761 /workdir# kubectl delete job/e2e-tests-1554140623
-job.batch "e2e-tests-1554140623" deleted
+(k8s: us-west-2.staging.oasiscloud.io) root@5c00abbf9761 /workdir# kubectl delete job/e2e-tests-1554141983
+job.batch "e2e-tests-1554141983" deleted
 ```
