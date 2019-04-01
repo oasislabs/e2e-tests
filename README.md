@@ -108,3 +108,9 @@ kops has set your kubectl context to us-west-2.staging.oasiscloud.io
 > EOF
 job.batch/e2e-tests-1554140623 created
 ```
+
+To clean up the job after it finishes (or hangs):
+```
+(k8s: us-west-2.staging.oasiscloud.io) root@5c00abbf9761 /workdir# kubectl delete job/e2e-tests-1554138553      
+job.batch "e2e-tests-1554138553" deleted
+```
