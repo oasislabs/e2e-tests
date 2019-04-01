@@ -105,7 +105,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
         if (web3c === web3cWebsocket) {
           // invoke is only implemented for websockets
-          it('should increment the count to ' + counter + ' and get value for a ' + description + ' with [provider=' + providerName + ']', async () => {
+          it('should increment the count to 1 and get value for a ' + description + ' with [provider=' + providerName + ']', async () => {
             const deployMethod = counterContract.deploy({ data: bytecode, header: { confidential } });
             const deployEstimatedGas = await deployMethod.estimateGas();
             const contract = await deployMethod.send({ gas: deployEstimatedGas });
