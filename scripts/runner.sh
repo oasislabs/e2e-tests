@@ -19,7 +19,7 @@
 # https://buildkite.com/docs/pipelines/writing-build-scripts
 set -euxo pipefail
 
-# Skip compilation step.
+# Skip contract compilation step (contracts are prebuilt).
 export SKIP_OASIS_COMPILE=true
 
 # Export gateway endpoints for truffle.
