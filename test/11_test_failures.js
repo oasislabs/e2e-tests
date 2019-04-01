@@ -1,7 +1,10 @@
 const Counter = artifacts.require('Counter');
+const WasmCounter = artifacts.require('WasmCounter');
+const ConfidentialCounter = artifacts.require('ConfidentialCounter');
 const truffleConfig = require('../truffle-config');
 const utils = require('../src/utils');
 const Web3c = require('web3c');
+const Web3 = require('web3');
 
 const web3c = new Web3c(Counter.web3.currentProvider, undefined, {
   keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
@@ -107,8 +110,45 @@ if (truffleConfig.shouldRun(__filename)) {
         await web3c.eth.sendSignedTransaction(signed.rawTransaction);
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        console.log(e.message);
         assert.equal(e.message.includes('Transaction has been reverted by the EVM'), true);
+      }
+    });
+
+    it('should return failure on executing non confidential call on confidential contract', async () => {
+      const web3 = utils.setupWeb3(ConfidentialCounter.currentProvider);
+      const contract = new web3.eth.Contract(ConfidentialCounter.abi, ConfidentialCounter.address, options);
+
+      try {
+        await contract.methods.getCounter().send({
+          gas: '0x141234',
+          gasPrice: '0x3b9aca00'
+        });
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        assert.equal(e.message.includes('Transaction execution error with cause Error { message: "Invalid nonce or public key" }'), true);
+      }
+    });
+
+    it('should fail on triggering require in a solidity contract', async () => {
+      const contract = new web3c.oasis.Contract(Counter.abi, Counter.address, options);
+
+      try {
+        await contract.methods.verifyCounterValue(1).send();
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        assert.equal(e.message.includes('Transaction execution error with cause Error { message: "Transaction execution error (Reverted)." }'), true);
+      }
+    });
+
+    it('should failure on panic! in a rust contract', async () => {
+      const contract = new web3c.oasis.Contract(WasmCounter.abi, WasmCounter.address, options);
+
+      try {
+        await contract.methods.verifyCounterValue(1).send();
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        console.log('error: ', e);
+        assert.equal(e.message.includes('Transaction execution error with cause Error { message: "Transaction execution error (Internal error: Wasm runtime error: Trap(Trap { kind: Unreachable }))." }'), true);
       }
     });
   });

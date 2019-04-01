@@ -5,6 +5,10 @@ contract Counter {
 
   uint256 _counter;
 
+  function verifyCounterValue(uint256 value) public {
+    require(value == _counter, "counter does not equal to expected value");
+  }
+
   function getCounter() public view returns (uint256) {
     return _counter;
   }
