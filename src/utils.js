@@ -97,18 +97,17 @@ function wsProviderUrl () {
 /**
  * @returns a web3c instance with softwallet setup.
  */
-function web3cSoftWallet(websocket = true) {
-  let provider = undefined;
-  if (websocket)  {
-	provider = new (new Web3c()).providers.WebsocketProvider(wsProviderUrl());
+function web3cSoftWallet (websocket = true) {
+  let provider;
+  if (websocket) {
+    provider = new (new Web3c()).providers.WebsocketProvider(wsProviderUrl());
   } else {
-	provider = new (new Web3c()).providers.HttpProvider(providerUrl());
+    provider = new (new Web3c()).providers.HttpProvider(providerUrl());
   }
 
   const web3c = new Web3c(provider, undefined, {
-	keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+    keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
   });
-
 
   let hdWalletProvider = Counter.web3.currentProvider;
   let addr = hdWalletProvider.addresses[0];
@@ -120,7 +119,7 @@ function web3cSoftWallet(websocket = true) {
   web3c.oasis.defaultAccount = acct.address;
   web3c.oasis.accounts.wallet.add(acct);
 
-  return web3c
+  return web3c;
 }
 
 function sleep (ms) {

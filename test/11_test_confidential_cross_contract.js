@@ -1,5 +1,4 @@
 const CallableCounter = artifacts.require('CallableCounter');
-const Web3c = require('web3c');
 const truffleConfig = require('../truffle-config');
 const utils = require('../src/utils');
 
@@ -23,7 +22,7 @@ if (truffleConfig.shouldRun(__filename)) {
         b: {
           label: 'non-confidential',
           confidential: false
-        },
+        }
       },
       {
         a: {
@@ -33,7 +32,7 @@ if (truffleConfig.shouldRun(__filename)) {
         b: {
           label: 'confidential',
           confidential: true
-        },
+        }
       },
       {
         a: {
@@ -43,7 +42,7 @@ if (truffleConfig.shouldRun(__filename)) {
         b: {
           label: 'confidential',
           confidential: true
-        },
+        }
       },
       {
         a: {
@@ -53,7 +52,7 @@ if (truffleConfig.shouldRun(__filename)) {
         b: {
           label: 'non-confidential',
           confidential: false
-        },
+        }
       }
     ];
 
@@ -61,7 +60,7 @@ if (truffleConfig.shouldRun(__filename)) {
     let b;
 
     bilateralTestCases.forEach((testCase) => {
-      it(`bilateral: deploys a ${testCase.a.label} and a ${testCase.b.label} contract` , async () => {
+      it(`bilateral: deploys a ${testCase.a.label} and a ${testCase.b.label} contract`, async () => {
         b = await callableContract.deploy({
           data: CallableCounter.bytecode,
           arguments: [accounts[0], 5, true, accounts[0]],
@@ -117,7 +116,6 @@ if (truffleConfig.shouldRun(__filename)) {
         assert.equal(aSender, accounts[0]);
         // Sender is contract A because it invoked a call.
         assert.equal(bSender, a.options.address);
-
       });
 
       it(`bilateral: ${testCase.a.label} sets ${testCase.b.label} storage via delegatecall`, async () => {
@@ -135,11 +133,10 @@ if (truffleConfig.shouldRun(__filename)) {
         assert.equal(aCount, 11);
         // Unchanged.
         assert.equal(bCount, 6);
-
       });
     });
 
-    let c = undefined;
+    let c;
 
     let threePartyCases = [
       {
@@ -154,7 +151,7 @@ if (truffleConfig.shouldRun(__filename)) {
         c: {
           label: 'non-confidential',
           confidential: false
-        },
+        }
       },
 
       {
@@ -172,7 +169,7 @@ if (truffleConfig.shouldRun(__filename)) {
           label: 'confidential',
           name: 'C',
           confidential: true
-        },
+        }
       },
       {
         a: {
@@ -189,13 +186,12 @@ if (truffleConfig.shouldRun(__filename)) {
           label: 'confidential',
           name: 'C',
           confidential: true
-        },
+        }
       }
 
     ];
 
     threePartyCases.forEach((testCase) => {
-
       it(`3-party: deploys a ${testCase.a.label}, ${testCase.b.label} and a ${testCase.c.label} contract`, async () => {
         c = await callableContract.deploy({
           data: CallableCounter.bytecode,
@@ -286,7 +282,5 @@ if (truffleConfig.shouldRun(__filename)) {
         assert.equal(cCount, 3);
       });
     });
-
-
   });
 }
