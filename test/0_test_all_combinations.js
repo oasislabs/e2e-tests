@@ -114,7 +114,7 @@ if (truffleConfig.shouldRun(__filename)) {
               gasPrice: '0x3b9aca00',
               gas: incrementEstimatedGas
             });
-            assert.equal(count, counter);
+            assert.equal(count, 1);
           });
         }
         it('should estimate gas for deploy transactions the same as gas used for a ' + description + ' with [provider=' + providerName + ']', async () => {
