@@ -4,7 +4,6 @@ const ConfidentialCounter = artifacts.require('ConfidentialCounter');
 const truffleConfig = require('../truffle-config');
 const utils = require('../src/utils');
 const Web3c = require('web3c');
-const Web3 = require('web3');
 
 const web3c = new Web3c(Counter.web3.currentProvider, undefined, {
   keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY

@@ -74,12 +74,12 @@ if (truffleConfig.shouldRun(__filename)) {
         instance = await contract.deploy({
           data: Counter.bytecode,
           header: {
-            expiry: Math.floor(Date.now() / 1000 + 5),
+            expiry: Math.floor(Date.now() / 1000 + 20),
             confidential
           }
         }).send();
         // When.
-        await utils.sleep(30 * 1000);
+        await utils.sleep(60 * 1000);
         // Send dummy transaction to make the tendermint clock tick.
         await web3c.eth.sendTransaction({
           from: accounts[0],
