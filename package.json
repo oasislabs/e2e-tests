@@ -14,6 +14,7 @@
     "test:devnet": "./test.sh ./node_modules/.bin/truffle test --network devnet"
   },
   "devDependencies": {
+    "bip39": "^2.5.0",
     "eslint": "^5.12.1",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
