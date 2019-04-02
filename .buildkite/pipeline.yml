@@ -35,7 +35,8 @@ steps:
   - wait
 
   - label: Build & publish test-runner docker image (master branches only)
-    branches: master
+    # TODO: restore branch filter
+    #branches: master
     command:
       - buildkite-agent artifact download build.zip .
       - .buildkite/scripts/build_tag_push_runner_image.sh
