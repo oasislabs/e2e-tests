@@ -135,7 +135,7 @@ if (truffleConfig.shouldRun(__filename)) {
         await contract.methods.verifyCounterValue(1).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message.includes('Transaction execution error with cause Error { message: "Transaction execution error (Reverted)." }'), true);
+        assert.equal(e.message.includes('Transaction execution error (Reverted with output `counter does not equal to expected value`).'), true);
       }
     });
 
@@ -146,7 +146,6 @@ if (truffleConfig.shouldRun(__filename)) {
         await contract.methods.verifyCounterValue(1).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        console.log('error: ', e);
         assert.equal(e.message.includes('Transaction execution error with cause Error { message: "Transaction execution error (Internal error: Wasm runtime error: Trap(Trap { kind: Unreachable }))." }'), true);
       }
     });
