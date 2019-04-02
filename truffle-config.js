@@ -32,7 +32,10 @@ const STAGING_WS_PROVIDER_URL = 'wss://web3.oasiscloud-staging.net/ws';
 /**
  * The remote key manager's public key to use for validating signatures in web3c.js.
  */
-const KEY_MANAGER_PUBLIC_KEY = process.env.KEY_MANAGER_PUBLIC_KEY;
+let KEY_MANAGER_PUBLIC_KEY = process.env.KEY_MANAGER_PUBLIC_KEY;
+if (!KEY_MANAGER_PUBLIC_KEY) {
+  KEY_MANAGER_PUBLIC_KEY = '0x51d5e24342ae2c4a951e24a2ba45a68106bcb7986198817331889264fd10f1bf';
+}
 /**
  * The amount of parallelism with which to run the tests. When the tests are run in
  * parallel, we assign each test file a number and divide up the tests into the "bucket"
