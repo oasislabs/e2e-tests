@@ -25,6 +25,7 @@ export SKIP_OASIS_COMPILE=true
 # Export gateway endpoints for truffle.
 export HTTPS_PROVIDER_URL=$1
 export WS_PROVIDER_URL=$2
+export KEY_MANAGER_PUBLIC_KEY="0x51d5e24342ae2c4a951e24a2ba45a68106bcb7986198817331889264fd10f1bf"
 
 FAUCET_URL=$3
 
