@@ -14,6 +14,18 @@ if (truffleConfig.shouldRun(__filename)) {
       { subscription: ethSubscribeCallbackLogs, label: 'callback', expectedCounter: 2 }
     ];
 
+    let contract;
+    before(async () => {
+      let web3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
+        keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+      });
+      contract = await new web3c.oasis.Contract(ConfidentialCounter.abi, undefined, {
+        from: accounts[0]
+      }).deploy({
+        data: ConfidentialCounter.bytecode
+      }).send();
+    });
+
     cases.forEach((c) => {
       it(`${c.label} should subscribe to logs`, async () => {
         let dataToEmit = 123;
@@ -31,17 +43,11 @@ if (truffleConfig.shouldRun(__filename)) {
       });
 
       it(`${c.label}: should subscribe to logs of a confidential contract`, async () => {
-        let web3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
-          keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-        });
-        let contract = new web3c.oasis.Contract(ConfidentialCounter.abi, ConfidentialCounter.address, {
-          from: accounts[0]
-        });
-        const subscribePromise = c.subscription(ConfidentialCounter.address);
+        const subscribePromise = c.subscription(contract.options.address);
         await contract.methods.incrementCounter().send();
         try {
           let log = await subscribePromise;
-          assert.equal(ConfidentialCounter.address, log.address);
+          assert.equal(contract.options.address, log.address);
           assert.equal(log.data, c.expectedCounter);
         } catch (err) {
           assert.fail(err);
@@ -76,19 +82,14 @@ if (truffleConfig.shouldRun(__filename)) {
     }
 
     async function sendSignedIncrementAndGet (filterIncludeParams) {
-      const web3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
-        keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-      });
-      const contract = new web3c.oasis.Contract(ConfidentialCounter.abi, ConfidentialCounter.address, {
-        from: accounts[0]
-      });
+      const web3c = utils.setupWebsocketProvider(ConfidentialCounter.web3.currentProvider);
       const hdWalletProvider = ConfidentialCounter.web3.currentProvider;
       const address = Object.keys(hdWalletProvider.wallets)[0];
       const privateKey = '0x' + hdWalletProvider.wallets[address]._privKey.toString('hex');
       const tx = {
         from: Object.keys(hdWalletProvider.wallets)[0],
         gasPrice: '0x3b9aca00',
-        to: ConfidentialCounter.address,
+        to: contract.options.address,
         data: contract.methods.incrementAndGetCounter().encodeABI(),
         gas: '0x141234'
       };
@@ -99,13 +100,12 @@ if (truffleConfig.shouldRun(__filename)) {
       const subargs = getSubset({
         transactionHash: transactionHash,
         fromAddress: tx.from,
-        address: ConfidentialCounter.address
+        address: contract.options.address
       }, filterIncludeParams);
 
-      let subscribePromise = ethSubscribePromise('completedTransaction', subargs);
+      const promise = subscribePromise(web3c, 'completedTransaction', subargs);
       await web3c.eth.sendSignedTransaction(signed.rawTransaction);
-
-      return subscribePromise;
+      return promise;
     }
 
     it('should subscribe to completed transaction with transactionHash', async () => {
@@ -145,13 +145,10 @@ function subscribePromise (web3c, type, filter) {
     args.push(filter);
   }
 
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     web3c.oasis.subscribe.apply(web3c.oasis, args)
-      .on('data', function (log) {
-        resolve(log);
-      }).on('error', function (err) {
-        reject(err);
-      });
+      .on('data', resolve)
+      .on('error', reject);
   });
 }
 
@@ -172,11 +169,8 @@ function ethSubscribeCallback (type, filter) {
     web3c.oasis.subscribe(
       type, filter,
       (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
+        if (err) reject(err);
+        else resolve(result);
       });
   });
 }
