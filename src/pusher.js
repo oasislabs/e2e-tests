@@ -22,4 +22,4 @@ if (result !== 0) {
   err.inc();
 }
 
-pushGateway.pushAdd({ jobName: `${name}`, groupings: 'ops-production' }, () => { process.exit(result); });
+pushGateway.pushAdd({ jobName: `${name}`, groupings: { instance: 'ops-production' } }, () => { process.exit(result); });
