@@ -36,15 +36,15 @@ FAUCET_URL=$3
 PROM_PUSH_GATEWAY=$4
 PROM_JOB_NAME=$5
 
-# Push the result to Prometheus.
+# Push the results. Non-zero exit code indicates test failure.
 function report {
   result=$?
-  node src/pusher.js $PROM_PUSH_GATEWAY $PROM_JOB_NAME $result
+  node src/report_result.js $PROM_PUSH_GATEWAY $PROM_JOB_NAME $result
 }
 trap report EXIT
 
 # Generate a mnemonic and request funds from the API faucet.
-mnemonic=`node src/funder.js $HTTPS_PROVIDER_URL $FAUCET_URL`
+mnemonic=`node src/get_funds.js $HTTPS_PROVIDER_URL $FAUCET_URL`
 export MNEMONIC=$mnemonic
 
 # Run truffle tests.

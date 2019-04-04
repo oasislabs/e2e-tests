@@ -4,9 +4,11 @@ const parseArgs = require('minimist');
 const request = require('request-promise');
 
 /**
- * Request funds from the API faucet.
+ * Generates a random mnemonic and requests funds from the API faucet.
+ * On success, prints the mnemonic to the console.
  * Will only work in cluster (staging or prod).
  */
+
 async function requestFunds (address, faucet) {
   // Request 1 DEV.
   let url = faucet + '?to=' + address + '&amnt=0xde0b6b3a7640000';
@@ -16,7 +18,7 @@ async function requestFunds (address, faucet) {
 // Parse command-line arguments.
 const argv = parseArgs(process.argv.slice(2));
 if (argv._.length !== 2) {
-  console.error('Usage: funder <gateway_https_endpoint> <private_faucet_endpoint>');
+  console.error('Usage: get_funds <gateway_https_endpoint> <private_faucet_endpoint>');
   process.exit(1);
 }
 let gateway = argv._[0];
