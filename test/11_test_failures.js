@@ -135,19 +135,23 @@ if (truffleConfig.shouldRun(__filename)) {
         await contract.methods.verifyCounterValue(1).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message.includes('Transaction execution error with cause Error { message: "Transaction execution error (Reverted)." }'), true);
+        assert.equal(e.message.includes('Transaction execution error (Reverted).'), true);
       }
     });
 
-    it('should failure on panic! in a rust contract', async () => {
+    it('should fail on panic! in a rust contract', async () => {
       const contract = new web3c.oasis.Contract(WasmCounter.abi, WasmCounter.address, options);
 
       try {
         await contract.methods.verifyCounterValue(1).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message.includes('Transaction execution error with cause Error { message: "Transaction execution error (Internal error: Wasm runtime error: Trap(Trap { kind: Unreachable }))." }'), true);
+        assert.equal(e.message.includes('Internal error: Wasm runtime error: Trap(Trap { kind: Unreachable }))."'), true);
       }
+    });
+
+    it('should return null when calling getPublicKey on non confidential contract', async () => {
+      assert.equal(null, await web3c.oasis.getPublicKey(Counter.address));
     });
   });
 }
