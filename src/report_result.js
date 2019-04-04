@@ -27,4 +27,4 @@ if (exitCode !== 0) {
   err.inc();
 }
 
-pushgateway.pushAdd({ jobName: `${name}`, groupings: { instance: 'ops-production' } }, () => { process.exit(result); });
+pushgateway.pushAdd({ jobName: `${name}`, groupings: { instance: 'ops-production' } }, () => { process.exit(exitCode); });
