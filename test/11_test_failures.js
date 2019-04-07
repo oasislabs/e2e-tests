@@ -56,7 +56,7 @@ if (truffleConfig.shouldRun(__filename)) {
         }).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message, 'Transaction execution error with cause Error { message: "Transaction execution error (Contract Expired)." }');
+        assert.equal(e.message, 'Transaction execution error with cause: Transaction execution error (Contract Expired).');
       }
     });
 
@@ -70,7 +70,7 @@ if (truffleConfig.shouldRun(__filename)) {
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message, 'Transaction execution error with cause Error { message: "Requested gas greater than block gas limit." }');
+        assert.equal(e.message, 'Transaction execution error with cause: Requested gas greater than block gas limit.');
       }
     });
 
@@ -83,7 +83,7 @@ if (truffleConfig.shouldRun(__filename)) {
         }).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message, 'Transaction execution error with cause Error { message: "Malformed header" }');
+        assert.equal(e.message, 'Transaction execution error with cause: Malformed header');
       }
     });
 
