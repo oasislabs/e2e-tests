@@ -146,8 +146,7 @@ if (truffleConfig.shouldRun(__filename)) {
         await contract.methods.verifyCounterValue(1).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        console.log(e.message);
-        assert.equal(e.message.includes('Internal error: Wasm runtime error: Trap(Trap { kind: Unreachable }))."'), true);
+        assert.equal(e.message.includes('Internal error: Wasm runtime error: Trap(Trap { kind: Unreachable })).'), true);
       }
     });
 
