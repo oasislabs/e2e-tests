@@ -56,7 +56,7 @@ if (truffleConfig.shouldRun(__filename)) {
         }).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message, 'Transaction execution error with cause Error { message: "Transaction execution error (Contract Expired)." }');
+        assert.equal(e.message, 'Transaction execution error with cause: Transaction execution error (Contract Expired).');
       }
     });
 
@@ -70,7 +70,7 @@ if (truffleConfig.shouldRun(__filename)) {
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message, 'Transaction execution error with cause Error { message: "Requested gas greater than block gas limit." }');
+        assert.equal(e.message, 'Transaction execution error with cause: Requested gas greater than block gas limit.');
       }
     });
 
@@ -83,7 +83,7 @@ if (truffleConfig.shouldRun(__filename)) {
         }).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message, 'Transaction execution error with cause Error { message: "Malformed header" }');
+        assert.equal(e.message, 'Transaction execution error with cause: Malformed header');
       }
     });
 
@@ -124,7 +124,7 @@ if (truffleConfig.shouldRun(__filename)) {
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message.includes('Unable to decrypt transaction data: Invalid nonce or public key'), true);
+        assert.equal(e.message.includes('Unable to decrypt transaction data: invalid nonce or public key'), true);
       }
     });
 
@@ -146,7 +146,7 @@ if (truffleConfig.shouldRun(__filename)) {
         await contract.methods.verifyCounterValue(1).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message.includes('Internal error: Wasm runtime error: Trap(Trap { kind: Unreachable }))."'), true);
+        assert.equal(e.message.includes('Internal error: Wasm runtime error: Trap(Trap { kind: Unreachable })).'), true);
       }
     });
 
