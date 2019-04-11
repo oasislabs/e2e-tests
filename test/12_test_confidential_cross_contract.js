@@ -44,7 +44,7 @@ if (truffleConfig.shouldRun(__filename)) {
           label: 'confidential',
           confidential: true
         },
-        shouldFail: "Cannot call call from non-confidential -> confidential."
+        shouldFail: 'Cannot call call from non-confidential -> confidential.'
       },
       {
         a: {
@@ -213,7 +213,7 @@ if (truffleConfig.shouldRun(__filename)) {
           name: 'C',
           confidential: true
         },
-        shouldFail: true,
+        shouldFail: true
       }
     ];
 
@@ -247,11 +247,9 @@ if (truffleConfig.shouldRun(__filename)) {
 
         // When.
         if (testCase.shouldFail) {
-
           _assert.rejects(async function () {
             await a.methods.getTailCounter().invoke();
           });
-
         } else {
           let cCount = await a.methods.getTailCounter().invoke();
 
@@ -263,16 +261,12 @@ if (truffleConfig.shouldRun(__filename)) {
       it(`3-party: ${testCase.a.label} sets storage of ${testCase.c.label} through ${testCase.b.label}`, async () => {
         // Given contracts A, B, C.
 
-
         if (testCase.shouldFail) {
-
           _assert.rejects(async function () {
             // When.
             await a.methods.incrementTailCounter().send();
           });
-
         } else {
-
           // When.
           await a.methods.incrementTailCounter().send();
           let cCount = await c.methods.getCounter().invoke();
@@ -313,7 +307,6 @@ if (truffleConfig.shouldRun(__filename)) {
         } else {
           assert.equal(cCount, 3);
         }
-
       });
 
       // A - (delegatecall) -> B - (call) -> C
@@ -323,7 +316,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
         if (testCase.shouldFail) {
           // When.
-          _assert.rejects(async function() {
+          _assert.rejects(async function () {
             await a.methods.incrementTailDelegatecallCall().send({
               gas: '0xf42400'
             });
@@ -345,7 +338,6 @@ if (truffleConfig.shouldRun(__filename)) {
         assert.equal(bCount, 2);
         assert.equal(cCount, 3);
       });
-
     });
   });
 }
