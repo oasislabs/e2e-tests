@@ -2,6 +2,7 @@ const Counter = artifacts.require('Counter');
 const request = require('request-promise');
 const truffleConfig = require('../truffle-config');
 const Web3c = require('web3c');
+const Web3 = require('web3');
 
 const PUBLIC_KEY_LENGTH = 64;
 const GAS_PRICE = '0x3b9aca00';
@@ -144,6 +145,19 @@ function setupWebsocketProvider (hdWalletProvider) {
   return web3cWebsocket;
 }
 
+function setupWeb3 (hdWalletProvider) {
+  const web3 = new Web3(providerUrl());
+
+  let addr = Object.keys(hdWalletProvider.wallets)[0];
+  let privKey = '0x' + hdWalletProvider.wallets[addr]._privKey.toString('hex');
+  let acct = web3.eth.accounts.privateKeyToAccount(privKey);
+
+  web3.eth.defaultAccount = acct.address;
+  web3.eth.accounts.wallet.add(acct);
+
+  return web3;
+}
+
 module.exports = {
   fetchNonce,
   fromHexStr,
@@ -156,6 +170,7 @@ module.exports = {
   web3cSoftWallet,
   sleep,
   setupWebsocketProvider,
+  setupWeb3,
   PUBLIC_KEY_LENGTH,
   GAS_LIMIT,
   GAS_PRICE
