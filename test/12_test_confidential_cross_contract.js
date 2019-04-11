@@ -44,7 +44,7 @@ if (truffleConfig.shouldRun(__filename)) {
           label: 'confidential',
           confidential: true
         },
-        shouldFail: 'Cannot call call from non-confidential -> confidential.'
+        shouldFail: true
       },
       {
         a: {
@@ -55,7 +55,7 @@ if (truffleConfig.shouldRun(__filename)) {
           label: 'non-confidential',
           confidential: false
         },
-        shouldFail: 'Cannot call from confidnetial -> non-confidential.'
+        shouldFail: true
       }
 
     ];
@@ -301,8 +301,9 @@ if (truffleConfig.shouldRun(__filename)) {
         assert.equal(bCount, 1);
 
         if (testCase.shouldFail) {
-          // If the call failed, then the increment in the previous test failed
-          // so 2 is expected, not 3.
+          // If the call failed, then the increment in the *previous* test failed
+          // so 2 is expected, not 3. Note that delegate calls are allowed across
+          // confidential -> non-confidential.
           assert.equal(cCount, 2);
         } else {
           assert.equal(cCount, 3);
