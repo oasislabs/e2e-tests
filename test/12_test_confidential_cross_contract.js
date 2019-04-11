@@ -1,6 +1,7 @@
 const CallableCounter = artifacts.require('CallableCounter');
 const truffleConfig = require('../truffle-config');
 const utils = require('../src/utils');
+const _assert = require('assert');
 
 if (truffleConfig.shouldRun(__filename)) {
   const web3c = utils.web3cSoftWallet();
@@ -42,7 +43,8 @@ if (truffleConfig.shouldRun(__filename)) {
         b: {
           label: 'confidential',
           confidential: true
-        }
+        },
+        shouldFail: "Cannot call call from non-confidential -> confidential."
       },
       {
         a: {
@@ -52,8 +54,10 @@ if (truffleConfig.shouldRun(__filename)) {
         b: {
           label: 'non-confidential',
           confidential: false
-        }
+        },
+        shouldFail: 'Cannot call from confidnetial -> non-confidential.'
       }
+
     ];
 
     let a;
@@ -76,48 +80,65 @@ if (truffleConfig.shouldRun(__filename)) {
           }
         }).send();
       });
-
       it(`bilateral: ${testCase.a.label} calls ${testCase.b.label}`, async () => {
         // Given contracts A and B.
 
-        // When.
-        let aCount = await a.methods.getCounter().invoke();
-        let aPeerCount = await a.methods.getPeerCounter().invoke();
-        let aSender = await a.methods._sender().invoke();
-        let bSender = await b.methods._sender().invoke();
+        if (testCase.shouldFail) {
+          // When.
+          _assert.rejects(async function () {
+            await a.methods.getPeerCounter().invoke();
+          });
+        } else {
+          // When.
+          let aCount = await a.methods.getCounter().invoke();
+          let aPeerCount = await a.methods.getPeerCounter().invoke();
+          let aSender = await a.methods._sender().invoke();
+          let bSender = await b.methods._sender().invoke();
 
-        // Then.
-        assert.equal(aCount, 10);
-        assert.equal(aPeerCount, 5);
-        // Not set, so defaults to 0.
-        assert.equal(aSender, 0);
-        assert.equal(bSender, 0);
+          // Then.
+          assert.equal(aCount, 10);
+          assert.equal(aPeerCount, 5);
+          // Not set, so defaults to 0.
+          assert.equal(aSender, 0);
+          assert.equal(bSender, 0);
+        }
       });
 
       it(`bilateral: ${testCase.a.label} sets ${testCase.b.label} storage via call`, async () => {
         // Given, contracts A and B.
 
-        // When.
-        await a.methods.incrementPeerCounter().send();
+        if (testCase.shouldFail) {
+          _assert.rejects(async function () {
+            // When.
+            await a.methods.incrementPeerCounter().send();
+          });
+          // Then fail.
+        } else {
+          // When.
+          await a.methods.incrementPeerCounter().send();
 
-        // Then.
+          // Then.
 
-        let aCount = await a.methods.getCounter().invoke();
-        let bCount = await b.methods.getCounter().invoke();
+          let aCount = await a.methods.getCounter().invoke();
+          let bCount = await b.methods.getCounter().invoke();
 
-        let aSender = await a.methods._sender().invoke();
-        let bSender = await b.methods._sender().invoke();
+          let aSender = await a.methods._sender().invoke();
+          let bSender = await b.methods._sender().invoke();
 
-        // Unchanged.
-        assert.equal(aCount, 10);
-        // Incremented.
-        assert.equal(bCount, 6);
-        // Sender is originator of transaction.
-        assert.equal(aSender, accounts[0]);
-        // Sender is contract A because it invoked a call.
-        assert.equal(bSender, a.options.address);
+          // Unchanged.
+          assert.equal(aCount, 10);
+          // Incremented.
+          assert.equal(bCount, 6);
+          // Sender is originator of transaction.
+          assert.equal(aSender, accounts[0]);
+          // Sender is contract A because it invoked a call.
+          assert.equal(bSender, a.options.address);
+        }
       });
 
+      // Note: this should *not* fail when calling between confidential/non-confidential.
+      //       because delegatecalls don't try to change encryption contexts, since the
+      //       storage of the called contract is not accessed at all.
       it(`bilateral: ${testCase.a.label} sets ${testCase.b.label} storage via delegatecall`, async () => {
         // Given, contracts A and B.
 
@@ -125,14 +146,18 @@ if (truffleConfig.shouldRun(__filename)) {
         await a.methods.delegatecallIncrementCounter().send();
 
         // Then.
-
         let aCount = await a.methods.getCounter().invoke();
         let bCount = await b.methods.getCounter().invoke();
 
         // Incremented.
         assert.equal(aCount, 11);
         // Unchanged.
-        assert.equal(bCount, 6);
+        // Note: if failed, the count wasn't incremented, hence 5 (not 6).
+        if (testCase.shouldFail) {
+          assert.equal(bCount, 5);
+        } else {
+          assert.equal(bCount, 6);
+        }
       });
     });
 
@@ -171,6 +196,7 @@ if (truffleConfig.shouldRun(__filename)) {
           confidential: true
         }
       },
+
       {
         a: {
           label: 'confidential',
@@ -180,15 +206,15 @@ if (truffleConfig.shouldRun(__filename)) {
         b: {
           label: 'non-confidential',
           name: 'B',
-          confidential: true
+          confidential: false
         },
         c: {
           label: 'confidential',
           name: 'C',
           confidential: true
-        }
+        },
+        shouldFail: true,
       }
-
     ];
 
     threePartyCases.forEach((testCase) => {
@@ -197,7 +223,7 @@ if (truffleConfig.shouldRun(__filename)) {
           data: CallableCounter.bytecode,
           arguments: [accounts[0], 2, true, accounts[0]],
           header: {
-            confidential: testCase.b.confidential
+            confidential: testCase.c.confidential
           }
         }).send();
         b = await callableContract.deploy({
@@ -220,28 +246,47 @@ if (truffleConfig.shouldRun(__filename)) {
         // Given contracts A, B, C.
 
         // When.
-        let cCount = await a.methods.getTailCounter().invoke();
+        if (testCase.shouldFail) {
 
-        // Then.
-        assert.equal(cCount, 2);
+          _assert.rejects(async function () {
+            await a.methods.getTailCounter().invoke();
+          });
+
+        } else {
+          let cCount = await a.methods.getTailCounter().invoke();
+
+          // Then.
+          assert.equal(cCount, 2);
+        }
       });
 
       it(`3-party: ${testCase.a.label} sets storage of ${testCase.c.label} through ${testCase.b.label}`, async () => {
         // Given contracts A, B, C.
 
-        // When.
-        await a.methods.incrementTailCounter().send();
-        let cCount = await c.methods.getCounter().invoke();
 
-        // Then.
-        assert.equal(cCount, 3);
-        let aSender = await a.methods._sender().invoke();
-        let bSender = await b.methods._sender().invoke();
-        let cSender = await c.methods._sender().invoke();
-        // Set via call so should be the contract that called it.
-        assert.equal(aSender, accounts[0]);
-        assert.equal(bSender, a.options.address);
-        assert.equal(cSender, b.options.address);
+        if (testCase.shouldFail) {
+
+          _assert.rejects(async function () {
+            // When.
+            await a.methods.incrementTailCounter().send();
+          });
+
+        } else {
+
+          // When.
+          await a.methods.incrementTailCounter().send();
+          let cCount = await c.methods.getCounter().invoke();
+
+          // Then.
+          assert.equal(cCount, 3);
+          let aSender = await a.methods._sender().invoke();
+          let bSender = await b.methods._sender().invoke();
+          let cSender = await c.methods._sender().invoke();
+          // Set via call so should be the contract that called it.
+          assert.equal(aSender, accounts[0]);
+          assert.equal(bSender, a.options.address);
+          assert.equal(cSender, b.options.address);
+        }
       });
 
       // accounts[0] - (call) -> A - (delegatecall) -> B - (delegatecall) -> C
@@ -260,13 +305,32 @@ if (truffleConfig.shouldRun(__filename)) {
         let cCount = await c.methods.getCounter().invoke();
         assert.equal(aCount, 1);
         assert.equal(bCount, 1);
-        assert.equal(cCount, 3);
+
+        if (testCase.shouldFail) {
+          // If the call failed, then the increment in the previous test failed
+          // so 2 is expected, not 3.
+          assert.equal(cCount, 2);
+        } else {
+          assert.equal(cCount, 3);
+        }
+
       });
 
       // A - (delegatecall) -> B - (call) -> C
       // This updates B's count with msg.sender == accounts[0] *when executing* all contracts.
       it(`3-party: ${testCase.c.label} sets storage of ${testCase.a.label} through ${testCase.b.name} via delegatecall and call`, async () => {
         // Given contracts A, B, C.
+
+        if (testCase.shouldFail) {
+          // When.
+          _assert.rejects(async function() {
+            await a.methods.incrementTailDelegatecallCall().send({
+              gas: '0xf42400'
+            });
+          });
+          // Then fail.
+          return;
+        }
 
         // When.
         await a.methods.incrementTailDelegatecallCall().send({
@@ -281,6 +345,7 @@ if (truffleConfig.shouldRun(__filename)) {
         assert.equal(bCount, 2);
         assert.equal(cCount, 3);
       });
+
     });
   });
 }
