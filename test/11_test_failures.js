@@ -124,8 +124,8 @@ if (truffleConfig.shouldRun(__filename)) {
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        console.log(e);
-        assert.equal(e.message.includes('Error: Transaction has been reverted by the EVM:'), true);
+        console.log(e.message);
+        assert.equal(e.message.includes('Transaction has been reverted by the EVM:'), true);
       }
     });
 
