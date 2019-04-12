@@ -124,7 +124,8 @@ if (truffleConfig.shouldRun(__filename)) {
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message.includes('Unable to decrypt transaction data: invalid nonce or public key'), true);
+        console.log(e.message);
+        assert.equal(e.message.includes('Transaction has been reverted by the EVM:'), true);
       }
     });
 
