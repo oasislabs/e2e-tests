@@ -23,4 +23,10 @@ trait WasmCounter {
         write(&COUNTER_KEY.into(), &(self.getCounter() + 1).into());
         U256::from_big_endian(&read(&COUNTER_KEY.into()))
     }
+
+    fn verifyCounterValue(&mut self, value: U256) {
+        if value != self.getCounter() {
+            panic!("counter does not equal to expected value");
+        }
+    }
 }
