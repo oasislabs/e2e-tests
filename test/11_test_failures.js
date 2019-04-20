@@ -143,8 +143,7 @@ if (truffleConfig.shouldRun(__filename)) {
       const contract = new web3c.oasis.Contract(WasmCounter.abi, WasmCounter.address, options);
 
       try {
-        await contract.methods.verifyCounterValue(1).estimateGas();
-        await contract.methods.verifyCounterValue(1).send();// estimateGas();
+        await contract.methods.verifyCounterValue(1).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
         assert.equal(e.message.includes('Transaction execution error with cause: Requested gas greater than block gas limit'), true);
