@@ -56,7 +56,7 @@ if (truffleConfig.shouldRun(__filename)) {
         }).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message, 'Transaction execution error with cause: Transaction execution error (Contract Expired).');
+        assert.equal(e.message.includes('Transaction execution error with cause: Requested gas greater than block gas limit.'), true);
       }
     });
 
@@ -124,7 +124,6 @@ if (truffleConfig.shouldRun(__filename)) {
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        console.log(e.message);
         assert.equal(e.message.includes('Transaction has been reverted by the EVM:'), true);
       }
     });
@@ -136,7 +135,7 @@ if (truffleConfig.shouldRun(__filename)) {
         await contract.methods.verifyCounterValue(1).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message.includes('Transaction execution error (Reverted).'), true);
+        assert.equal(e.message.includes('Transaction has been reverted by the EVM:'), true);
       }
     });
 
@@ -144,10 +143,11 @@ if (truffleConfig.shouldRun(__filename)) {
       const contract = new web3c.oasis.Contract(WasmCounter.abi, WasmCounter.address, options);
 
       try {
-        await contract.methods.verifyCounterValue(1).send();
+        await contract.methods.verifyCounterValue(1).estimateGas();
+        await contract.methods.verifyCounterValue(1).send();// estimateGas();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message.includes('Internal error: Wasm runtime error: Trap(Trap { kind: Unreachable })).'), true);
+        assert.equal(e.message.includes('Transaction execution error with cause: Requested gas greater than block gas limit'), true);
       }
     });
 
