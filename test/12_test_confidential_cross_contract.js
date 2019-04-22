@@ -64,7 +64,6 @@ if (truffleConfig.shouldRun(__filename)) {
     let b;
 
     bilateralTestCases.forEach((testCase) => {
-
       // Reset the websocket connection to avoid the gateway's "Too many requests" error.
       // See https://github.com/oasislabs/e2e-tests/issues/74.
       callableContract._requestManager.setProvider(callableContract._requestManager.provider);
@@ -223,7 +222,6 @@ if (truffleConfig.shouldRun(__filename)) {
     ];
 
     threePartyCases.forEach((testCase) => {
-
       // Reset the websocket connection to avoid the gateway's "Too many requests" error.
       // See https://github.com/oasislabs/e2e-tests/issues/74.
       callableContract._requestManager.setProvider(callableContract._requestManager.provider);
