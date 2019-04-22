@@ -85,7 +85,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
         if (testCase.shouldFail) {
           // When.
-          _assert.rejects(async function () {
+          await _assert.rejects(async function () {
             await a.methods.getPeerCounter().invoke();
           });
         } else {
@@ -108,7 +108,7 @@ if (truffleConfig.shouldRun(__filename)) {
         // Given, contracts A and B.
 
         if (testCase.shouldFail) {
-          _assert.rejects(async function () {
+          await _assert.rejects(async function () {
             // When.
             await a.methods.incrementPeerCounter().send();
           });
@@ -247,7 +247,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
         // When.
         if (testCase.shouldFail) {
-          _assert.rejects(async function () {
+          await _assert.rejects(async function () {
             await a.methods.getTailCounter().invoke();
           });
         } else {
@@ -262,7 +262,7 @@ if (truffleConfig.shouldRun(__filename)) {
         // Given contracts A, B, C.
 
         if (testCase.shouldFail) {
-          _assert.rejects(async function () {
+          await _assert.rejects(async function () {
             // When.
             await a.methods.incrementTailCounter().send();
           });
@@ -317,7 +317,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
         if (testCase.shouldFail) {
           // When.
-          _assert.rejects(async function () {
+          await _assert.rejects(async function () {
             await a.methods.incrementTailDelegatecallCall().send({
               gas: '0xf42400'
             });
