@@ -25,6 +25,7 @@
     "ethereumjs-wallet": "0.6.0",
     "js-sha512": "^0.8.0",
     "oasis-compile": "^2.0.0",
+    "prom-client": "^11.3.0",
     "request-promise": "4.2.2",
     "truffle-hdwallet-provider": "^1.0.0-web3one.0",
     "truffle-oasis": "^5.0.4",
