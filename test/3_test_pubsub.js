@@ -15,15 +15,21 @@ if (truffleConfig.shouldRun(__filename)) {
     ];
 
     let contract;
+
+    let beforeWeb3c = undefined;
     before(async () => {
-      let web3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
+      let beforeWeb3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
         keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
       });
-      contract = await new web3c.oasis.Contract(ConfidentialCounter.abi, undefined, {
+      contract = await new beforeWeb3c.oasis.Contract(ConfidentialCounter.abi, undefined, {
         from: accounts[0]
       }).deploy({
         data: ConfidentialCounter.bytecode
       }).send();
+    });
+
+    after(async () => {
+      beforeWeb3c.currentProvider.disconnect();
     });
 
     cases.forEach((c) => {
@@ -81,8 +87,7 @@ if (truffleConfig.shouldRun(__filename)) {
       return result;
     }
 
-    async function sendSignedIncrementAndGet (filterIncludeParams) {
-      const web3c = utils.setupWebsocketProvider(ConfidentialCounter.web3.currentProvider);
+    async function sendSignedIncrementAndGet (web3c, filterIncludeParams) {
       const hdWalletProvider = ConfidentialCounter.web3.currentProvider;
       const address = Object.keys(hdWalletProvider.wallets)[0];
       const privateKey = '0x' + hdWalletProvider.wallets[address]._privKey.toString('hex');
@@ -110,9 +115,11 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('should subscribe to completed transaction with transactionHash', async () => {
       try {
-        let result = await sendSignedIncrementAndGet({ transactionHash: true, address: true });
+        const web3c = utils.setupWebsocketProvider(ConfidentialCounter.web3.currentProvider);
+        let result = await sendSignedIncrementAndGet(web3c, { transactionHash: true, address: true });
         assert.equal('0x0000000000000000000000000000000000000000000000000000000000000003', result.returnData);
         assert.equal(result.transactionHash.length, 66);
+        web3c.currentProvider.disconnect();
       } catch (err) {
         assert.fail(err);
       }
@@ -120,9 +127,11 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('should subscribe to completed transaction with fromAddress', async () => {
       try {
-        let result = await sendSignedIncrementAndGet({ fromAddress: true, address: true });
+        const web3c = utils.setupWebsocketProvider(ConfidentialCounter.web3.currentProvider);
+        let result = await sendSignedIncrementAndGet(web3c, { fromAddress: true, address: true });
         assert.equal('0x0000000000000000000000000000000000000000000000000000000000000004', result.returnData);
         assert.equal(result.transactionHash.length, 66);
+        web3c.currentProvider.disconnect();
       } catch (err) {
         assert.fail(err);
       }
