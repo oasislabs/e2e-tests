@@ -18,7 +18,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
     let beforeWeb3c;
     before(async () => {
-      let beforeWeb3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
+      beforeWeb3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
         keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
       });
       contract = await new beforeWeb3c.oasis.Contract(ConfidentialCounter.abi, undefined, {
