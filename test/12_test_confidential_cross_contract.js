@@ -4,15 +4,11 @@ const utils = require('../src/utils');
 const _assert = require('assert');
 
 if (truffleConfig.shouldRun(__filename)) {
-  const web3c = utils.web3cSoftWallet();
-
   contract('Confidential Cross Contract Calls', function (accounts) {
     const options = {
       from: accounts[0],
       gas: '0x100000'
     };
-
-    let callableContract = new web3c.oasis.Contract(CallableCounter.abi, undefined, options);
 
     let bilateralTestCases = [
       {
@@ -66,7 +62,8 @@ if (truffleConfig.shouldRun(__filename)) {
     bilateralTestCases.forEach((testCase) => {
       // Reset the websocket connection to avoid the gateway's "Too many requests" error.
       // See https://github.com/oasislabs/e2e-tests/issues/74.
-      callableContract._requestManager.setProvider(callableContract._requestManager.provider);
+      let web3c = utils.web3cSoftWallet();
+      let callableContract = new web3c.oasis.Contract(CallableCounter.abi, undefined, options);
 
       it(`bilateral: deploys a ${testCase.a.label} and a ${testCase.b.label} contract`, async () => {
         b = await callableContract.deploy({
@@ -163,6 +160,11 @@ if (truffleConfig.shouldRun(__filename)) {
           assert.equal(bCount, 6);
         }
       });
+
+      // Must be the last bilateral test.
+      it('should disconnect the websocket connection', async () => {
+        web3c.currentProvider.disconnect();
+      });
     });
 
     let c;
@@ -224,7 +226,8 @@ if (truffleConfig.shouldRun(__filename)) {
     threePartyCases.forEach((testCase) => {
       // Reset the websocket connection to avoid the gateway's "Too many requests" error.
       // See https://github.com/oasislabs/e2e-tests/issues/74.
-      callableContract._requestManager.setProvider(callableContract._requestManager.provider);
+      let web3c = utils.web3cSoftWallet();
+      let callableContract = new web3c.oasis.Contract(CallableCounter.abi, undefined, options);
 
       it(`3-party: deploys a ${testCase.a.label}, ${testCase.b.label} and a ${testCase.c.label} contract`, async () => {
         c = await callableContract.deploy({
@@ -346,6 +349,10 @@ if (truffleConfig.shouldRun(__filename)) {
         assert.equal(aCount, 1);
         assert.equal(bCount, 2);
         assert.equal(cCount, 3);
+      });
+      // Must be the last bilateral test.
+      it('should disconnect the websocket connection', async () => {
+        web3c.currentProvider.disconnect();
       });
     });
   });

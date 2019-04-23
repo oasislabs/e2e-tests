@@ -31,37 +31,52 @@ if (truffleConfig.shouldRun(__filename)) {
         let dataToEmit = 123;
 
         let instance = await TestEvent.new();
-        const subscribePromise = c.subscription(instance.address);
+        const web3c = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()), undefined, {
+          keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+        });
+        const subscribePromise = c.subscription(web3c, instance.address);
         await instance.emitEvent(dataToEmit);
         try {
           let log = await subscribePromise;
           assert.equal(instance.address, log.address);
           assert.equal(log.data, dataToEmit);
+          web3c.currentProvider.disconnect();
         } catch (err) {
+          web3c.currentProvider.disconnect();
           assert.fail(err);
         }
       });
 
       it(`${c.label}: should subscribe to logs of a confidential contract`, async () => {
-        const subscribePromise = c.subscription(contract.options.address);
+        const web3c = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()), undefined, {
+          keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+        });
+        const subscribePromise = c.subscription(web3c, contract.options.address);
         await contract.methods.incrementCounter().send();
         try {
           let log = await subscribePromise;
           assert.equal(contract.options.address, log.address);
           assert.equal(log.data, c.expectedCounter);
+          web3c.currentProvider.disconnect();
         } catch (err) {
+          web3c.currentProvider.disconnect();
           assert.fail(err);
         }
       });
     });
 
     it('should fail to subscribe to pending transactions', async () => {
+      const web3c = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()), undefined, {
+        keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+      });
       try {
-        const subscribePromise = ethSubscribePromise('pendingTransactions');
+        const subscribePromise = ethSubscribePromise(web3c, 'pendingTransactions');
         await subscribePromise;
+        web3c.currentProvider.disconnect();
         assert.fail('subscribe request shold not have succeeded');
       } catch (err) {
         assert.equal(err.message.indexOf('not implemented yet') > -1, true);
+        web3c.currentProvider.disconnect();
       }
     });
 
@@ -81,8 +96,7 @@ if (truffleConfig.shouldRun(__filename)) {
       return result;
     }
 
-    async function sendSignedIncrementAndGet (filterIncludeParams) {
-      const web3c = utils.setupWebsocketProvider(ConfidentialCounter.web3.currentProvider);
+    async function sendSignedIncrementAndGet (web3c, filterIncludeParams) {
       const hdWalletProvider = ConfidentialCounter.web3.currentProvider;
       const address = Object.keys(hdWalletProvider.wallets)[0];
       const privateKey = '0x' + hdWalletProvider.wallets[address]._privKey.toString('hex');
@@ -110,9 +124,11 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('should subscribe to completed transaction with transactionHash', async () => {
       try {
-        let result = await sendSignedIncrementAndGet({ transactionHash: true, address: true });
+        const web3c = utils.setupWebsocketProvider(ConfidentialCounter.web3.currentProvider);
+        let result = await sendSignedIncrementAndGet(web3c, { transactionHash: true, address: true });
         assert.equal('0x0000000000000000000000000000000000000000000000000000000000000003', result.returnData);
         assert.equal(result.transactionHash.length, 66);
+        web3c.currentProvider.disconnect();
       } catch (err) {
         assert.fail(err);
       }
@@ -120,9 +136,11 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('should subscribe to completed transaction with fromAddress', async () => {
       try {
-        let result = await sendSignedIncrementAndGet({ fromAddress: true, address: true });
+        const web3c = utils.setupWebsocketProvider(ConfidentialCounter.web3.currentProvider);
+        let result = await sendSignedIncrementAndGet(web3c, { fromAddress: true, address: true });
         assert.equal('0x0000000000000000000000000000000000000000000000000000000000000004', result.returnData);
         assert.equal(result.transactionHash.length, 66);
+        web3c.currentProvider.disconnect();
       } catch (err) {
         assert.fail(err);
       }
@@ -130,12 +148,12 @@ if (truffleConfig.shouldRun(__filename)) {
   });
 }
 
-function ethSubscribePromiseLogs (address) {
-  return ethSubscribePromise('logs', { fromBlock: 'latest', toBlock: 'latest', address });
+function ethSubscribePromiseLogs (web3c, address) {
+  return ethSubscribePromise(web3c, 'logs', { fromBlock: 'latest', toBlock: 'latest', address });
 }
 
-function ethSubscribeCallbackLogs (address) {
-  return ethSubscribeCallback('logs', { fromBlock: 'latest', toBlock: 'latest', address });
+function ethSubscribeCallbackLogs (web3c, address) {
+  return ethSubscribeCallback(web3c, 'logs', { fromBlock: 'latest', toBlock: 'latest', address });
 }
 
 function subscribePromise (web3c, type, filter) {
@@ -152,19 +170,11 @@ function subscribePromise (web3c, type, filter) {
   });
 }
 
-function ethSubscribePromise (type, filter) {
-  const web3c = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()), undefined, {
-    keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-  });
-
+function ethSubscribePromise (web3c, type, filter) {
   return subscribePromise(web3c, type, filter);
 }
 
-function ethSubscribeCallback (type, filter) {
-  const web3c = new Web3c(new (new Web3c()).providers.WebsocketProvider(utils.wsProviderUrl()), undefined, {
-    keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-  });
-
+function ethSubscribeCallback (web3c, type, filter) {
   return new Promise(function (resolve, reject) {
     web3c.oasis.subscribe(
       type, filter,

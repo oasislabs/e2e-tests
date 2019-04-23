@@ -9,6 +9,7 @@
     "artifacts": true,
     "contract": true,
     "before": true,
+    "after": true,
     "describe": true
   },
   "rules": {

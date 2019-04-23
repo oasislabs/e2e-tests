@@ -136,6 +136,12 @@ if (truffleConfig.shouldRun(__filename)) {
           assert.equal(incrementEstimatedGas, receipt.gasUsed);
         });
       });
+
+      it('should shut down the websocket connection', () => {
+        if (inst.name === 'ws') {
+          inst.provider.currentProvider.disconnect();
+        }
+      });
     });
   });
 }
