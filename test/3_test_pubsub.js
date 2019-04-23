@@ -15,22 +15,17 @@ if (truffleConfig.shouldRun(__filename)) {
     ];
 
     let contract;
-
-    let beforeWeb3c;
     before(async () => {
-      beforeWeb3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
+      let web3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
         keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
       });
-      contract = await new beforeWeb3c.oasis.Contract(ConfidentialCounter.abi, undefined, {
+      contract = await new web3c.oasis.Contract(ConfidentialCounter.abi, undefined, {
         from: accounts[0]
       }).deploy({
         data: ConfidentialCounter.bytecode
       }).send();
     });
 
-    after(async () => {
-      beforeWeb3c.currentProvider.disconnect();
-    });
 
     cases.forEach((c) => {
       it(`${c.label} should subscribe to logs`, async () => {
