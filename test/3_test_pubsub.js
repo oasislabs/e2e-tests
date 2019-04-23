@@ -26,7 +26,6 @@ if (truffleConfig.shouldRun(__filename)) {
       }).send();
     });
 
-
     cases.forEach((c) => {
       it(`${c.label} should subscribe to logs`, async () => {
         let dataToEmit = 123;
