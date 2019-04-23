@@ -16,7 +16,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
     let contract;
 
-    let beforeWeb3c = undefined;
+    let beforeWeb3c;
     before(async () => {
       let beforeWeb3c = new Web3c(ConfidentialCounter.web3.currentProvider, undefined, {
         keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY

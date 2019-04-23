@@ -4,7 +4,6 @@ const utils = require('../src/utils');
 const _assert = require('assert');
 
 if (truffleConfig.shouldRun(__filename)) {
-
   contract('Confidential Cross Contract Calls', function (accounts) {
     const options = {
       from: accounts[0],
