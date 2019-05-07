@@ -17,7 +17,7 @@ if (truffleConfig.shouldRun(__filename)) {
       let instance;
       let confidential = label === 'confidential';
 
-      it(`${label}: creates a confidential contract that expires tomorrow with success`, async () => {
+      it(`${label}: creates a contract that expires tomorrow with success`, async () => {
         // Given.
         let counterContract = contract;
 
@@ -29,7 +29,11 @@ if (truffleConfig.shouldRun(__filename)) {
             expiry: expectedExpiry,
             confidential
           }
-        }).send();
+        }).send({
+          // Hardcode gas if confidential.
+          // TODO: tighter bound for gasLimit
+          ...(confidential && { gasLimit: 1000000 })
+        });
 
         // Then.
         let resultantExpiry = await instance.expiry();
@@ -43,7 +47,11 @@ if (truffleConfig.shouldRun(__filename)) {
       it(`${label}: can execute transactions and calls on a contract with expiry`, async () => {
         let count = await instance.methods.getCounter().call();
         assert.equal(count, 0);
-        await instance.methods.incrementCounter().send();
+        await instance.methods.incrementCounter().send({
+          // Hardcode gas if confidential.
+          // TODO: tighter bound for gasLimit
+          ...(confidential && { gasLimit: 1000000 })
+        });
         count = await instance.methods.getCounter().call();
         assert.equal(count, 1);
       });
@@ -62,7 +70,11 @@ if (truffleConfig.shouldRun(__filename)) {
                 expiry: expectedExpiry,
                 confidential
               }
-            }).send();
+            }).send({
+              // Hardcode gas if confidential.
+              // TODO: tighter bound for gasLimit
+              ...(confidential && { gasLimit: 1000000 })
+            });
 
             // Then reject.
           }
@@ -77,7 +89,11 @@ if (truffleConfig.shouldRun(__filename)) {
             expiry: Math.floor(Date.now() / 1000 + 20),
             confidential
           }
-        }).send();
+        }).send({
+          // Hardcode gas if confidential.
+          // TODO: tighter bound for gasLimit
+          ...(confidential && { gasLimit: 1000000 })
+        });
         // When.
         await utils.sleep(60 * 1000);
         // Send dummy transaction to make the tendermint clock tick.
@@ -88,7 +104,11 @@ if (truffleConfig.shouldRun(__filename)) {
         });
         // Then.
         _assert.rejects(async function () {
-          await instance.methods.incrementCounter().send();
+          await instance.methods.incrementCounter().send({
+            // Hardcode gas if confidential.
+            // TODO: tighter bound for gasLimit
+            ...(confidential && { gasLimit: 1000000 })
+          });
         });
       });
     });
