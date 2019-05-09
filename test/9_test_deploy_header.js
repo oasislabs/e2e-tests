@@ -1,16 +1,15 @@
 const Counter = artifacts.require('Counter');
 const truffleConfig = require('../truffle-config');
 const Web3c = require('web3c');
-const web3c = new Web3c(Counter.web3.currentProvider, undefined, {
-  keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-});
 const _assert = require('assert');
 const utils = require('../src/utils');
+const web3c = utils.setupWebsocketProvider(Counter.web3.currentProvider);
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Deploy Header', async (accounts) => {
     let contract = new web3c.oasis.Contract(Counter.abi, undefined, {
-      from: accounts[0]
+      from: accounts[0],
+      gas: '0x100000'
     });
     let labels = ['confidential', 'eth'];
     labels.forEach((label) => {
@@ -45,14 +44,14 @@ if (truffleConfig.shouldRun(__filename)) {
       });
 
       it(`${label}: can execute transactions and calls on a contract with expiry`, async () => {
-        let count = await instance.methods.getCounter().call();
+        let count = await instance.methods.getCounter().invoke();
         assert.equal(count, 0);
         await instance.methods.incrementCounter().send({
           // Hardcode gas if confidential.
           // TODO: tighter bound for gasLimit
           ...(confidential && { gasLimit: 1000000 })
         });
-        count = await instance.methods.getCounter().call();
+        count = await instance.methods.getCounter().invoke();
         assert.equal(count, 1);
       });
 
