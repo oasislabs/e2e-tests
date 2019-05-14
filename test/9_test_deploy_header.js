@@ -56,7 +56,7 @@ if (truffleConfig.shouldRun(__filename)) {
       });
 
       it(`${label}: creates a contract that expires yesterday with failure`, async () => {
-        _assert.rejects(
+        await _assert.rejects(
           async function () {
             // Given.
             let counterContract = contract;
@@ -99,7 +99,8 @@ if (truffleConfig.shouldRun(__filename)) {
         await web3c.eth.sendTransaction({
           from: accounts[0],
           to: web3c.eth.accounts.create().address,
-          value: 100
+          value: 100,
+          gas: 2100
         });
         // Then.
         _assert.rejects(async function () {
