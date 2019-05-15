@@ -17,7 +17,8 @@ if (truffleConfig.shouldRun(__filename)) {
       },
       {
         storage: new web3c.oasis.Contract(BulkStorage.abi, undefined, {
-          from: accounts[0]
+          from: accounts[0],
+          gas: '0x100000'
         }),
         label: 'confidential'
       }
@@ -47,51 +48,77 @@ if (truffleConfig.shouldRun(__filename)) {
         }
       ];
 
+      let confidential = contract.label === 'confidential';
+
       // The deployed contract instance to use in all the subsequent tests.
       let instance;
 
       it(`${contract.label}: deploys a bulk storage contract`, async () => {
         instance = await contract.storage.deploy({ data: BulkStorage.bytecode }).send({
-          from: accounts[0]
+          from: accounts[0],
+          // Hardcode gas if confidential.
+          // TODO: tighter bound for gasLimit
+          ...(confidential && { gasLimit: 1000000 })
         });
         assert.equal(instance.options.address.length, 42);
       });
 
       tests.forEach((test) => {
         it(`${contract.label}: stores data ${test.description} with the set_bytes interface`, async () => {
-          let receipt = await instance.methods.set_bulk_storage(test.key, test.value).send();
+          let receipt = await instance.methods.set_bulk_storage(test.key, test.value).send({
+            from: accounts[0],
+            // Hardcode gas if confidential.
+            // TODO: tighter bound for gasLimit
+            ...(confidential && { gasLimit: 10000000 })
+          });
           assert.equal(receipt.status, true);
         });
 
-        it(`${contract.label}: retrieves data ${test.description} with the get_bytes interface`, async () => {
-          let storage = await instance.methods.get_bulk_storage(test.key).call();
-          assert.equal(test.value, storage);
-        });
+        // We don't have confidential call, and invoke doesn't work with
+        // with method parameters: https://github.com/oasislabs/web3c.js/issues/176
+        if (!confidential) {
+          it(`${contract.label}: retrieves data ${test.description} with the get_bytes interface`, async () => {
+            let storage = await instance.methods.get_bulk_storage(test.key).call();
+            assert.equal(test.value, storage);
+          });
+        }
 
-        it(`${contract.label}: retrieves H256::zero() when reading the same key (from previously set bulk storage with data ${test.description}) from the oasis_std::ext::read interface`, async () => {
-          let storage = await instance.methods.read_h256_storage(test.key).call();
-          assert.equal(storage, 0);
-        });
+        // We don't have confidential call, and invoke doesn't work with
+        // with method parameters: https://github.com/oasislabs/web3c.js/issues/176
+        if (!confidential) {
+          it(`${contract.label}: retrieves H256::zero() when reading the same key (from previously set bulk storage with data ${test.description}) from the oasis_std::ext::read interface`, async () => {
+            let storage = await instance.methods.read_h256_storage(test.key).call();
+            assert.equal(storage, 0);
+          });
+        }
 
-        it(`${contract.label}: writes two different non-conflicting values when writing to bulk storage and the H256 interface`, async () => {
-          let receipt = await instance.methods.set_h256_storage(test.key, test.key).send();
-          assert.equal(receipt.status, true);
+        // We don't have confidential call, and invoke doesn't work with
+        // with method parameters: https://github.com/oasislabs/web3c.js/issues/176
+        if (!confidential) {
+          it(`${contract.label}: writes two different non-conflicting values when writing to bulk storage and the H256 interface`, async () => {
+            let receipt = await instance.methods.set_h256_storage(test.key, test.key).send();
+            assert.equal(receipt.status, true);
 
-          let storage = await instance.methods.read_h256_storage(test.key).call();
-          let bulkStorage = await instance.methods.get_bulk_storage(test.key).call();
+            let storage = await instance.methods.read_h256_storage(test.key).call();
+            let bulkStorage = await instance.methods.get_bulk_storage(test.key).call();
 
-          assert.equal(storage, test.key);
-          assert.equal(bulkStorage, test.value);
-        });
+            assert.equal(storage, test.key);
+            assert.equal(bulkStorage, test.value);
+          });
+        }
       });
 
-      it(`${contract.label}: retrieves an empty bulk storage for storage that has never been set`, async () => {
-        let key = [
-          1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-        ];
-        let storage = await instance.methods.get_bulk_storage(key).call();
-        assert.equal(storage, null);
-      });
+      // We don't have confidential call, and invoke doesn't work with
+      // with method parameters: https://github.com/oasislabs/web3c.js/issues/176
+      if (!confidential) {
+        it(`${contract.label}: retrieves an empty bulk storage for storage that has never been set`, async () => {
+          let key = [
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+          ];
+          let storage = await instance.methods.get_bulk_storage(key).call();
+          assert.equal(storage, null);
+        });
+      }
     });
   });
 }
