@@ -1,6 +1,5 @@
 const Counter = artifacts.require('Counter');
 const truffleConfig = require('../truffle-config');
-const Web3c = require('web3c');
 const _assert = require('assert');
 const utils = require('../src/utils');
 const web3c = utils.setupWebsocketProvider(Counter.web3.currentProvider);
