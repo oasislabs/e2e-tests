@@ -20,7 +20,8 @@ if (truffleConfig.shouldRun(__filename)) {
         keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
       });
       contract = await new web3c.oasis.Contract(ConfidentialCounter.abi, undefined, {
-        from: accounts[0]
+        from: accounts[0],
+        gas: '0x100000'
       }).deploy({
         data: ConfidentialCounter.bytecode
       }).send();
@@ -52,7 +53,11 @@ if (truffleConfig.shouldRun(__filename)) {
           keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
         });
         const subscribePromise = c.subscription(web3c, contract.options.address);
-        await contract.methods.incrementCounter().send();
+        await contract.methods.incrementCounter().send({
+          // Hardcode gas since we don't have confidential estimateGas.
+          // TODO: tighter bound for gasLimit
+          gasLimit: 1000000
+        });
         try {
           let log = await subscribePromise;
           assert.equal(contract.options.address, log.address);
