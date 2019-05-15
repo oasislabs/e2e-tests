@@ -18,7 +18,8 @@ if (truffleConfig.shouldRun(__filename)) {
     const expectedTimestamp8Array = new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]);
     // Contract we will be testing against.
     let counterContract = new web3c.oasis.Contract(Counter.abi, undefined, {
-      from: accounts[0]
+      from: accounts[0],
+      gas: '0x100000'
     });
     // System log output by the confidential vm. Expect the log to be of the
     // form public_key || sign(public_key).
@@ -86,7 +87,11 @@ if (truffleConfig.shouldRun(__filename)) {
       // Ensure we overflow at least one byte in the counter.
       const numEvents = 256 + 1;
       // Execute a transaction to trigger a bunch of logs to be encrypted.
-      const decryptedReceipt = await counterContract.methods.incrementCounterManyTimes(numEvents).send();
+      const decryptedReceipt = await counterContract.methods.incrementCounterManyTimes(numEvents).send({
+        // Hardcode gas since we don't have confidential estimateGas.
+        // TODO: tighter bound for gasLimit
+        gasLimit: 10000000
+      });
       // First check the decrypted data is as expected (web3c will decrypt  automatically).
       const events = decryptedReceipt.events.Incremented;
       assert.equal(events.length, numEvents);
@@ -117,18 +122,6 @@ if (truffleConfig.shouldRun(__filename)) {
         .oasis
         .getPublicKey('0x0000000000000000000000000000000000000000');
       assert.equal(payload, null);
-    });
-
-    it('should yield a larger estimate for confidential transactions than non-confidential', async () => {
-      const confidentialContract = new web3c.oasis.Contract(Counter.abi);
-      const confidentialDeploy = confidentialContract.deploy({ data: Counter.bytecode });
-      const confidentialEstimatedGas = await confidentialDeploy.estimateGas();
-
-      const contract = new web3c.eth.Contract(Counter.abi);
-      const deploy = contract.deploy({ data: Counter.bytecode });
-      const estimatedGas = await deploy.estimateGas();
-
-      assert.equal(confidentialEstimatedGas - estimatedGas > 0, true);
     });
   });
 }
