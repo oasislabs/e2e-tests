@@ -3,12 +3,38 @@ const truffleConfig = require('../truffle-config');
 const utils = require('../src/utils');
 const _assert = require('assert');
 
+const Factory = artifacts.require('Factory');
+const FactoryInstance = artifacts.require('FactoryInstance');
+
 if (truffleConfig.shouldRun(__filename)) {
   contract('Confidential Cross Contract Calls', function (accounts) {
+
     const options = {
       from: accounts[0],
       gas: '0x100000'
     };
+
+    it('Creates a confidential contract from a confidential contract', async function () {
+      const Web3c = require('web3c');
+      const web3c = new Web3c(FactoryInstance.web3.currentProvider, undefined, {
+	      keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
+	  });
+
+      let factory = new web3c.oasis.Contract(Factory.abi, Factory.address, options);
+
+      let receipt = await factory.methods.deployContract(33, 55, [1,2,3]).send();
+
+      let deployedAddr = receipt.events.Addr.returnValues.addr;
+
+      let deployed = new web3c.oasis.Contract(FactoryInstance.abi, deployedAddr, options);
+
+      let a = await deployed.methods.retrieveA().call();
+      let b = await deployed.methods.retrieveB().call();
+      let c = await deployed.methods.retrieveC().call();
+
+      assert.equal(a, 33);
+      assert.equal(b, 55);
+    });
 
     let bilateralTestCases = [
       {

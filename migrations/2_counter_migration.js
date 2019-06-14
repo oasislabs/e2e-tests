@@ -3,6 +3,7 @@ const ConfidentialCounter = artifacts.require("ConfidentialCounter");
 const ConfidentialStartCounter = artifacts.require("ConfidentialStartCounter");
 const WasmCounter = artifacts.require("WasmCounter");
 const ConfidentialWasmCounter = artifacts.require("ConfidentialWasmCounter");
+const Factory = artifacts.require("Factory");
 const truffleConfig = require('../truffle-config');
 
 module.exports = function(deployer) {
@@ -23,6 +24,11 @@ module.exports = function(deployer) {
   // Deploy wasm contracts.
   deployer.deploy(WasmCounter);
   deployer.deploy(ConfidentialWasmCounter, {
+    oasis: {
+      confidential: true
+    }
+  });
+  deployer.deploy(Factory, {
     oasis: {
       confidential: true
     }
