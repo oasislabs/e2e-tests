@@ -3,8 +3,30 @@ const truffleConfig = require('../truffle-config');
 const utils = require('../src/utils');
 const _assert = require('assert');
 
+const Factory = artifacts.require('Factory');
+const FactoryInstance = artifacts.require('FactoryInstance');
+
 if (truffleConfig.shouldRun(__filename)) {
   contract('Confidential Cross Contract Calls', function (accounts) {
+
+	it('Creates a confidential contract from a confidential contract', async function () {
+	  const Web3c = require('web3c');
+	  const web3c = new Web3c(FactoryInstance.web3.currentProvider);
+	  const options = { from: accounts[0] };
+
+	  let factory = new web3c.oasis.Contract(Factory.abi, Factory.address, options);
+
+	  let receipt = await factory.methods.deployContract(33).send();
+
+	  let deployedAddr = receipt.events.Addr.returnValues.addr;
+
+	  let deployed = new web3c.oasis.Contract(FactoryInstance.abi, deployedAddr);
+
+	  let a = await deployed.methods.retrieveA().call();
+
+	  _assert.equal(a, 33);
+	});
+
     const options = {
       from: accounts[0],
       gas: '0x100000'
