@@ -11,6 +11,8 @@ const MNEMONIC = process.env.MNEMONIC;
  */
 const HTTPS_PROVIDER_URL = process.env.HTTPS_PROVIDER_URL;
 const WS_PROVIDER_URL = process.env.WS_PROVIDER_URL;
+const DEVELOPER_GATEWAY_URL = process.env.DEVELOPER_GATEWAY_URL;
+
 /**
  * Get network name from args.
  */
@@ -151,5 +153,7 @@ module.exports = {
   HTTPS_PROVIDER_URL,
   TEST_TIMESTAMP,
   WS_PROVIDER_URL,
+  DEVELOPER_GATEWAY_URL,
+  MNEMONIC,
   shouldRun
 };
