@@ -1,8 +1,6 @@
 const Counter = artifacts.require("Counter");
 const ConfidentialCounter = artifacts.require("ConfidentialCounter");
 const ConfidentialStartCounter = artifacts.require("ConfidentialStartCounter");
-const WasmCounter = artifacts.require("WasmCounter");
-const ConfidentialWasmCounter = artifacts.require("ConfidentialWasmCounter");
 const truffleConfig = require('../truffle-config');
 
 module.exports = function(deployer) {
@@ -18,13 +16,6 @@ module.exports = function(deployer) {
     oasis: {
       confidential: true,
       expiry: truffleConfig.TEST_TIMESTAMP + 24*60*60
-    }
-  });
-  // Deploy wasm contracts.
-  deployer.deploy(WasmCounter);
-  deployer.deploy(ConfidentialWasmCounter, {
-    oasis: {
-      confidential: true
     }
   });
 }
