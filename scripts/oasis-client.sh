@@ -17,6 +17,7 @@ mkdir tmp
 pushd tmp
     git clone https://github.com/oasislabs/oasis-client.git
     pushd oasis-client
+      git checkout armani/test
       yarn
       yarn build
       ln -s $(pwd)/node_modules/client $(pwd)/../../node_modules/client
