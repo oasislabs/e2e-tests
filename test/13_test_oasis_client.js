@@ -15,15 +15,12 @@ if (truffleConfig.shouldRun(__filename)) {
         ),
         completion: test => test.gateway.disconnect(),
         options: { gasLimit: '0xf00000' }
-      }
-      // TODO: https://github.com/oasislabs/developer-gateway/issues/112
-      /*
+      },
       {
         gateway: oasis.gateways.DeveloperGateway.http(truffleConfig.DEVELOPER_GATEWAY_URL),
         completion: _test => {},
         options: undefined
       }
-      */
     ];
 
     gateways.forEach(test => {
