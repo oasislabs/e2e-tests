@@ -17,7 +17,7 @@ if (truffleConfig.shouldRun(__filename)) {
         options: { gasLimit: '0xf00000' }
       },
       {
-        gateway: oasis.gateways.DeveloperGateway.http(truffleConfig.DEVELOPER_GATEWAY_URL),
+        gateway: new oasis.gateways.DeveloperGateway(truffleConfig.DEVELOPER_GATEWAY_URL),
         completion: _test => {},
         options: undefined
       }
