@@ -1,6 +1,6 @@
 const Counter = artifacts.require('Counter');
 const truffleConfig = require('../truffle-config');
-const oasis = require('client');
+const oasis = require('@oasislabs/client');
 const utils = require('../src/utils');
 
 if (truffleConfig.shouldRun(__filename)) {

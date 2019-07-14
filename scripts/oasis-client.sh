@@ -15,10 +15,10 @@ fi
 
 mkdir tmp
 pushd tmp
-    git clone https://github.com/oasislabs/oasis-client.git
+    git clone https://github.com/oasislabs/oasis.js.git
     pushd oasis-client
       yarn
       yarn build
-      ln -s $(pwd)/node_modules/client $(pwd)/../../node_modules/client
+      ln -s $(pwd)/node_modules/@oasislabs $(pwd)/../../node_modules/@oasislabs
     popd
 popd
