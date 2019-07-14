@@ -16,7 +16,7 @@ fi
 mkdir tmp
 pushd tmp
     git clone https://github.com/oasislabs/oasis.js.git
-    pushd oasis-client
+    pushd oasis.js
       yarn
       yarn build
       ln -s $(pwd)/node_modules/@oasislabs $(pwd)/../../node_modules/@oasislabs
