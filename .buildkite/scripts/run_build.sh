@@ -41,6 +41,8 @@ rustup update nightly
 rustup default nightly
 cargo install --git https://github.com/oasislabs/oasis-cli.git oasis-cli
 cargo install --git https://github.com/oasislabs/mantle.git mantle-build
+# So we ignore oasis-cli prompts.
+touch ~/.config/oasis/config.toml
 
 # Install e2e-test dependencies.
 npm install
