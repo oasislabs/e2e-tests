@@ -39,6 +39,7 @@ ssh-add || true
 # Install mantle deps
 rustup update nightly
 rustup default nightly
+rustup target add wasm32-wasi
 cargo install --git https://github.com/oasislabs/oasis-cli.git oasis-cli
 cargo install --git https://github.com/oasislabs/mantle.git mantle-build
 # So we ignore oasis-cli prompts.
@@ -46,13 +47,13 @@ mkdir -p ~/.config/oasis/
 touch ~/.config/oasis/config.toml
 
 # Install e2e-test dependencies.
-#npm install
+npm install
 
 # Lint Check.
-#npm run lint
+npm run lint
 
 # Compile the contracts.
-#npm run compile:truffle
+npm run compile:truffle
 npm run compile:mantle
 
 # Finally move the build to the out directory.
