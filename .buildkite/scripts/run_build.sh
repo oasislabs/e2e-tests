@@ -37,6 +37,8 @@ ssh-add || true
 ################################################################################
 
 # Install mantle deps
+rustup update nightly
+rustup default nightly
 cargo install --git https://github.com/oasislabs/oasis-cli.git oasis-cli
 cargo install --git https://github.com/oasislabs/mantle.git mantle-build
 

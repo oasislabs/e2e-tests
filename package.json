@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "oasis-compile clean",
     "compile:truffle": "./node_modules/.bin/truffle compile",
-    "compile:mantle": "./scripts/compile-mantle",
+    "compile:mantle": "./scripts/compile-mantle.sh",
     "lint": "eslint *.js test/ src/ truffle-config.js",
     "lint:fix": "eslint *.js test/ src/ truffle-config.js --fix",
     "test:development": "./test.sh ./node_modules/.bin/truffle test --network development",
