@@ -99,6 +99,7 @@ if (truffleConfig.shouldRun(__filename)) {
                 let logs = [];
                 service.addEventListener('Incremented', function listener (event) {
                   logs.push(event);
+                  console.log("event = ", event);
                   if (logs.length === 3) {
                     service.removeEventListener('Incremented', listener);
                     resolve(logs);
