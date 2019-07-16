@@ -3,11 +3,10 @@ const truffleConfig = require('../truffle-config');
 const oasis = require('@oasislabs/client');
 const utils = require('../src/utils');
 
-let s = truffleConfig.shouldRun(__filename);
-console.log('should run = ', s);
-
-//if (truffleConfig.shouldRun(__filename)) {
+if (truffleConfig.shouldRun(__filename)) {
+  console.log('Running test', __filename);
   contract('Oasis client', async (accounts) => {
+    console.log('runniing test with accounts', accounts);
     const services = [
       {
         idl: Counter.abi,
@@ -56,9 +55,11 @@ console.log('should run = ', s);
       }
     ];
 
+    console.log('now here');
     services.forEach(serviceConfig => {
       gateways.forEach(gatewayConfig => {
         headers.forEach(headerConfig => {
+          console.log(' here!!!!!!!!!!!!!!!!');
           let prefix = `${serviceConfig.label}/${gatewayConfig.label}/${headerConfig.label}`;
           let service;
 
@@ -125,4 +126,4 @@ console.log('should run = ', s);
       });
     });
   });
-//}
+}
