@@ -56,8 +56,8 @@ if (truffleConfig.shouldRun(__filename)) {
     ];
     console.log('headers = ', headers);
     console.log('now here');
-    services.forEach(serviceConfig => {
-      gateways.forEach(gatewayConfig => {
+    gateways.forEach(gatewayConfig => {
+      services.forEach(serviceConfig => {
         headers.forEach(headerConfig => {
           // We don't support confidential solidity.
           if (!headerConfig.header.confidential || serviceConfig.label !== 'solidity') {
