@@ -89,12 +89,9 @@ if (truffleConfig.shouldRun(__filename)) {
               let afterSetCount2 = await service.getCounter(gatewayConfig.options);
 
               assert.equal(beforeCount, 0);
-              assert.equal(result, null);
               assert.equal(afterCount, 1);
               assert.equal(afterSetCount, 6);
-              assert.equal(setResult, null);
               assert.equal(afterSetCount2, 9);
-              assert.equal(setResult2, null);
             });
 
             it(`${prefix}: listens for three service events`, async () => {
@@ -120,7 +117,7 @@ if (truffleConfig.shouldRun(__filename)) {
                 // Solidity coder uses big numbers.
                 if (serviceConfig.label === 'solidity') {
                   currentCounter = currentCounter.toNumber();
-                  oldCounter = oldCounter.toNumber();
+                  lastCounter = lastCounter.toNumber();
                 }
                 assert.equal(currentCounter - lastCounter, 1);
               }

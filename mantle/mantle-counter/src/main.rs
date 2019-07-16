@@ -1,10 +1,11 @@
 use mantle::{Context, Service, Event};
 use serde::{Serialize, Deserialize};
 
+// Use camelCase to match solidity for test cases :(.
 #[derive(Serialize, Deserialize, Event)]
 pub struct Incremented {
     #[indexed]
-    pub count: u64,
+    pub newCounter: u64,
 }
 
 #[derive(Service)]
@@ -12,7 +13,6 @@ pub struct MantleCounter {
     count: u64,
 }
 
-// Use camelCase to match solidity for test cases :(.
 impl MantleCounter {
     pub fn new(_ctx: &Context) -> Result<Self, String> {
         Ok(Self { count: 0 })
