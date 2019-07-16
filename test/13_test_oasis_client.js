@@ -33,15 +33,15 @@ if (truffleConfig.shouldRun(__filename)) {
         completion: test => test.gateway.disconnect(),
         options: { gasLimit: '0xf00000' },
         label: 'web3-gw'
-      },
-	  /*
+      }
+      /*
       {
         gateway: new oasis.gateways.Gateway(truffleConfig.DEVELOPER_GATEWAY_URL),
         completion: _test => {},
         options: undefined,
         label: 'dev-gw',
       }
-	  */
+      */
     ];
     console.log('gateways = ', gateways);
     const headers = [
@@ -61,7 +61,6 @@ if (truffleConfig.shouldRun(__filename)) {
         headers.forEach(headerConfig => {
           // We don't support confidential solidity.
           if (!headerConfig.header.confidential || serviceConfig.label !== 'solidity') {
-
             let prefix = `${serviceConfig.label}/${gatewayConfig.label}/${headerConfig.label}`;
             let service;
 
@@ -81,11 +80,11 @@ if (truffleConfig.shouldRun(__filename)) {
 
             it(`${prefix}: executes an rpc`, async () => {
               let beforeCount = await service.getCounter(gatewayConfig.options);
-              let result = await service.incrementCounter(gatewayConfig.options);
+              await service.incrementCounter(gatewayConfig.options);
               let afterCount = await service.getCounter(gatewayConfig.options);
-              let setResult = await service.setCounter(6, gatewayConfig.options);
+              await service.setCounter(6, gatewayConfig.options);
               let afterSetCount = await service.getCounter(gatewayConfig.options);
-              let setResult2 = await service.setCounter2(10, 9, gatewayConfig.options);
+              await service.setCounter2(10, 9, gatewayConfig.options);
               let afterSetCount2 = await service.getCounter(gatewayConfig.options);
 
               assert.equal(beforeCount, 0);
@@ -99,7 +98,7 @@ if (truffleConfig.shouldRun(__filename)) {
                 let logs = [];
                 service.addEventListener('Incremented', function listener (event) {
                   logs.push(event);
-                  console.log("event = ", event);
+                  console.log('event = ', event);
                   if (logs.length === 3) {
                     service.removeEventListener('Incremented', listener);
                     resolve(logs);
@@ -114,7 +113,7 @@ if (truffleConfig.shouldRun(__filename)) {
                 // Depending upon the gateway's view, we might get the log for the previous test,
                 // so just ensure the logs received are monotonically increasing.
                 let currentCounter = logs[k].newCounter;
-                let lastCounter = logs[k-1].newCounter;
+                let lastCounter = logs[k - 1].newCounter;
                 // Solidity coder uses big numbers.
                 if (serviceConfig.label === 'solidity') {
                   currentCounter = currentCounter.toNumber();

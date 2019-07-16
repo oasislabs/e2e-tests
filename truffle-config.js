@@ -73,9 +73,6 @@ const TEST_TIMESTAMP = Math.floor(Date.now() / 1000);
 function shouldRun (filename) {
   let testNumber = parseInt(path.basename(filename).split('_')[0]);
   let testsToRun = makeBuckets()[PARALLELISM_BUCKET];
-  if (PARALLELISM_BUCKET === 0) {
-	throw new Error("");
-  }
   return testsToRun.includes(testNumber);
 }
 /**
