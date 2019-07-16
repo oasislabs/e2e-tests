@@ -17,13 +17,13 @@ if (truffleConfig.shouldRun(__filename)) {
       {
         idl: undefined,
         bytecode: require('fs').readFileSync(
-          '/root/tests/e2e-tests/mantle/mantle-counter/target/service/mantle-counter.wasm'
+          '/workdir/tests/e2e-tests/mantle/mantle-counter/target/service/mantle-counter.wasm'
         ),
         coder: undefined,
         label: 'mantle'
       }
     ];
-
+    console.log('services = ', services);
     const gateways = [
       {
         gateway: new oasis.gateways.Web3Gateway(
@@ -43,7 +43,7 @@ if (truffleConfig.shouldRun(__filename)) {
       }
       */
     ];
-
+    console.log('gateways = ', gateways);
     const headers = [
       {
         header: { confidential: true },
@@ -54,7 +54,7 @@ if (truffleConfig.shouldRun(__filename)) {
         label: 'non-confidential'
       }
     ];
-
+    console.log('headers = ', headers);
     console.log('now here');
     services.forEach(serviceConfig => {
       gateways.forEach(gatewayConfig => {
