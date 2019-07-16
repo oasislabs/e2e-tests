@@ -36,6 +36,10 @@ ssh-add || true
 # Now we can start the build.
 ################################################################################
 
+# Install mantle deps
+cargo install --git https://github.com/oasislabs/oasis-cli.git oasis-cli
+cargo install --git https://github.com/oasislabs/mantle.git mantle-build
+
 # Install e2e-test dependencies.
 npm install
 
@@ -43,7 +47,8 @@ npm install
 npm run lint
 
 # Compile the contracts.
-npm run compile
+npm run compile:truffle
+npm run compile:mantle
 
 # Finally move the build to the out directory.
 zip -r build.zip build
