@@ -59,7 +59,12 @@ if (truffleConfig.shouldRun(__filename)) {
     services.forEach(serviceConfig => {
       gateways.forEach(gatewayConfig => {
         headers.forEach(headerConfig => {
-          console.log(' here!!!!!!!!!!!!!!!!');
+
+          // We don't support confidential solidity.
+          if (headerConfig.header.confidential && serviceConfig.label === 'solidity') {
+            continue;
+          }
+
           let prefix = `${serviceConfig.label}/${gatewayConfig.label}/${headerConfig.label}`;
           let service;
 
@@ -113,7 +118,14 @@ if (truffleConfig.shouldRun(__filename)) {
             for (let k = 1; k < logs.length; k += 1) {
               // Depending upon the gateway's view, we might get the log for the previous test,
               // so just ensure the logs received are monotonically increasing.
-              assert.equal(logs[k].newCounter.toNumber() - logs[k - 1].newCounter.toNumber(), 1);
+              let currentCounter = logs[k].newCounter;
+              let lastCounter = logs[k-1].newCounter;
+              // Solidity coder uses big numbers.
+              if (serviceConfig.label === 'solidity') {
+                currentCounter = currentCounter.toNumber();
+                oldCounter = oldCounter.toNumber();
+              }
+              assert.equal(currentCounter - lastCounter, 1);
             }
           });
         });
