@@ -3,7 +3,10 @@ const truffleConfig = require('../truffle-config');
 const oasis = require('@oasislabs/client');
 const utils = require('../src/utils');
 
-if (truffleConfig.shouldRun(__filename)) {
+let s = truffleConfig.shouldRun(__fiilename);
+console.log('should run = ', s);
+
+//if (truffleConfig.shouldRun(__filename)) {
   contract('Oasis client', async (accounts) => {
     const services = [
       {
@@ -122,4 +125,4 @@ if (truffleConfig.shouldRun(__filename)) {
       });
     });
   });
-}
+//}
