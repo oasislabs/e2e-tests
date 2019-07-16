@@ -3,7 +3,7 @@ const truffleConfig = require('../truffle-config');
 const oasis = require('@oasislabs/client');
 const utils = require('../src/utils');
 
-let s = truffleConfig.shouldRun(__fiilename);
+let s = truffleConfig.shouldRun(__filename);
 console.log('should run = ', s);
 
 //if (truffleConfig.shouldRun(__filename)) {
