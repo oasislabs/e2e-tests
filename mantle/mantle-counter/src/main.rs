@@ -1,4 +1,4 @@
-use mantle::{Context, Service, Event};
+use oasis_std::{Context, Service, Event};
 use serde::{Serialize, Deserialize};
 
 // Use camelCase to match solidity for test cases :(.
