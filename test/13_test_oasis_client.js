@@ -34,12 +34,14 @@ if (truffleConfig.shouldRun(__filename)) {
         options: { gasLimit: '0xf00000' },
         label: 'web3-gw'
       },
+	  /*
       {
-        gateway: new oasis.gateways.DeveloperGateway(truffleConfig.DEVELOPER_GATEWAY_URL),
+        gateway: new oasis.gateways.Gateway(truffleConfig.DEVELOPER_GATEWAY_URL),
         completion: _test => {},
         options: undefined,
         label: 'dev-gw',
       }
+	  */
     ];
     console.log('gateways = ', gateways);
     const headers = [
