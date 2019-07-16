@@ -42,5 +42,5 @@ impl MantleCounter {
 }
 
 fn main() {
-    mantle::service!(MantleCounter);
+    oasis_std::service!(MantleCounter);
 }
