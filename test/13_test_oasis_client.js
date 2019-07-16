@@ -46,12 +46,12 @@ if (truffleConfig.shouldRun(__filename)) {
     console.log('gateways = ', gateways);
     const headers = [
       {
-        header: { confidential: true },
-        label: 'confidential'
-      },
-      {
         header: { confidential: false },
         label: 'non-confidential'
+      },
+      {
+        header: { confidential: true },
+        label: 'confidential'
       }
     ];
     console.log('headers = ', headers);
