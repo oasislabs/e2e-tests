@@ -42,7 +42,7 @@ rustup default nightly
 rustup target add wasm32-wasi
 cargo install --git https://github.com/oasislabs/oasis-cli.git oasis-cli
 cargo install --git https://github.com/oasislabs/mantle.git mantle-build
-# So we ignore oasis-cli prompts.
+# So we can skip the oasis-cli startup prompts.
 mkdir -p ~/.config/oasis/
 touch ~/.config/oasis/config.toml
 
