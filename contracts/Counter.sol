@@ -18,6 +18,14 @@ contract Counter {
     emit Incremented(_counter);
   }
 
+  function setCounter(uint256 counter) public {
+	_counter = counter;
+  }
+
+  function setCounter2(uint256 counter, uint256 counter2) public {
+	_counter = counter2;
+  }
+
   function incrementAndGetCounter() public view returns (uint256) {
     _counter += 1;
     return _counter;

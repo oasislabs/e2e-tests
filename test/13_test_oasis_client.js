@@ -5,7 +5,22 @@ const utils = require('../src/utils');
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Oasis client', async (accounts) => {
-    let service;
+    const services = [
+      {
+        idl: Counter.abi,
+        bytecode: Counter.bytecode,
+        coder: new oasis.utils.EthereumCoder(),
+        label: 'solidity'
+      },
+      {
+        idl: undefined,
+        bytecode: require('fs').readFileSync(
+          '/root/tests/e2e-tests/mantle/mantle-counter/target/service/mantle-counter.wasm'
+        ),
+        coder: undefined,
+        label: 'mantle'
+      }
+    ];
 
     const gateways = [
       {
@@ -14,60 +29,96 @@ if (truffleConfig.shouldRun(__filename)) {
           oasis.Wallet.fromMnemonic(truffleConfig.MNEMONIC)
         ),
         completion: test => test.gateway.disconnect(),
-        options: { gasLimit: '0xf00000' }
-      },
+        options: { gasLimit: '0xf00000' },
+        label: 'web3-gw'
+      }
+      /*
       {
         gateway: new oasis.gateways.DeveloperGateway(truffleConfig.DEVELOPER_GATEWAY_URL),
         completion: _test => {},
-        options: undefined
+        options: undefined,
+        label: 'dev-gw',
+      }
+      */
+    ];
+
+    const headers = [
+      {
+        header: { confidential: true },
+        label: 'confidential'
+      },
+      {
+        header: { confidential: false },
+        label: 'non-confidential'
       }
     ];
 
-    gateways.forEach(test => {
-      it('deploys a non-confidential ethereum service', async () => {
-        let coder = new oasis.utils.EthereumCoder();
+    services.forEach(serviceConfig => {
+      gateways.forEach(gatewayConfig => {
+        headers.forEach(headerConfig => {
+          let prefix = `${serviceConfig.label}/${gatewayConfig.label}/${headerConfig.label}`;
+          let service;
 
-        service = await oasis.deploy({
-          idl: Counter.abi,
-          bytecode: Counter.bytecode,
-          arguments: [],
-          header: { confidential: false },
-          coder,
-          gateway: test.gateway
-        });
-      });
+          it(`${prefix}: sets the default gateway`, () => {
+            oasis.setGateway(gatewayConfig.gateway);
+          });
 
-      it('executes an rpc', async () => {
-        let beforeCount = await service.getCounter(test.options);
-        await service.incrementCounter(test.options);
-        let afterCount = await service.getCounter(test.options);
+          it(`${prefix}: deploys a service`, async () => {
+            service = await oasis.deploy({
+              idl: serviceConfig.idl,
+              bytecode: serviceConfig.bytecode,
+              arguments: [],
+              header: headerConfig.header,
+              coder: serviceConfig.coder
+            });
+          });
 
-        assert.equal(beforeCount.toNumber(), 0);
-        assert.equal(afterCount.toNumber(), 1);
-      });
+          it(`${prefix}: executes an rpc`, async () => {
+            let beforeCount = await service.getCounter(gatewayConfig.options);
+            let result = await service.incrementCounter(gatewayConfig.options);
+            let afterCount = await service.getCounter(gatewayConfig.options);
+            let setResult = await service.setCounter(6, gatewayConfig.options);
+            let afterSetCount = await service.getCounter(gatewayConfig.options);
+            let setResult2 = await service.setCounter2(10, 9, gatewayConfig.options);
+            let afterSetCount2 = await service.getCounter(gatewayConfig.options);
 
-      it(`listens for three service events`, async () => {
-        let logs = await new Promise(async resolve => {
-          let logs = [];
-          service.addEventListener('Incremented', function listener (event) {
-            logs.push(event);
-            if (logs.length === 3) {
-              service.removeEventListener('Incremented', listener);
-              resolve(logs);
+            assert.equal(beforeCount, 0);
+            assert.equal(result, null);
+            assert.equal(afterCount, 1);
+            assert.equal(afterSetCount, 6);
+            assert.equal(setResult, null);
+            assert.equal(afterSetCount2, 9);
+            assert.equal(setResult2, null);
+          });
+
+          it(`${prefix}: listens for three service events`, async () => {
+            let logs = await new Promise(async resolve => {
+              let logs = [];
+              service.addEventListener('Incremented', function listener (event) {
+                logs.push(event);
+                if (logs.length === 3) {
+                  service.removeEventListener('Incremented', listener);
+                  resolve(logs);
+                }
+              });
+              for (let k = 0; k < 3; k += 1) {
+                await service.incrementCounter();
+              }
+            });
+
+            for (let k = 1; k < logs.length; k += 1) {
+              // Depending upon the gateway's view, we might get the log for the previous test,
+              // so just ensure the logs received are monotonically increasing.
+              assert.equal(logs[k].newCounter.toNumber() - logs[k - 1].newCounter.toNumber(), 1);
             }
           });
-          for (let k = 0; k < 3; k += 1) {
-            await service.incrementCounter();
-          }
         });
+      });
+    });
 
-        for (let k = 1; k < logs.length; k += 1) {
-          // Depending upon the gateway's view, we might get the log for the previous test,
-          // so just ensure the logs received are monotonically increasing.
-          assert.equal(logs[k].newCounter.toNumber() - logs[k - 1].newCounter.toNumber(), 1);
-        }
-
-        test.completion(test);
+    it('cleans up', () => {
+      gateways.forEach(gatewayConfig => {
+        gatewayConfig.completion(gatewayConfig);
       });
     });
   });
