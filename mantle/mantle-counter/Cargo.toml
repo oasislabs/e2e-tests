@@ -6,6 +6,6 @@ edition = "2018"
 
 [dependencies]
 failure = "0.1"
-mantle = { git = "https://github.com/oasislabs/mantle", branch = "armani/test" }
+oasis-std = { git = "https://github.com/oasislabs/oasis-rs" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json =  "1.0.40"
