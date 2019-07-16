@@ -29,6 +29,7 @@ steps:
       - .buildkite/scripts/run_build.sh /tmp/artifacts
       - cd /tmp/artifacts
       - buildkite-agent artifact upload build.zip
+      - buildkite-agent artifact upload mantle.zip
     plugins:
       <<: *docker_plugin_configuration
 
