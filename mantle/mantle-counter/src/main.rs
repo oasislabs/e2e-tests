@@ -35,7 +35,7 @@ impl MantleCounter {
     pub fn incrementCounter(&mut self, _ctx: &Context) -> Result<(), String> {
         self.count += 1;
         Event::emit(&Incremented {
-            count: self.count,
+            newCounter: self.count,
         });
         Ok(())
     }
