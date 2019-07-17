@@ -37,9 +37,6 @@ ssh-add || true
 ################################################################################
 
 # Install the latest oasis-bulid deps.
-rustup update nightly
-rustup default nightly
-rustup target add wasm32-wasi
 cargo install --git https://github.com/oasislabs/oasis-cli.git oasis-cli
 cargo install --git https://github.com/oasislabs/oasis-rs.git oasis-build
 # So we can skip the oasis-cli startup prompts.
