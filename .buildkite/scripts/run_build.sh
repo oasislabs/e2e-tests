@@ -44,7 +44,7 @@ mkdir -p ~/.config/oasis/
 touch ~/.config/oasis/config.toml
 
 apt-get update -qq
-apt-get install -qq --assume-yes nodejs npm unzip zip
+apt-get install -qq --assume-yes nodejs npm zip
 
 # Install e2e-test dependencies.
 npm install
