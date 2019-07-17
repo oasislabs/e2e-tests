@@ -4,9 +4,7 @@ const oasis = require('@oasislabs/client');
 const utils = require('../src/utils');
 
 if (truffleConfig.shouldRun(__filename)) {
-  console.log('Running test', __filename);
   contract('Oasis client', async (accounts) => {
-    console.log('runniing test with accounts', accounts);
     const services = [
       {
         idl: Counter.abi,
@@ -23,7 +21,6 @@ if (truffleConfig.shouldRun(__filename)) {
         label: 'mantle'
       }
     ];
-    console.log('services = ', services);
     const gateways = [
       {
         gateway: new oasis.gateways.Web3Gateway(
@@ -31,19 +28,20 @@ if (truffleConfig.shouldRun(__filename)) {
           oasis.Wallet.fromMnemonic(truffleConfig.MNEMONIC)
         ),
         completion: test => test.gateway.disconnect(),
-        options: { gasLimit: '0xf00000' },
+        options: { gasLimit: '0xe79732' },
         label: 'web3-gw'
       }
       /*
-      {
-        gateway: new oasis.gateways.Gateway(truffleConfig.DEVELOPER_GATEWAY_URL),
+        {
+        gateway: new oasis.gateways.Gateway(truffleConfig.DEVELOPER_GATEWAY_URL, {
+        headers: new Map(['X-OASIS-INSECURE-AUTH', 'VALUE'])
+        }),
         completion: _test => {},
         options: undefined,
-        label: 'dev-gw',
-      }
+        label: 'dev-gw'
+        }
       */
     ];
-    console.log('gateways = ', gateways);
     const headers = [
       {
         header: { confidential: false },
@@ -54,8 +52,6 @@ if (truffleConfig.shouldRun(__filename)) {
         label: 'confidential'
       }
     ];
-    console.log('headers = ', headers);
-    console.log('now here');
     gateways.forEach(gatewayConfig => {
       services.forEach(serviceConfig => {
         headers.forEach(headerConfig => {
@@ -98,14 +94,13 @@ if (truffleConfig.shouldRun(__filename)) {
                 let logs = [];
                 service.addEventListener('Incremented', function listener (event) {
                   logs.push(event);
-                  console.log('event = ', event);
                   if (logs.length === 3) {
                     service.removeEventListener('Incremented', listener);
                     resolve(logs);
                   }
                 });
                 for (let k = 0; k < 3; k += 1) {
-                  await service.incrementCounter();
+                  await service.incrementCounter(gatewayConfig.options);
                 }
               });
 
