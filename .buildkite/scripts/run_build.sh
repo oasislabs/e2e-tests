@@ -44,8 +44,7 @@ mkdir -p ~/.config/oasis/
 touch ~/.config/oasis/config.toml
 
 apt-get update -qq
-apt-get install -qq --assume-yes nodejs
-
+apt-get install -qq --assume-yes nodejs npm
 # Install e2e-test dependencies.
 npm install
 
