@@ -14,4 +14,4 @@ pushd mantle
         wait $job
     done
 popd
-echo "Done buliding mantle services"
+echo "Done building mantle services"
