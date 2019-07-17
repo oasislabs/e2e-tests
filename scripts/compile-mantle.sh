@@ -1,6 +1,6 @@
 #! /bin/bash
 
-echo "Buliding mantle services"
+echo "Building mantle services"
 pushd mantle
     for d in */ ; do
         pushd $d

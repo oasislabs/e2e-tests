@@ -36,7 +36,7 @@ ssh-add || true
 # Now we can start the build.
 ################################################################################
 
-# Install mantle deps
+# Install the latest oasis-bulid deps.
 rustup update nightly
 rustup default nightly
 rustup target add wasm32-wasi

@@ -1,7 +1,7 @@
 [package]
 name = "mantle-counter"
 version = "0.1.0"
-authors = ["Armani Ferrante <armaniferrante@gmail.com>"]
+authors = ["Oasis Labs <feedback@oasislabs.com>"]
 edition = "2018"
 
 [dependencies]
