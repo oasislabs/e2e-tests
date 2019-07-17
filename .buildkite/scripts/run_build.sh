@@ -43,8 +43,8 @@ ssh-add || true
 mkdir -p ~/.config/oasis/
 touch ~/.config/oasis/config.toml
 
-apt-get update
-apt-get install nodejs
+apt-get update -qq
+apt-get install -qq --assume-yes nodejs
 
 # Install e2e-test dependencies.
 npm install
