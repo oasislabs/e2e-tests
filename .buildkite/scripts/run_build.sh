@@ -37,11 +37,14 @@ ssh-add || true
 ################################################################################
 
 # Install the latest oasis-bulid deps.
-cargo install --git https://github.com/oasislabs/oasis-cli.git oasis-cli
-cargo install --git https://github.com/oasislabs/oasis-rs.git oasis-build
+#cargo install --git https://github.com/oasislabs/oasis-cli.git oasis-cli
+#cargo install --git https://github.com/oasislabs/oasis-rs.git oasis-build
 # So we can skip the oasis-cli startup prompts.
 mkdir -p ~/.config/oasis/
 touch ~/.config/oasis/config.toml
+
+apt-get update
+apt-get install nodejs
 
 # Install e2e-test dependencies.
 npm install
