@@ -1,7 +1,6 @@
 const Counter = artifacts.require('Counter');
 const request = require('request-promise');
 const truffleConfig = require('../truffle-config');
-const Web3c = require('web3c');
 const Web3 = require('web3');
 
 const PUBLIC_KEY_LENGTH = 64;
@@ -96,31 +95,29 @@ function wsProviderUrl () {
 }
 
 /**
- * @returns a web3c instance with softwallet setup.
+ * @returns a web3 instance with softwallet setup.
  */
-function web3cSoftWallet (websocket = true) {
+function web3SoftWallet (websocket = true) {
   let provider;
   if (websocket) {
-    provider = new (new Web3c()).providers.WebsocketProvider(wsProviderUrl());
+    provider = new (new Web3()).providers.WebsocketProvider(wsProviderUrl());
   } else {
-    provider = new (new Web3c()).providers.HttpProvider(providerUrl());
+    provider = new (new Web3()).providers.HttpProvider(providerUrl());
   }
 
-  const web3c = new Web3c(provider, undefined, {
-    keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-  });
+  const web3 = new Web3(provider);
 
   let hdWalletProvider = Counter.web3.currentProvider;
   let addr = hdWalletProvider.addresses[0];
   let privKey = '0x' + hdWalletProvider.wallets[addr]._privKey.toString('hex');
-  let acct = web3c.eth.accounts.privateKeyToAccount(privKey);
-  web3c.eth.defaultAccount = acct.address;
-  web3c.eth.accounts.wallet.add(acct);
+  let acct = web3.eth.accounts.privateKeyToAccount(privKey);
+  web3.eth.defaultAccount = acct.address;
+  web3.eth.accounts.wallet.add(acct);
 
-  web3c.oasis.defaultAccount = acct.address;
-  web3c.oasis.accounts.wallet.add(acct);
+  web3.oasis.defaultAccount = acct.address;
+  web3.oasis.accounts.wallet.add(acct);
 
-  return web3c;
+  return web3;
 }
 
 function sleep (ms) {
@@ -128,21 +125,19 @@ function sleep (ms) {
 }
 
 function setupWebsocketProvider (hdWalletProvider) {
-  const web3cWebsocket = new Web3c(new (new Web3c()).providers.WebsocketProvider(wsProviderUrl()), undefined, {
-    keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-  });
+  const web3Websocket = new Web3(new (new Web3()).providers.WebsocketProvider(wsProviderUrl()));
 
   let addr = Object.keys(hdWalletProvider.wallets)[0];
   let privKey = '0x' + hdWalletProvider.wallets[addr]._privKey.toString('hex');
-  let acct = web3cWebsocket.eth.accounts.privateKeyToAccount(privKey);
+  let acct = web3Websocket.eth.accounts.privateKeyToAccount(privKey);
 
-  web3cWebsocket.eth.defaultAccount = acct.address;
-  web3cWebsocket.eth.accounts.wallet.add(acct);
+  web3Websocket.eth.defaultAccount = acct.address;
+  web3Websocket.eth.accounts.wallet.add(acct);
 
-  web3cWebsocket.oasis.defaultAccount = acct.address;
-  web3cWebsocket.oasis.accounts.wallet.add(acct);
+  web3Websocket.oasis.defaultAccount = acct.address;
+  web3Websocket.oasis.accounts.wallet.add(acct);
 
-  return web3cWebsocket;
+  return web3Websocket;
 }
 
 function setupWeb3 (hdWalletProvider) {
@@ -167,7 +162,7 @@ module.exports = {
   makeConfidential,
   providerUrl,
   wsProviderUrl,
-  web3cSoftWallet,
+  web3SoftWallet,
   sleep,
   setupWebsocketProvider,
   setupWeb3,

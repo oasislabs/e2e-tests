@@ -1,19 +1,12 @@
-const Deployed = artifacts.require('./cross_contract/solidity/Deployed.sol');
-const Existing = artifacts.require('./cross_contract/solidity/Existing.sol');
-const DeployedRust = artifacts.require('DeployedRust');
-const ExistingRust = artifacts.require('ExistingRust');
+const Deployed = artifacts.require('./cross_contract/Deployed.sol');
+const Existing = artifacts.require('./cross_contract/Existing.sol');
 
 const truffleConfig = require('../truffle-config');
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('CrossContractCall', (accounts) => {
-    let testCases = [
-      [Deployed, Existing, 'should update value in other solidity contract'],
-      [DeployedRust, ExistingRust, 'should update value in other rust contract']
-    ];
-
     testCases.forEach((test) => {
-      it(test[2], async () => {
+      it('should update value in other solidity contract', async () => {
         let deployedArtifact = test[0];
         let existingArtifact = test[1];
 
