@@ -134,9 +134,6 @@ function setupWebsocketProvider (hdWalletProvider) {
   web3Websocket.eth.defaultAccount = acct.address;
   web3Websocket.eth.accounts.wallet.add(acct);
 
-  web3Websocket.oasis.defaultAccount = acct.address;
-  web3Websocket.oasis.accounts.wallet.add(acct);
-
   return web3Websocket;
 }
 

@@ -6,15 +6,12 @@ const Web3 = require('web3');
 const web3 = new Web3(Counter.web3.currentProvider);
 
 if (truffleConfig.shouldRun(__filename)) {
-
   contract('Failure Cases', function (accounts) {
     const options = { from: accounts[0] };
 
-    it('should fail to send transaction with web3c with no default account', async function () {
-      const web3c = new Web3c(new (new Web3c()).providers.HttpProvider(utils.providerUrl()), undefined, {
-        keyManagerPublicKey: truffleConfig.KEY_MANAGER_PUBLIC_KEY
-      });
-      const contract = new web3c.oasis.Contract(Counter.abi, Counter.address, options);
+    it('should fail to send transaction with web3 with no default account', async function () {
+      const web3 = new Web3(new (new Web3()).providers.HttpProvider(utils.providerUrl()));
+      const contract = new web3.eth.Contract(Counter.abi, Counter.address, options);
 
       try {
         await contract.methods.incrementCounter().send({
@@ -27,32 +24,12 @@ if (truffleConfig.shouldRun(__filename)) {
       }
     });
 
-    it('should fail to deploy contract without bytecode', async function () {
-      const contract = new web3c.oasis.Contract(Counter.abi, undefined, options);
-      try {
-        await contract.deploy().send();
-        assert.fail(new Error('error should have been thrown'));
-      } catch (e) {
-        assert.equal(e.message, 'No "data" specified in neither the given options, nor the default options.');
-      }
-    });
-
     it('should fail to deploy an expired contract', async function () {
-      const contract = new web3c.oasis.Contract(Counter.abi, undefined, options);
-
-      try {
-        await contract.deploy({
-          data: Counter.bytecode,
-          header: { expiry: 0, confidential: false }
-        }).send();
-        assert.fail(new Error('error should have been thrown'));
-      } catch (e) {
-        assert.equal(e.message.includes('Transaction execution error with cause: Requested gas greater than block gas limit.'), true);
-      }
+      // todo
     });
 
     it('should fail if not enough gas', async function () {
-      const contract = new web3c.oasis.Contract(Counter.abi, Counter.address, options);
+      const contract = new web3.eth.Contract(Counter.abi, Counter.address, options);
 
       try {
         await contract.methods.incrementCounter().send({
@@ -61,25 +38,16 @@ if (truffleConfig.shouldRun(__filename)) {
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message, 'Transaction execution error with cause: Requested gas greater than block gas limit.');
+        assert.equal(e.message, 'Transaction execution error with cause: transaction failed: Requested gas greater than block gas limit');
       }
     });
 
     it('should fail to execute transaction with malformed headers', async function () {
-      const contract = new web3c.oasis.Contract(Counter.abi, undefined, options);
-      try {
-        await contract.deploy({
-          data: Counter.bytecode,
-          header: { expiry: 0.1 }
-        }).send();
-        assert.fail(new Error('error should have been thrown'));
-      } catch (e) {
-        assert.equal(e.message, 'Transaction execution error with cause: Malformed header');
-      }
+      // todo
     });
 
     it('should fail to execute not existing method', async () => {
-      const contract = new web3c.oasis.Contract(Counter.abi, Counter.address, options);
+      const contract = new web3.eth.Contract(Counter.abi, Counter.address, options);
       const invalidMethodABI = '0x8ada066f';
 
       const hdWalletProvider = Counter.web3.currentProvider;
@@ -93,11 +61,11 @@ if (truffleConfig.shouldRun(__filename)) {
         gas: '0x141234'
       };
 
-      const account = web3c.eth.accounts.privateKeyToAccount(privateKey);
+      const account = web3.eth.accounts.privateKeyToAccount(privateKey);
       const signed = await account.signTransaction(tx);
 
       try {
-        await web3c.eth.sendSignedTransaction(signed.rawTransaction);
+        await web3.eth.sendSignedTransaction(signed.rawTransaction);
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
         assert.equal(e.message.includes('Transaction has been reverted by the EVM'), true);
@@ -105,11 +73,11 @@ if (truffleConfig.shouldRun(__filename)) {
     });
 
     it('should return failure on executing non confidential call on confidential contract', async () => {
-	  // todo
+      // todo
     });
 
     it('should fail on triggering require in a solidity contract', async () => {
-      const contract = new web3c.oasis.Contract(Counter.abi, Counter.address, options);
+      const contract = new web3.eth.Contract(Counter.abi, Counter.address, options);
 
       try {
         await contract.methods.verifyCounterValue(1).send();
@@ -120,11 +88,7 @@ if (truffleConfig.shouldRun(__filename)) {
     });
 
     it('should fail on panic! in a rust contract', async () => {
-	  // todo
-    });
-
-    it('should return null when calling getPublicKey on non confidential contract', async () => {
-      assert.equal(null, await web3c.oasis.getPublicKey(Counter.address));
+      // todo
     });
   });
 }

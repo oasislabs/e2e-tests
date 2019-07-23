@@ -1,12 +1,13 @@
-const _Counter = artifacts.require('Counter');
-const Web3 = require('web3');
+// const _Counter = artifacts.require('Counter');
+// const Web3 = require('web3');
 
 const truffleConfig = require('../truffle-config');
 
-const BLOCK_GAS_LIMIT = 16000000;
+// const BLOCK_GAS_LIMIT = 16000000;
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Retries', async (accounts) => {
+    /*
     const web3 = new Web3(_Counter.web3.currentProvider);
 
     // Create three soft wallets.
@@ -28,9 +29,11 @@ if (truffleConfig.shouldRun(__filename)) {
         return sendBigTxn(wallet);
       }));
     });
+    */
   });
 }
 
+/*
 function newWallet () {
   const web3 = new Web3(truffleConfig.HTTPS_PROVIDER_URL);
   const account = web3.eth.accounts.create();
@@ -49,3 +52,4 @@ function sendBigTxn (wallet) {
       .on('receipt', resolve);
   });
 }
+*/

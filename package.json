@@ -31,7 +31,6 @@
     "truffle-hdwallet-provider": "^1.0.0-web3one.0",
     "truffle-oasis": "^5.0.4",
     "tweetnacl": "^1.0.1",
-    "web3": "1.0.0-beta.36",
-    "web3c": "git+https://github.com/oasislabs/web3c.js.git"
+    "web3": "1.0.0-beta.36"
   }
 }
