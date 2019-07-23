@@ -1,11 +1,13 @@
-const Counter = artifacts.require('Counter');
+// const Counter = artifacts.require('Counter');
 const truffleConfig = require('../truffle-config');
-const _assert = require('assert');
-const utils = require('../src/utils');
-const web3c = utils.setupWebsocketProvider(Counter.web3.currentProvider);
+// const _assert = require('assert');
+// const utils = require('../src/utils');
+// const web3 = utils.setupWebsocketProvider(Counter.web3.currentProvider);
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Deploy Header', async (accounts) => {
+    // TODO: switch to oasis-client
+    /*
     let contract = new web3c.oasis.Contract(Counter.abi, undefined, {
       from: accounts[0],
       gas: '0x100000'
@@ -111,5 +113,6 @@ if (truffleConfig.shouldRun(__filename)) {
         });
       });
     });
+    */
   });
 }

@@ -32,13 +32,6 @@ const DEVNET_WS_PROVIDER_URL = 'wss://web3.oasiscloud.io/ws';
 const STAGING_HTTPS_PROVIDER_URL = 'https://web3.oasiscloud-staging.net';
 const STAGING_WS_PROVIDER_URL = 'wss://web3.oasiscloud-staging.net/ws';
 /**
- * The remote key manager's public key to use for validating signatures in web3c.js.
- */
-let KEY_MANAGER_PUBLIC_KEY = process.env.KEY_MANAGER_PUBLIC_KEY;
-if (!KEY_MANAGER_PUBLIC_KEY) {
-  KEY_MANAGER_PUBLIC_KEY = '0x51d5e24342ae2c4a951e24a2ba45a68106bcb7986198817331889264fd10f1bf';
-}
-/**
  * The amount of parallelism with which to run the tests. When the tests are run in
  * parallel, we assign each test file a number and divide up the tests into the "bucket"
  * corresponding with its number. For example, TEST_FILES_COUNT of 10 and PARALLELISM
@@ -149,7 +142,6 @@ module.exports = {
   STAGING_WS_PROVIDER_URL,
   DEVNET_HTTPS_PROVIDER_URL,
   DEVNET_WS_PROVIDER_URL,
-  KEY_MANAGER_PUBLIC_KEY,
   HTTPS_PROVIDER_URL,
   TEST_TIMESTAMP,
   WS_PROVIDER_URL,
