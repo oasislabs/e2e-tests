@@ -1,9 +1,21 @@
 const Counter = artifacts.require('Counter');
 const truffleConfig = require('../truffle-config');
 const utils = require('../src/utils');
+const oasis = require('@oasislabs/client');
 const Web3 = require('web3');
 
 const web3 = new Web3(Counter.web3.currentProvider);
+
+let mantleCounterBytecode = require('fs').readFileSync(
+  '/workdir/tests/e2e-tests/mantle/mantle-counter/target/service/mantle-counter.wasm'
+);
+
+oasis.setGateway(
+  new oasis.gateways.Web3Gateway(
+    utils.wsProviderUrl(),
+    oasis.Wallet.fromMnemonic(truffleConfig.MNEMONIC)
+  )
+);
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Failure Cases', function (accounts) {
@@ -25,7 +37,16 @@ if (truffleConfig.shouldRun(__filename)) {
     });
 
     it('should fail to deploy an expired contract', async function () {
-      // todo
+      try {
+        await oasis.deploy({
+          bytecode: mantleCounterBytecode,
+          header: { expiry: 0, confidential: false },
+          arguments: [0]
+        });
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        assert.equal(e.message.includes('Transaction execution error with cause: transaction failed: Requested gas greater than block gas limit'), true);
+      }
     });
 
     it('should fail if not enough gas', async function () {
@@ -43,7 +64,16 @@ if (truffleConfig.shouldRun(__filename)) {
     });
 
     it('should fail to execute transaction with malformed headers', async function () {
-      // todo
+      try {
+        await oasis.deploy({
+          bytecode: mantleCounterBytecode,
+          header: { expiry: 0.1 },
+          arguments: [0]
+        });
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        assert.equal(e.message, 'Transaction execution error with cause: Transaction execution error (Malformed transaction: Malformed header).');
+      }
     });
 
     it('should fail to execute not existing method', async () => {
@@ -72,10 +102,6 @@ if (truffleConfig.shouldRun(__filename)) {
       }
     });
 
-    it('should return failure on executing non confidential call on confidential contract', async () => {
-      // todo
-    });
-
     it('should fail on triggering require in a solidity contract', async () => {
       const contract = new web3.eth.Contract(Counter.abi, Counter.address, options);
 
@@ -88,7 +114,17 @@ if (truffleConfig.shouldRun(__filename)) {
     });
 
     it('should fail on panic! in a rust contract', async () => {
-      // todo
+      const contract = oasis.deploy({
+        bytecode: mantleCounterBytecode,
+        header: { confidential: false },
+        arguments: []
+      });
+      try {
+        await contract.panic(options);
+        assert.fail(new Error('error should have been thrown'));
+      } catch (e) {
+        assert.equal(e.message, 'Transaction execution error with cause: transaction failed: Requested gas greater than block gas limit');
+      }
     });
   });
 }
