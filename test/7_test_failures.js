@@ -114,7 +114,7 @@ if (truffleConfig.shouldRun(__filename)) {
     });
 
     it('should fail on panic! in a rust contract', async () => {
-      const contract = oasis.deploy({
+      const contract = await oasis.deploy({
         bytecode: mantleCounterBytecode,
         header: { confidential: false },
         arguments: []
