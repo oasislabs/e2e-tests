@@ -30,7 +30,7 @@ if (truffleConfig.shouldRun(__filename)) {
         let expectedExpiry = Math.floor(Date.now() / 1000 + 60 * 60 * 24);
 
         instance = await oasis.deploy({
-          arguments: [0],
+          arguments: [],
           bytecode: mantleCounterBytecode,
           header: {
             expiry: expectedExpiry,
