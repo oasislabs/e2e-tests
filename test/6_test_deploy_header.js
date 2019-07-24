@@ -3,6 +3,7 @@ const truffleConfig = require('../truffle-config');
 const _assert = require('assert');
 const utils = require('../src/utils');
 const oasis = require('@oasislabs/client');
+const web3 = utils.setupWebsocketProvider(Counter.web3.currentProvider);
 // Use for the expiry api.
 const web3c = utils.setupWebsocketProvider(Counter.web3.currentProvider, true);
 
@@ -24,7 +25,7 @@ if (truffleConfig.shouldRun(__filename)) {
     labels.forEach((label) => {
       let instance;
       let confidential = label === 'confidential';
-      let options = (confidential) ? { gasLimit: '0xe79732' } : undefined;
+      let options = { gasLimit: '0xe79732' };
 
       it(`${label}: creates a contract that expires tomorrow with success`, async () => {
         let expectedExpiry = Math.floor(Date.now() / 1000 + 60 * 60 * 24);
@@ -43,12 +44,12 @@ if (truffleConfig.shouldRun(__filename)) {
       });
 
       it(`${label}: can execute transactions and calls on a contract with expiry`, async () => {
-        let count = await instance.getCounter();
+        let count = await instance.getCounter(options);
         assert.equal(count, 0);
 
-        await instance.incrementCounter(undefined);
+        await instance.incrementCounter(options);
 
-        count = await instance.getCounter();
+        count = await instance.getCounter(options);
         assert.equal(count, 1);
       });
 
@@ -73,7 +74,7 @@ if (truffleConfig.shouldRun(__filename)) {
         // Given.
         instance = await oasis.deploy({
           arguments: [0],
-          data: mantleCounterBytecode,
+          bytecode: mantleCounterBytecode,
           header: {
             expiry: Math.floor(Date.now() / 1000 + 20),
             confidential
@@ -83,9 +84,9 @@ if (truffleConfig.shouldRun(__filename)) {
         // When.
         await utils.sleep(60 * 1000);
         // Send dummy transaction to make the tendermint clock tick.
-        await web3c.eth.sendTransaction({
+        await web3.eth.sendTransaction({
           from: accounts[0],
-          to: web3c.eth.accounts.create().address,
+          to: web3.eth.accounts.create().address,
           value: 100,
           gas: 2100
         });
