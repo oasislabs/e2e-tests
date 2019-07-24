@@ -41,7 +41,7 @@ if (truffleConfig.shouldRun(__filename)) {
         await oasis.deploy({
           bytecode: mantleCounterBytecode,
           header: { expiry: 0, confidential: false },
-          arguments: [0]
+          arguments: []
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
@@ -68,7 +68,7 @@ if (truffleConfig.shouldRun(__filename)) {
         await oasis.deploy({
           bytecode: mantleCounterBytecode,
           header: { expiry: 0.1 },
-          arguments: [0]
+          arguments: []
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
