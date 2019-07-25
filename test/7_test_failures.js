@@ -25,7 +25,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('sets up the contract for the tests', async () => {
       // TODO: https://github.com/oasislabs/e2e-tests/issues/105
-      //       We should just deploy with web3.js diirectly.
+      //       We should just deploy with web3.js directly.
       let service = await oasis.deploy({
         idl: Counter.abi,
         bytecode: Counter.bytecode,

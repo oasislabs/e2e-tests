@@ -6,10 +6,7 @@ const path = require('path');
  */
 const MNEMONIC = process.env.MNEMONIC;
 /**
- * Secret key to use for the oasiis client. This must be a different
- * account than the account used by HDWalletProvider since HDWalletProvider
- * maintains internal nonce state => using the same account with oasis-client
- * will get out of sync with the expected nonce.
+ * Secret key to use for the oasis client.
  */
 const OASIS_CLIENT_SK = process.env.OASIS_CLIENT_SK;
 /**
