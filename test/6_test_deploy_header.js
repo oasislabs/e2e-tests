@@ -18,7 +18,7 @@ if (truffleConfig.shouldRun(__filename)) {
     oasis.setGateway(
       new oasis.gateways.Web3Gateway(
         utils.wsProviderUrl(),
-        oasis.Wallet.fromMnemonic(truffleConfig.MNEMONIC)
+        new oasis.Wallet(truffleConfig.OASIS_CLIENT_SK)
       )
     );
 
@@ -94,6 +94,9 @@ if (truffleConfig.shouldRun(__filename)) {
         _assert.rejects(async function () {
           await instance.incrementCounter(options);
         });
+        // TODO: https://github.com/oasislabs/e2e-tests/issues/105
+        //       We shouldn't have to sleep here.
+        await utils.sleep(5 * 1000);
       });
     });
   });

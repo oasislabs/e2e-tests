@@ -13,7 +13,7 @@ let mantleCounterBytecode = require('fs').readFileSync(
 oasis.setGateway(
   new oasis.gateways.Web3Gateway(
     utils.wsProviderUrl(),
-    oasis.Wallet.fromMnemonic(truffleConfig.MNEMONIC)
+    new oasis.Wallet(truffleConfig.OASIS_CLIENT_SK)
   )
 );
 
@@ -24,8 +24,22 @@ if (truffleConfig.shouldRun(__filename)) {
     let contract;
 
     it('sets up the contract for the tests', async () => {
-      let c = new web3.eth.Contract(Counter.abi, undefined, options);
-      contract = await c.deploy({ data: Counter.bytecode }).send();
+      // TODO: https://github.com/oasislabs/e2e-tests/issues/105
+      //       We should just deploy with web3.js diirectly.
+      let service = await oasis.deploy({
+        idl: Counter.abi,
+        bytecode: Counter.bytecode,
+        arguments: [],
+        header: {
+          confidential: false
+        },
+        coder: new oasis.utils.EthereumCoder()
+      });
+      contract = new web3.eth.Contract(
+        Counter.abi,
+        oasis.utils.bytes.toHex(service._inner.address),
+        options
+      );
     });
 
     it('should fail to send transaction with web3 with no default account', async function () {

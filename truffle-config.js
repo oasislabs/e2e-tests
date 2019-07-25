@@ -6,6 +6,13 @@ const path = require('path');
  */
 const MNEMONIC = process.env.MNEMONIC;
 /**
+ * Secret key to use for the oasiis client. This must be a different
+ * account than the account used by HDWalletProvider since HDWalletProvider
+ * maintains internal nonce state => using the same account with oasis-client
+ * will get out of sync with the expected nonce.
+ */
+const OASIS_CLIENT_SK = process.env.OASIS_CLIENT_SK;
+/**
  * Constants that should be defined as environment variables if one wants to
  * run the tests against a custom gateway.
  */
@@ -126,12 +133,10 @@ module.exports = {
       network_id: '*'
     }
   },
+
   compilers: {
-    external: {
-      command: './node_modules/.bin/oasis-compile',
-      targets: [{
-        path: './.oasis-build/*.json'
-      }]
+    solc: {
+      version: '0.4.24'
     }
   },
   mocha: {
@@ -147,5 +152,6 @@ module.exports = {
   WS_PROVIDER_URL,
   DEVELOPER_GATEWAY_URL,
   MNEMONIC,
+  OASIS_CLIENT_SK,
   shouldRun
 };
