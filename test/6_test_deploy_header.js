@@ -13,7 +13,7 @@ let mantleCounterBytecode = require('fs').readFileSync(
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Deploy Header', async (accounts) => {
-    let labels = ['confidential', 'non-confidential'];
+    let labels = ['non-confidential', 'confidential'];
 
     oasis.setGateway(
       new oasis.gateways.Web3Gateway(
@@ -73,7 +73,7 @@ if (truffleConfig.shouldRun(__filename)) {
       it(`${label}: calls a contract that has expired with failure`, async () => {
         // Given.
         instance = await oasis.deploy({
-          arguments: [0],
+          arguments: [],
           bytecode: mantleCounterBytecode,
           header: {
             expiry: Math.floor(Date.now() / 1000 + 20),

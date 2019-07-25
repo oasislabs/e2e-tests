@@ -21,12 +21,19 @@ if (truffleConfig.shouldRun(__filename)) {
   contract('Failure Cases', function (accounts) {
     const options = { from: accounts[0] };
 
+    let contract;
+
+    it('sets up the contract for the tests', async () => {
+      let c = new web3.eth.Contract(Counter.abi, undefined, options);
+      contract = await c.deploy({ data: Counter.bytecode }).send();
+    });
+
     it('should fail to send transaction with web3 with no default account', async function () {
       const web3 = new Web3(new (new Web3()).providers.HttpProvider(utils.providerUrl()));
-      const contract = new web3.eth.Contract(Counter.abi, Counter.address, options);
+      const c = new web3.eth.Contract(Counter.abi, contract.options.address, options);
 
       try {
-        await contract.methods.incrementCounter().send({
+        await c.methods.incrementCounter().send({
           gasPrice: '0x3b9aca00',
           gas: '0x141234'
         });
@@ -50,8 +57,6 @@ if (truffleConfig.shouldRun(__filename)) {
     });
 
     it('should fail if not enough gas', async function () {
-      const contract = new web3.eth.Contract(Counter.abi, Counter.address, options);
-
       try {
         await contract.methods.incrementCounter().send({
           gasPrice: '0x3b9aca00',
@@ -77,7 +82,6 @@ if (truffleConfig.shouldRun(__filename)) {
     });
 
     it('should fail to execute not existing method', async () => {
-      const contract = new web3.eth.Contract(Counter.abi, Counter.address, options);
       const invalidMethodABI = '0x8ada066f';
 
       const hdWalletProvider = Counter.web3.currentProvider;
@@ -103,10 +107,9 @@ if (truffleConfig.shouldRun(__filename)) {
     });
 
     it('should fail on triggering require in a solidity contract', async () => {
-      const contract = new web3.eth.Contract(Counter.abi, Counter.address, options);
-
+      const c = new web3.eth.Contract(Counter.abi, contract.options.address, options);
       try {
-        await contract.methods.verifyCounterValue(1).send();
+        await c.methods.verifyCounterValue(1).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
         assert.equal(e.message.includes('Transaction has been reverted by the EVM:'), true);
