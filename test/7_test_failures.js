@@ -120,10 +120,10 @@ if (truffleConfig.shouldRun(__filename)) {
         arguments: []
       });
       try {
-        await contract.panic(options);
+        await contract.panic();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
-        assert.equal(e.message, 'Transaction execution error with cause: transaction failed: Requested gas greater than block gas limit');
+        assert.equal(e.message.includes('\'this should panic\''), true);
       }
     });
   });
