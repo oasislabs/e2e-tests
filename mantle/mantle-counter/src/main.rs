@@ -39,6 +39,10 @@ impl MantleCounter {
         });
         Ok(())
     }
+
+    pub fn panic(&mut self, _ctx: &Context) -> Result<(), String> {
+        panic!("this should panic");
+    }
 }
 
 fn main() {

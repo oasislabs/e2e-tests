@@ -28,9 +28,10 @@
     "oasis-compile": "^2.0.0",
     "prom-client": "^11.3.0",
     "request-promise": "4.2.2",
-    "truffle-hdwallet-provider": "^1.0.0-web3one.0",
-    "truffle-oasis": "^5.0.4",
+    "truffle": "^5.0.28",
+    "truffle-hdwallet-provider": "^1.0.14",
     "tweetnacl": "^1.0.1",
-    "web3": "1.0.0-beta.36"
+    "web3": "1.0.0-beta.36",
+    "web3c": "git+https://github.com/oasislabs/web3c.js.git"
   }
 }

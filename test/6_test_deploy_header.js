@@ -1,118 +1,100 @@
-// const Counter = artifacts.require('Counter');
+const Counter = artifacts.require('Counter');
 const truffleConfig = require('../truffle-config');
-// const _assert = require('assert');
-// const utils = require('../src/utils');
-// const web3 = utils.setupWebsocketProvider(Counter.web3.currentProvider);
+const _assert = require('assert');
+const utils = require('../src/utils');
+const oasis = require('@oasislabs/client');
+const web3 = utils.setupWebsocketProvider(Counter.web3.currentProvider);
+// Use for the expiry api.
+const web3c = utils.setupWebsocketProvider(Counter.web3.currentProvider, true);
+
+let mantleCounterBytecode = require('fs').readFileSync(
+  '/workdir/tests/e2e-tests/mantle/mantle-counter/target/service/mantle-counter.wasm'
+);
 
 if (truffleConfig.shouldRun(__filename)) {
   contract('Deploy Header', async (accounts) => {
-    // TODO: switch to oasis-client
-    /*
-    let contract = new web3c.oasis.Contract(Counter.abi, undefined, {
-      from: accounts[0],
-      gas: '0x100000'
-    });
-    let labels = ['confidential', 'eth'];
+    let labels = ['non-confidential', 'confidential'];
+
+    oasis.setGateway(
+      new oasis.gateways.Web3Gateway(
+        utils.wsProviderUrl(),
+        new oasis.Wallet(truffleConfig.OASIS_CLIENT_SK)
+      )
+    );
+
     labels.forEach((label) => {
       let instance;
       let confidential = label === 'confidential';
+      let options = { gasLimit: '0xe79732' };
 
       it(`${label}: creates a contract that expires tomorrow with success`, async () => {
-        // Given.
-        let counterContract = contract;
-
-        // When.
         let expectedExpiry = Math.floor(Date.now() / 1000 + 60 * 60 * 24);
-        instance = await counterContract.deploy({
-          data: Counter.bytecode,
+
+        instance = await oasis.deploy({
+          arguments: [],
+          bytecode: mantleCounterBytecode,
           header: {
             expiry: expectedExpiry,
             confidential
-          }
-        }).send({
-          // Hardcode gas if confidential.
-          // TODO: tighter bound for gasLimit
-          ...(confidential && { gasLimit: 1000000 })
+          },
+          options
         });
-
-        // Then.
-        let resultantExpiry = await instance.expiry();
-        assert.equal(expectedExpiry, resultantExpiry);
-
-        // Bonus: Sanity check other api.
-        resultantExpiry = await web3c.oasis.expiry(instance.options.address);
+        let resultantExpiry = await web3c.oasis.expiry(oasis.utils.bytes.toHex(instance._inner.address));
         assert.equal(expectedExpiry, resultantExpiry);
       });
 
       it(`${label}: can execute transactions and calls on a contract with expiry`, async () => {
-        let count = await instance.methods.getCounter().invoke();
+        let count = await instance.getCounter(options);
         assert.equal(count, 0);
-        await instance.methods.incrementCounter().send({
-          // Hardcode gas if confidential.
-          // TODO: tighter bound for gasLimit
-          ...(confidential && { gasLimit: 1000000 })
-        });
-        count = await instance.methods.getCounter().invoke();
+
+        await instance.incrementCounter(options);
+
+        count = await instance.getCounter(options);
         assert.equal(count, 1);
       });
 
       it(`${label}: creates a contract that expires yesterday with failure`, async () => {
         await _assert.rejects(
           async function () {
-            // Given.
-            let counterContract = contract;
-
-            // When.
             let expectedExpiry = Math.floor(Date.now() / 1000 - 60 * 60 * 24);
-            await counterContract.deploy({
-              data: Counter.bytecode,
+
+            await oasis.deploy({
+              data: mantleCounterBytecode,
               header: {
                 expiry: expectedExpiry,
                 confidential
-              }
-            }).send({
-              // Hardcode gas if confidential.
-              // TODO: tighter bound for gasLimit
-              ...(confidential && { gasLimit: 1000000 })
+              },
+              options
             });
-
-            // Then reject.
           }
         );
       });
 
       it(`${label}: calls a contract that has expired with failure`, async () => {
         // Given.
-        instance = await contract.deploy({
-          data: Counter.bytecode,
+        instance = await oasis.deploy({
+          arguments: [],
+          bytecode: mantleCounterBytecode,
           header: {
             expiry: Math.floor(Date.now() / 1000 + 20),
             confidential
-          }
-        }).send({
-          // Hardcode gas if confidential.
-          // TODO: tighter bound for gasLimit
-          ...(confidential && { gasLimit: 1000000 })
+          },
+          options
         });
         // When.
         await utils.sleep(60 * 1000);
         // Send dummy transaction to make the tendermint clock tick.
-        await web3c.eth.sendTransaction({
+        await web3.eth.sendTransaction({
           from: accounts[0],
-          to: web3c.eth.accounts.create().address,
+          to: web3.eth.accounts.create().address,
           value: 100,
           gas: 2100
         });
         // Then.
-        _assert.rejects(async function () {
-          await instance.methods.incrementCounter().send({
-            // Hardcode gas if confidential.
-            // TODO: tighter bound for gasLimit
-            ...(confidential && { gasLimit: 1000000 })
-          });
+        await _assert.rejects(async function () {
+          await instance.incrementCounter(options);
         });
       });
     });
-    */
   });
 }
