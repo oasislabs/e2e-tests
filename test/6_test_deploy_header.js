@@ -91,12 +91,9 @@ if (truffleConfig.shouldRun(__filename)) {
           gas: 2100
         });
         // Then.
-        _assert.rejects(async function () {
+        await _assert.rejects(async function () {
           await instance.incrementCounter(options);
         });
-        // TODO: https://github.com/oasislabs/e2e-tests/issues/105
-        //       We shouldn't have to sleep here.
-        await utils.sleep(5 * 1000);
       });
     });
   });

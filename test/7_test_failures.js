@@ -24,22 +24,13 @@ if (truffleConfig.shouldRun(__filename)) {
     let contract;
 
     it('sets up the contract for the tests', async () => {
-      // TODO: https://github.com/oasislabs/e2e-tests/issues/105
-      //       We should just deploy with web3.js directly.
-      let service = await oasis.deploy({
-        idl: Counter.abi,
-        bytecode: Counter.bytecode,
-        arguments: [],
-        header: {
-          confidential: false
-        },
-        coder: new oasis.utils.EthereumCoder()
-      });
-      contract = new web3.eth.Contract(
+      contract = await (new web3.eth.Contract(
         Counter.abi,
-        oasis.utils.bytes.toHex(service._inner.address),
+        undefined,
         options
-      );
+      )).deploy({
+        data: Counter.bytecode
+      }).send();
     });
 
     it('should fail to send transaction with web3 with no default account', async function () {
