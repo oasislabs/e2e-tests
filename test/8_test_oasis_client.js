@@ -37,7 +37,7 @@ if (truffleConfig.shouldRun(__filename)) {
         completion: _test => {},
         options: undefined,
         label: 'dev-gw'
-      } 
+      }
     ];
     const headers = [
       {
