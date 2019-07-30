@@ -10,10 +10,13 @@ let mantleCounterBytecode = require('fs').readFileSync(
   '/workdir/tests/e2e-tests/mantle/mantle-counter/target/service/mantle-counter.wasm'
 );
 
+const insecure = true;
+
 oasis.setGateway(
   new oasis.gateways.Web3Gateway(
     utils.wsProviderUrl(),
-    new oasis.Wallet(truffleConfig.OASIS_CLIENT_SK)
+    new oasis.Wallet(truffleConfig.OASIS_CLIENT_SK),
+    insecure
   )
 );
 

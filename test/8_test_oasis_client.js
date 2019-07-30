@@ -21,11 +21,15 @@ if (truffleConfig.shouldRun(__filename)) {
         label: 'mantle'
       }
     ];
+
+    const insecure = true;
+
     const gateways = [
       {
         gateway: new oasis.gateways.Web3Gateway(
           utils.wsProviderUrl(),
-          new oasis.Wallet(truffleConfig.OASIS_CLIENT_SK)
+          new oasis.Wallet(truffleConfig.OASIS_CLIENT_SK),
+          insecure
         ),
         completion: test => test.gateway.disconnect(),
         options: { gasLimit: '0xe79732' },
@@ -33,7 +37,7 @@ if (truffleConfig.shouldRun(__filename)) {
       }, {
         gateway: new oasis.gateways.Gateway(truffleConfig.DEVELOPER_GATEWAY_URL, {
           headers: new Map([['X-OASIS-INSECURE-AUTH', 'VALUE']])
-        }),
+        }, insecure),
         completion: _test => {},
         options: undefined,
         label: 'dev-gw'

@@ -15,10 +15,13 @@ if (truffleConfig.shouldRun(__filename)) {
   contract('Deploy Header', async (accounts) => {
     let labels = ['non-confidential', 'confidential'];
 
+    const insecure = true;
+
     oasis.setGateway(
       new oasis.gateways.Web3Gateway(
         utils.wsProviderUrl(),
-        new oasis.Wallet(truffleConfig.OASIS_CLIENT_SK)
+        new oasis.Wallet(truffleConfig.OASIS_CLIENT_SK),
+        insecure
       )
     );
 
