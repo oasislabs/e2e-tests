@@ -30,8 +30,8 @@ if (truffleConfig.shouldRun(__filename)) {
         completion: test => test.gateway.disconnect(),
         options: { gasLimit: '0xe79732' },
         label: 'web3-gw'
-      }
-      /*, {
+      },
+      {
         gateway: new oasis.gateways.Gateway(truffleConfig.DEVELOPER_GATEWAY_URL, {
           headers: new Map([['X-OASIS-INSECURE-AUTH', 'VALUE']])
         }),
@@ -39,7 +39,6 @@ if (truffleConfig.shouldRun(__filename)) {
         options: undefined,
         label: 'dev-gw'
       }
-      */
     ];
     const headers = [
       {
