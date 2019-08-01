@@ -5,7 +5,7 @@ pushd mantle
     for d in */ ; do
         pushd $d
             echo "Buliding $d..."
-            oasis build --release &
+            oasis build &
         popd
     done
 
