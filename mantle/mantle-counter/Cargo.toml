@@ -1,0 +1,11 @@
+[package]
+name = "mantle-counter"
+version = "0.1.0"
+authors = ["Oasis Labs <feedback@oasislabs.com>"]
+edition = "2018"
+
+[dependencies]
+failure = "0.1"
+oasis-std = { git = "https://github.com/oasislabs/oasis-rs" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json =  "1.0.40"

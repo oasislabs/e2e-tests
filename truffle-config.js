@@ -6,11 +6,17 @@ const path = require('path');
  */
 const MNEMONIC = process.env.MNEMONIC;
 /**
+ * Secret key to use for the oasis client.
+ */
+const OASIS_CLIENT_SK = process.env.OASIS_CLIENT_SK;
+/**
  * Constants that should be defined as environment variables if one wants to
  * run the tests against a custom gateway.
  */
 const HTTPS_PROVIDER_URL = process.env.HTTPS_PROVIDER_URL;
 const WS_PROVIDER_URL = process.env.WS_PROVIDER_URL;
+const DEVELOPER_GATEWAY_URL = process.env.DEVELOPER_GATEWAY_URL;
+
 /**
  * Get network name from args.
  */
@@ -29,13 +35,6 @@ const DEVNET_WS_PROVIDER_URL = 'wss://web3.oasiscloud.io/ws';
  */
 const STAGING_HTTPS_PROVIDER_URL = 'https://web3.oasiscloud-staging.net';
 const STAGING_WS_PROVIDER_URL = 'wss://web3.oasiscloud-staging.net/ws';
-/**
- * The remote key manager's public key to use for validating signatures in web3c.js.
- */
-let KEY_MANAGER_PUBLIC_KEY = process.env.KEY_MANAGER_PUBLIC_KEY;
-if (!KEY_MANAGER_PUBLIC_KEY) {
-  KEY_MANAGER_PUBLIC_KEY = '0x51d5e24342ae2c4a951e24a2ba45a68106bcb7986198817331889264fd10f1bf';
-}
 /**
  * The amount of parallelism with which to run the tests. When the tests are run in
  * parallel, we assign each test file a number and divide up the tests into the "bucket"
@@ -131,12 +130,10 @@ module.exports = {
       network_id: '*'
     }
   },
+
   compilers: {
-    external: {
-      command: './node_modules/.bin/oasis-compile',
-      targets: [{
-        path: './.oasis-build/*.json'
-      }]
+    solc: {
+      version: '0.4.24'
     }
   },
   mocha: {
@@ -147,9 +144,11 @@ module.exports = {
   STAGING_WS_PROVIDER_URL,
   DEVNET_HTTPS_PROVIDER_URL,
   DEVNET_WS_PROVIDER_URL,
-  KEY_MANAGER_PUBLIC_KEY,
   HTTPS_PROVIDER_URL,
   TEST_TIMESTAMP,
   WS_PROVIDER_URL,
+  DEVELOPER_GATEWAY_URL,
+  MNEMONIC,
+  OASIS_CLIENT_SK,
   shouldRun
 };

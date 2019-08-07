@@ -36,6 +36,16 @@ ssh-add || true
 # Now we can start the build.
 ################################################################################
 
+# Install the latest oasis-bulid deps.
+cargo install --git https://github.com/oasislabs/oasis-cli.git oasis-cli
+cargo install --git https://github.com/oasislabs/oasis-rs.git oasis-build
+# So we can skip the oasis-cli startup prompts.
+mkdir -p ~/.config/oasis/
+touch ~/.config/oasis/config.toml
+
+apt-get update -qq
+apt-get install -qq --assume-yes nodejs npm zip
+
 # Install e2e-test dependencies.
 npm install
 
@@ -43,9 +53,13 @@ npm install
 npm run lint
 
 # Compile the contracts.
-npm run compile
+npm run compile:truffle
+npm run compile:mantle
 
 # Finally move the build to the out directory.
 zip -r build.zip build
 mkdir -p $out_dir
 mv build.zip $out_dir
+
+zip -r mantle.zip mantle
+mv mantle.zip $out_dir
