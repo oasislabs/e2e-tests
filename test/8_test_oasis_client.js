@@ -44,11 +44,13 @@ if (truffleConfig.shouldRun(__filename)) {
       {
         header: { confidential: false },
         label: 'non-confidential'
-      },
+      }
+      /*,
       {
         header: { confidential: true },
         label: 'confidential'
       }
+      */
     ];
     gateways.forEach(gatewayConfig => {
       services.forEach(serviceConfig => {
@@ -72,6 +74,7 @@ if (truffleConfig.shouldRun(__filename)) {
               });
             });
 
+            /*
             it(`${prefix}: executes an rpc`, async () => {
               let beforeCount = await service.getCounter(gatewayConfig.options);
               await service.incrementCounter(gatewayConfig.options);
@@ -86,6 +89,7 @@ if (truffleConfig.shouldRun(__filename)) {
               assert.equal(afterSetCount, 6);
               assert.equal(afterSetCount2, 9);
             });
+            */
 
             it(`${prefix}: listens for three service events`, async () => {
               let logs = await new Promise(async resolve => {
