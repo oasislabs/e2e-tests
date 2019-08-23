@@ -4,8 +4,6 @@ const _assert = require('assert');
 const utils = require('../src/utils');
 const oasis = require('@oasislabs/client');
 const web3 = utils.setupWebsocketProvider(Counter.web3.currentProvider);
-// Use for the expiry api.
-const web3c = utils.setupWebsocketProvider(Counter.web3.currentProvider, true);
 
 let mantleCounterBytecode = require('fs').readFileSync(
   '/workdir/tests/e2e-tests/mantle/mantle-counter/target/service/mantle-counter.wasm'
@@ -15,12 +13,12 @@ if (truffleConfig.shouldRun(__filename)) {
   contract('Deploy Header', async (accounts) => {
     let labels = ['non-confidential', 'confidential'];
 
-    oasis.setGateway(
-      new oasis.gateways.Web3Gateway(
-        utils.wsProviderUrl(),
-        new oasis.Wallet(truffleConfig.OASIS_CLIENT_SK)
-      )
+    const gateway = new oasis.gateways.Web3Gateway(
+      utils.wsProviderUrl(),
+      new oasis.Wallet(truffleConfig.OASIS_CLIENT_SK)
     );
+
+    oasis.setGateway(gateway);
 
     labels.forEach((label) => {
       let instance;
@@ -39,7 +37,7 @@ if (truffleConfig.shouldRun(__filename)) {
           },
           options
         });
-        let resultantExpiry = await web3c.oasis.expiry(oasis.utils.bytes.toHex(instance._inner.address));
+        let resultantExpiry = await gateway.oasis.getExpiry(oasis.utils.bytes.toHex(instance._inner.address));
         assert.equal(expectedExpiry, resultantExpiry);
       });
 
