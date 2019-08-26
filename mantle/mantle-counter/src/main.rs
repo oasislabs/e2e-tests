@@ -18,21 +18,21 @@ impl MantleCounter {
         Ok(Self { count: 0 })
     }
 
-    pub fn getCounter(&mut self, _ctx: &Context) -> Result<u64, String> {
+    pub fn get_counter(&mut self, _ctx: &Context) -> Result<u64, String> {
         Ok(self.count)
     }
 
-    pub fn setCounter(&mut self, _ctx: &Context, c: u64) -> Result<(), String> {
+    pub fn set_counter(&mut self, _ctx: &Context, c: u64) -> Result<(), String> {
         self.count = c;
         Ok(())
     }
 
-    pub fn setCounter2(&mut self, _ctx: &Context, _c: u64, c2: u64) -> Result<(), String> {
+    pub fn set_counter2(&mut self, _ctx: &Context, _c: u64, c2: u64) -> Result<(), String> {
         self.count = c2;
         Ok(())
     }
 
-    pub fn incrementCounter(&mut self, _ctx: &Context) -> Result<(), String> {
+    pub fn increment_counter(&mut self, _ctx: &Context) -> Result<(), String> {
         self.count += 1;
         Event::emit(&Incremented {
             newCounter: self.count,

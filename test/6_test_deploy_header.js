@@ -42,12 +42,12 @@ if (truffleConfig.shouldRun(__filename)) {
       });
 
       it(`${label}: can execute transactions and calls on a contract with expiry`, async () => {
-        let count = await instance.getCounter(options);
+        let count = await instance.get_counter(options);
         assert.equal(count, 0);
 
-        await instance.incrementCounter(options);
+        await instance.increment_counter(options);
 
-        count = await instance.getCounter(options);
+        count = await instance.get_counter(options);
         assert.equal(count, 1);
       });
 

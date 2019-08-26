@@ -38,7 +38,7 @@ if (truffleConfig.shouldRun(__filename)) {
       const c = new web3.eth.Contract(Counter.abi, contract.options.address, options);
 
       try {
-        await c.methods.incrementCounter().send({
+        await c.methods.increment_counter().send({
           gasPrice: '0x3b9aca00',
           gas: '0x141234'
         });
@@ -63,7 +63,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('should fail if not enough gas', async function () {
       try {
-        await contract.methods.incrementCounter().send({
+        await contract.methods.increment_counter().send({
           gasPrice: '0x3b9aca00',
           gas: '0x987654321'
         });
@@ -114,7 +114,7 @@ if (truffleConfig.shouldRun(__filename)) {
     it('should fail on triggering require in a solidity contract', async () => {
       const c = new web3.eth.Contract(Counter.abi, contract.options.address, options);
       try {
-        await c.methods.verifyCounterValue(1).send();
+        await c.methods.verify_counter_value(1).send();
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
         assert.equal(e.message.includes('Transaction has been reverted by the EVM:'), true);
