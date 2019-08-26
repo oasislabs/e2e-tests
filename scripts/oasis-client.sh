@@ -9,14 +9,15 @@
 
 # Already installed so exit.
 if [ -d "tmp/oasis-client" ]; then
-	echo "oasis-client already exists"
-	exit 0
+    echo "oasis-client already exists"
+    exit 0
 fi
 
 mkdir tmp
 pushd tmp
     git clone https://github.com/oasislabs/oasis.js.git
     pushd oasis.js
+      git checkout armani/web3
       yarn
       yarn build
       ln -s $(pwd)/node_modules/@oasislabs $(pwd)/../../node_modules/@oasislabs
