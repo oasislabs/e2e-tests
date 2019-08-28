@@ -7,7 +7,7 @@ build/
 **/generated
 Cargo.lock
 .oasis-build
-.web3c
+.oasis
 
 # IDE.
 .idea/*

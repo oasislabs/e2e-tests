@@ -9,8 +9,8 @@
 
 # Already installed so exit.
 if [ -d "tmp/oasis-client" ]; then
-	echo "oasis-client already exists"
-	exit 0
+    echo "oasis-client already exists"
+    exit 0
 fi
 
 mkdir tmp
