@@ -6,10 +6,6 @@ const Web3 = require('web3');
 
 const web3 = new Web3(Counter.web3.currentProvider);
 
-let mantleCounterBytecode = require('fs').readFileSync(
-  '/workdir/tests/e2e-tests/mantle/mantle-counter/target/service/mantle-counter.wasm'
-);
-
 oasis.setGateway(
   new oasis.gateways.Web3Gateway(
     utils.wsProviderUrl(),
@@ -51,7 +47,7 @@ if (truffleConfig.shouldRun(__filename)) {
     it('should fail to deploy an expired contract', async function () {
       try {
         await oasis.deploy({
-          bytecode: mantleCounterBytecode,
+          bytecode: oasis.workspace.MantleCounter.bytecode,
           header: { expiry: 0, confidential: false },
           arguments: []
         });
@@ -76,7 +72,7 @@ if (truffleConfig.shouldRun(__filename)) {
     it('should fail to execute transaction with malformed headers', async function () {
       try {
         await oasis.deploy({
-          bytecode: mantleCounterBytecode,
+          bytecode: oasis.workspace.MantleCounter.bytecode,
           header: { expiry: 0.1 },
           arguments: []
         });
@@ -123,7 +119,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('should fail on panic! in a rust contract', async () => {
       const contract = await oasis.deploy({
-        bytecode: mantleCounterBytecode,
+        bytecode: oasis.workspace.MantleCounter.bytecode,
         header: { confidential: false },
         arguments: []
       });
