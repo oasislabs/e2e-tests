@@ -16,8 +16,8 @@ fi
 mkdir tmp
 pushd tmp
     git clone https://github.com/oasislabs/oasis.js.git
-    git checkout armani/timeout
     pushd oasis.js
+      git checkout armani/timeout
       yarn
       yarn build
       ln -s $(pwd)/node_modules/@oasislabs $(pwd)/../../node_modules/@oasislabs
