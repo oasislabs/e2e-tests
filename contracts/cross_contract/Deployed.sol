@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity >=0.4.21 <0.6.0;
 
 contract Deployed {
     uint public a = 1;
