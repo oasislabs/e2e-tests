@@ -5,10 +5,6 @@ const utils = require('../src/utils');
 const oasis = require('@oasislabs/client');
 const web3 = utils.setupWebsocketProvider(Counter.web3.currentProvider);
 
-let mantleCounterBytecode = require('fs').readFileSync(
-  '/workdir/tests/e2e-tests/mantle/mantle-counter/target/service/mantle-counter.wasm'
-);
-
 if (truffleConfig.shouldRun(__filename)) {
   contract('Deploy Header', async (accounts) => {
     let labels = ['non-confidential', 'confidential'];
@@ -30,7 +26,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
         instance = await oasis.deploy({
           arguments: [],
-          bytecode: mantleCounterBytecode,
+          bytecode: oasis.workspace.MantleCounter.bytecode,
           header: {
             expiry: expectedExpiry,
             confidential
@@ -57,7 +53,7 @@ if (truffleConfig.shouldRun(__filename)) {
             let expectedExpiry = Math.floor(Date.now() / 1000 - 60 * 60 * 24);
 
             await oasis.deploy({
-              data: mantleCounterBytecode,
+              data: oasis.workspace.MantleCounter.bytecode,
               header: {
                 expiry: expectedExpiry,
                 confidential
@@ -72,7 +68,7 @@ if (truffleConfig.shouldRun(__filename)) {
         // Given.
         instance = await oasis.deploy({
           arguments: [],
-          bytecode: mantleCounterBytecode,
+          bytecode: oasis.workspace.MantleCounter.bytecode,
           header: {
             expiry: Math.floor(Date.now() / 1000 + 20),
             confidential

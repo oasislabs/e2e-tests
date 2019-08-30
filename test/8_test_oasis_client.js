@@ -14,9 +14,7 @@ if (truffleConfig.shouldRun(__filename)) {
       },
       {
         idl: undefined,
-        bytecode: require('fs').readFileSync(
-          '/workdir/tests/e2e-tests/mantle/mantle-counter/target/service/mantle-counter.wasm'
-        ),
+        bytecode: oasis.workspace.MantleCounter.bytecode,
         coder: undefined,
         label: 'mantle'
       }
