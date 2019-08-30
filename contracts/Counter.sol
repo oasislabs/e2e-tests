@@ -1,4 +1,4 @@
-pragma solidity ^0.4.0;
+pragma solidity >=0.4.21 <0.6.0;
 
 contract Counter {
   event Incremented(uint newCounter);
@@ -26,7 +26,7 @@ contract Counter {
 	_counter = counter2;
   }
 
-  function increment_and_get_counter() public view returns (uint256) {
+  function increment_and_get_counter() public returns (uint256) {
     _counter += 1;
     return _counter;
   }
