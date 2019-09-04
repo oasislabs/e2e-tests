@@ -75,13 +75,13 @@ if (truffleConfig.shouldRun(__filename)) {
             });
 
             it(`${prefix}: executes an rpc`, async () => {
-              let beforeCount = await service.get_counter(gatewayConfig.options);
-              await service.increment_counter(gatewayConfig.options);
-              let afterCount = await service.get_counter(gatewayConfig.options);
-              await service.set_counter(6, gatewayConfig.options);
-              let afterSetCount = await service.get_counter(gatewayConfig.options);
-              await service.set_counter2(10, 9, gatewayConfig.options);
-              let afterSetCount2 = await service.get_counter(gatewayConfig.options);
+              let beforeCount = await service.getCounter(gatewayConfig.options);
+              await service.incrementCounter(gatewayConfig.options);
+              let afterCount = await service.getCounter(gatewayConfig.options);
+              await service.setCounter(6, gatewayConfig.options);
+              let afterSetCount = await service.getCounter(gatewayConfig.options);
+              await service.setCounter2(10, 9, gatewayConfig.options);
+              let afterSetCount2 = await service.getCounter(gatewayConfig.options);
 
               assert.equal(beforeCount, 0);
               assert.equal(afterCount, 1);
@@ -100,7 +100,7 @@ if (truffleConfig.shouldRun(__filename)) {
                   }
                 });
                 for (let k = 0; k < 3; k += 1) {
-                  await service.increment_counter(gatewayConfig.options);
+                  await service.incrementCounter(gatewayConfig.options);
                 }
               });
 
