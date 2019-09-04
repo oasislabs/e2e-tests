@@ -3,6 +3,10 @@ const truffleConfig = require('../truffle-config');
 const oasis = require('@oasislabs/client');
 const utils = require('../src/utils');
 
+const DUMMY_API_TOKEN = 'YkbtcR1EWsC8JV0HzTB3KHGUXA0kGox2l4qTZT05rrg=';
+// ^ This is generated from 32 random bytes. It may need to be updated once the dev gateway
+//   uses API tokens.
+
 if (truffleConfig.shouldRun(__filename)) {
   contract('Oasis client', async (accounts) => {
     const services = [
@@ -30,7 +34,7 @@ if (truffleConfig.shouldRun(__filename)) {
         label: 'web3-gw'
       },
       {
-        gateway: new oasis.gateways.Gateway(truffleConfig.DEVELOPER_GATEWAY_URL, {
+        gateway: new oasis.gateways.Gateway(truffleConfig.DEVELOPER_GATEWAY_URL, DUMMY_API_TOKEN, {
           headers: new Map([['X-OASIS-INSECURE-AUTH', 'VALUE']])
         }),
         completion: _test => {},
