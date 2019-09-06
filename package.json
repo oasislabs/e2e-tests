@@ -31,6 +31,7 @@
     "truffle": "^5.0.28",
     "truffle-hdwallet-provider": "^1.0.14",
     "tweetnacl": "^1.0.1",
-    "web3": "1.0.0-beta.36"
+    "web3": "1.0.0-beta.36",
+    "@oasislabs/client": "^1.0.0-rc.17"
   }
 }

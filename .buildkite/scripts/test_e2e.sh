@@ -1,19 +1,17 @@
 #!/bin/bash
 
-############################################################
+################################################################################
 # This script tests the Ekiden project.
 #
 # Usage:
 # test_e2e.sh [-w <workdir>] [-t <test-name>]
-############################################################
+################################################################################
 
 # Defaults.
 WORKDIR=$(pwd)
 TEST_FILTER=""
 
-#########################
 # Process test arguments.
-#########################
 while getopts 'f:t:' arg
 do
     case ${arg} in
@@ -25,15 +23,14 @@ do
     esac
 done
 
-export E2E_TESTS_BRANCH=master
+export E2E_TESTS_BRANCH=armani/ci
 export EKIDEN_REPO="https://github.com/oasislabs/ekiden.git"
 export EKIDEN_BRANCH=master
 export RUNTIME_BRANCH=master
 export DEVELOPER_GATEWAY_BRANCH=master
 export BUILDKITE_ACCESS_TOKEN="7a3c5347b067ba00750cc9a513e0d93c4fbfc293"
+export RUNTIME_DIR=${WORKDIR}/runtime-ethereum
 
-# Helpful tips on writing build scripts:
-# https://buildkite.com/docs/pipelines/writing-build-scripts
 set -euxo pipefail
 
 # Setup tests.
@@ -41,6 +38,8 @@ set -euxo pipefail
 .buildkite/scripts/setup_gitconfig.sh
 .buildkite/scripts/download_ekiden_test_scripts.sh
 rm -rf tests/e2e-tests
+
+
 
 # Now begin.
 source .buildkite/scripts/common.sh
@@ -52,14 +51,14 @@ source .buildkite/rust/common.sh
 nvm_script="${NVM_DIR:-${HOME}/.nvm}/nvm.sh"
 [ -s "${nvm_script}" ] && source "${nvm_script}"
 
-###################
+#
 # Test definitions.
-###################
+#
 run_backend_tendermint_committee_custom() {
     run_backend_tendermint_committee \
         epochtime_backend=tendermint_mock \
         replica_group_size=3 \
-        runtime_genesis=${WORKDIR}/resources/genesis/ekiden_genesis_testing.json
+        runtime_genesis=${RUNTIME_DIR}/resources/genesis/ekiden_genesis_testing.json
 }
 
 run_no_client() {
@@ -90,12 +89,13 @@ scenario_basic() {
     sleep 3
 }
 
-
-#################################
+#
 # Tests from e2e-tests repository
-#################################
+#
 install_e2e_tests() {
     local e2e_tests_branch=${E2E_TESTS_BRANCH:-master}
+
+	mkdir -p ${WORKDIR}/tests
 
     echo "Installing E2E tests from e2e-tests repository."
     pushd ${WORKDIR}/tests
@@ -103,10 +103,6 @@ install_e2e_tests() {
             git clone https://github.com/oasislabs/e2e-tests.git -b ${e2e_tests_branch} --depth 1
             pushd e2e-tests
                 npm install > /dev/null
-                # Needed to install and build oasis-client within e2e-tests.
-                npm install -g lerna
-                npm install -g yarn
-                ./scripts/oasis-client.sh
                 # If the Buildkite access token is available, download pre-compiled contracts
                 # from the e2e-tests pipeline.
                 if [ "${BUILDKITE:-}" == "true" ]; then
@@ -165,25 +161,16 @@ scenario_e2e_tests() {
     popd
 }
 
-#############
+#
 # Test suite.
 #
 # Arguments:
 #    backend_name - name of the backend to use in test name
 #    backend_runner - function that will prepare and run the backend services
-#############
+#
 test_suite() {
     local backend_name=$1
     local backend_runner=$2
-
-    # RPC test.
-    run_test \
-        pre_init_hook=install_rpc_tests \
-        scenario=scenario_rpc_tests \
-        name="e2e-${backend_name}-rpc-tests" \
-        backend_runner=$backend_runner \
-        runtime=runtime-ethereum \
-        client_runner=run_no_client
 
     # E2E tests from e2e-tests repository.
     run_test \
@@ -195,7 +182,6 @@ test_suite() {
         client_runner=run_no_client
 }
 
-##########################################
+
 # Multiple validators tendermint backends.
-##########################################
 test_suite tm-committee run_backend_tendermint_committee_custom
