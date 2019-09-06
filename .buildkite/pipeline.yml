@@ -1,9 +1,10 @@
-################
+################################################################################
 # Build pipeline
-################
+################################################################################
+
 docker_plugin: &docker_plugin_configuration
   oasislabs/docker#v2.1.0-oasis4:
-    image: "oasislabs/rust:latest"
+    image: "oasislabs/testing:0.3.0"
     always_pull: true
     workdir: /workdir
     volumes:
@@ -19,24 +20,22 @@ docker_plugin: &docker_plugin_configuration
       - "LANG=C.UTF-8"
       - "CARGO_INCREMENTAL=/cargo_cache"
       - "CARGO_INSTALL_ROOT=/root/.cargo"
+      - "EKIDEN_BRANCH=master"
+      - "RUNTIME_BRANCH=master"
+      - "DEVELOPER_GATEWAY_BRANCH=master"
     propagate-environment: true
     unconfined: true
 
 steps:
-  - label: Lint and Compile Contracts
+  - label: Run Tests
+    parallelism: 4
     command:
-      - .buildkite/scripts/setup_gitconfig.sh
-      - .buildkite/scripts/run_build.sh /tmp/artifacts
-      - cd /tmp/artifacts
-      - buildkite-agent artifact upload build.zip
-      - buildkite-agent artifact upload mantle.zip
+      - .buildkite/scripts/test_e2e.sh -t e2e-tm-committee-e2e-tests
+    timeout_in_minutes: 25
+    # use default: exit-status: "*" and retry limit of 2
+    retry:
+      automatic: true
+    agents:
+      buildkite_agent_size: large
     plugins:
       <<: *docker_plugin_configuration
-
-  - wait
-
-  - label: Build & publish test-runner docker image (master branches only)
-    branches: master
-    command:
-      - buildkite-agent artifact download build.zip .
-      - .buildkite/scripts/build_tag_push_runner_image.sh
