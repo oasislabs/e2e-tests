@@ -68,7 +68,6 @@ if (truffleConfig.shouldRun(__filename)) {
               service = await oasis.deploy({
                 idl: serviceConfig.idl,
                 bytecode: serviceConfig.bytecode,
-                arguments: [],
                 header: headerConfig.header,
                 coder: serviceConfig.coder
               });

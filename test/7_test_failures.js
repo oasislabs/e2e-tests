@@ -48,8 +48,7 @@ if (truffleConfig.shouldRun(__filename)) {
       try {
         await oasis.deploy({
           bytecode: oasis.workspace.MantleCounter.bytecode,
-          header: { expiry: 0, confidential: false },
-          arguments: []
+          header: { expiry: 0, confidential: false }
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
@@ -73,8 +72,7 @@ if (truffleConfig.shouldRun(__filename)) {
       try {
         await oasis.deploy({
           bytecode: oasis.workspace.MantleCounter.bytecode,
-          header: { expiry: 0.1 },
-          arguments: []
+          header: { expiry: 0.1 }
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
@@ -120,8 +118,7 @@ if (truffleConfig.shouldRun(__filename)) {
     it('should fail on panic! in a rust contract', async () => {
       const contract = await oasis.deploy({
         bytecode: oasis.workspace.MantleCounter.bytecode,
-        header: { confidential: false },
-        arguments: []
+        header: { confidential: false }
       });
       try {
         await contract.panic();
