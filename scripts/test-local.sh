@@ -19,7 +19,7 @@
 # ./scripts/test-local.sh [-t <path>] [-r <boolean>] [-e <path>]
 #
 # -t (optional) is the path to the file to test. If not given, all tests run.
-# -c (optional) is true iff we want to compile the rust services.
+# -r (optional) is true iff we want to compile the rust services.
 #               Defaults to false.
 # -e (optional) is the path to the runtime-ethereum directory. Set this if
 #               you want to use runtime-ethereum's single-node config instead

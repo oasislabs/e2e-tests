@@ -25,13 +25,12 @@ if (truffleConfig.shouldRun(__filename)) {
         let expectedExpiry = Math.floor(Date.now() / 1000 + 60 * 60 * 24);
 
         instance = await oasis.deploy({
-          arguments: [],
           bytecode: oasis.workspace.MantleCounter.bytecode,
           header: {
             expiry: expectedExpiry,
             confidential
           },
-          options
+          ...options
         });
         let resultantExpiry = await gateway.oasis.getExpiry(oasis.utils.bytes.toHex(instance._inner.address));
         assert.equal(expectedExpiry, resultantExpiry);
@@ -58,7 +57,7 @@ if (truffleConfig.shouldRun(__filename)) {
                 expiry: expectedExpiry,
                 confidential
               },
-              options
+              ...options
             });
           }
         );
@@ -67,13 +66,12 @@ if (truffleConfig.shouldRun(__filename)) {
       it(`${label}: calls a contract that has expired with failure`, async () => {
         // Given.
         instance = await oasis.deploy({
-          arguments: [],
           bytecode: oasis.workspace.MantleCounter.bytecode,
           header: {
             expiry: Math.floor(Date.now() / 1000 + 20),
             confidential
           },
-          options
+          ...options
         });
         // When.
         await utils.sleep(60 * 1000);
