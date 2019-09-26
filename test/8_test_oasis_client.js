@@ -60,7 +60,8 @@ if (truffleConfig.shouldRun(__filename)) {
               idl: serviceConfig.idl,
               bytecode: serviceConfig.bytecode,
               header: headerConfig.header,
-              coder: serviceConfig.coder
+              coder: serviceConfig.coder,
+              gasLimit: '0xe79732'
             });
           });
 
