@@ -72,7 +72,7 @@ if (truffleConfig.shouldRun(__filename)) {
       try {
         await oasis.deploy({
           bytecode: oasis.workspace.MantleCounter.bytecode,
-          header: { expiry: 0.1 }
+          header: { expiry: 0.1, confidential: false }
         });
         assert.fail(new Error('error should have been thrown'));
       } catch (e) {
