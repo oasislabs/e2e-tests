@@ -32,7 +32,7 @@ if (truffleConfig.shouldRun(__filename)) {
           },
           ...options
         });
-        let resultantExpiry = await gateway.oasis.getExpiry(oasis.utils.bytes.toHex(instance._inner.address));
+        let resultantExpiry = await gateway.oasis.getExpiry(oasis.utils.bytes.toHex(instance.address));
         assert.equal(expectedExpiry, resultantExpiry);
       });
 
