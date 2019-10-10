@@ -6,6 +6,9 @@ A set of [Truffle](https://github.com/trufflesuite/truffle)-based acceptance tes
 
 ## Installing
 
+
+First, follow the [instructions](https://docs.oasis.dev/quickstart.html#set-up-the-oasis-sdk) for setting up the Oasis SDK.
+
 Download the tests and install their dependencies:
 
 ```
@@ -15,8 +18,6 @@ npm install
 npm install -g lerna
 npm install -g yarn
 ```
-
-Follow the [instructions](https://docs.oasis.dev/quickstart.html#set-up-the-oasis-sdk) for setting up the Oasis SDK.
 
 ## Compiling
 
