@@ -22,7 +22,7 @@ Follow the [instructions](https://docs.oasis.dev/quickstart.html#set-up-the-oasi
 
 ```
 npm run compile:truffle
-npm run compile:mantle
+npm run compile:oasis
 ```
 
 ## Running tests against Devnet

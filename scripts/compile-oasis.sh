@@ -1,10 +1,10 @@
 #! /bin/bash
 
-echo "Building mantle services"
-pushd mantle
+echo "Building Oasis services"
+pushd services
     for d in */ ; do
         pushd $d
-            echo "Buliding $d..."
+            echo "Building $d..."
             oasis build &
         popd
     done
@@ -14,4 +14,4 @@ pushd mantle
         wait $job
     done
 popd
-echo "Done building mantle services"
+echo "Done building Oasis services"

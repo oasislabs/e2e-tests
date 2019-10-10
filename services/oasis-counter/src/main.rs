@@ -9,11 +9,11 @@ pub struct Incremented {
 }
 
 #[derive(Service)]
-pub struct MantleCounter {
+pub struct OasisCounter {
     count: u64,
 }
 
-impl MantleCounter {
+impl OasisCounter {
     pub fn new(_ctx: &Context) -> Result<Self, String> {
         Ok(Self { count: 0 })
     }
@@ -46,5 +46,5 @@ impl MantleCounter {
 }
 
 fn main() {
-    oasis_std::service!(MantleCounter);
+    oasis_std::service!(OasisCounter);
 }

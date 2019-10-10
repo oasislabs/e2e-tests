@@ -68,7 +68,7 @@ fi
 # TODO: launch the developer gateway.
 
 if $rust_compile; then
-    pushd mantle
+    pushd services
         oasis build
     popd
 fi

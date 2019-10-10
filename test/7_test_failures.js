@@ -47,7 +47,7 @@ if (truffleConfig.shouldRun(__filename)) {
     it('should fail to deploy an expired contract', async function () {
       try {
         await oasis.deploy({
-          bytecode: oasis.workspace.MantleCounter.bytecode,
+          bytecode: oasis.workspace.OasisCounter.bytecode,
           header: { expiry: 0, confidential: false }
         });
         assert.fail(new Error('error should have been thrown'));
@@ -71,7 +71,7 @@ if (truffleConfig.shouldRun(__filename)) {
     it('should fail to execute transaction with malformed headers', async function () {
       try {
         await oasis.deploy({
-          bytecode: oasis.workspace.MantleCounter.bytecode,
+          bytecode: oasis.workspace.OasisCounter.bytecode,
           header: { expiry: 0.1, confidential: false }
         });
         assert.fail(new Error('error should have been thrown'));
@@ -117,7 +117,7 @@ if (truffleConfig.shouldRun(__filename)) {
 
     it('should fail on panic! in a rust contract', async () => {
       const contract = await oasis.deploy({
-        bytecode: oasis.workspace.MantleCounter.bytecode,
+        bytecode: oasis.workspace.OasisCounter.bytecode,
         header: { confidential: false }
       });
       try {

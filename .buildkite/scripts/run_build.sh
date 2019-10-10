@@ -54,12 +54,12 @@ npm run lint
 
 # Compile the contracts.
 npm run compile:truffle
-npm run compile:mantle
+npm run compile:oasis
 
 # Finally move the build to the out directory.
 zip -r build.zip build
 mkdir -p $out_dir
 mv build.zip $out_dir
 
-zip -r mantle.zip mantle
-mv mantle.zip $out_dir
+zip -r services.zip services
+mv services.zip $out_dir
