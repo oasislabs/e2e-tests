@@ -16,17 +16,7 @@ npm install -g lerna
 npm install -g yarn
 ```
 
-To make sure you're using the proper version of Rust, install [rustup](https://rustup.rs/)
-
-`curl https://sh.rustup.rs -sSf | sh`
-
-and set your default to nightly-2018-10-01:
-
-`rustup default nightly-2018-10-01`
-
-In order to compile to WASM, also run:
-
-`rustup target add wasm32-unknown-unknown`
+Follow the [instructions](https://docs.oasis.dev/quickstart.html#set-up-the-oasis-sdk) for setting up the Oasis SDK.
 
 ## Compiling
 
