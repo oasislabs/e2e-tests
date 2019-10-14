@@ -8,7 +8,6 @@ docker_plugin: &docker_plugin_configuration
     workdir: /workdir
     volumes:
       - .:/workdir
-      - /var/lib/buildkite-agent/.ssh:/root/.ssh
       # Shared Rust artifacts cache.
       - /tmp/cargo_cache:/cargo_cache
       # Shared Rust package checkouts directory.
@@ -25,7 +24,6 @@ docker_plugin: &docker_plugin_configuration
 steps:
   - label: Lint and Compile Contracts
     command:
-      - .buildkite/scripts/setup_gitconfig.sh
       - .buildkite/scripts/run_build.sh /tmp/artifacts
       - cd /tmp/artifacts
       - buildkite-agent artifact upload build.zip
