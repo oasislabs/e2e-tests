@@ -31,11 +31,6 @@ if (networkIndex > -1) {
 const DEVNET_HTTPS_PROVIDER_URL = 'https://web3.oasiscloud.io';
 const DEVNET_WS_PROVIDER_URL = 'wss://web3.oasiscloud.io/ws';
 /**
- * Devnet constants used if one wants to run the tests against the staging Devnet.
- */
-const STAGING_HTTPS_PROVIDER_URL = 'https://web3.oasiscloud-staging.net';
-const STAGING_WS_PROVIDER_URL = 'wss://web3.oasiscloud-staging.net/ws';
-/**
  * The amount of parallelism with which to run the tests. When the tests are run in
  * parallel, we assign each test file a number and divide up the tests into the "bucket"
  * corresponding with its number. For example, TEST_FILES_COUNT of 10 and PARALLELISM
@@ -117,12 +112,6 @@ module.exports = {
       },
       network_id: '*'
     },
-    staging: {
-      provider: function () {
-        return new HDWalletProvider(MNEMONIC, STAGING_HTTPS_PROVIDER_URL);
-      },
-      network_id: '*'
-    },
     devnet: {
       provider: function () {
         return new HDWalletProvider(MNEMONIC, DEVNET_HTTPS_PROVIDER_URL);
@@ -140,8 +129,6 @@ module.exports = {
     enableTimeouts: false
   },
   NETWORK,
-  STAGING_HTTPS_PROVIDER_URL,
-  STAGING_WS_PROVIDER_URL,
   DEVNET_HTTPS_PROVIDER_URL,
   DEVNET_WS_PROVIDER_URL,
   HTTPS_PROVIDER_URL,
