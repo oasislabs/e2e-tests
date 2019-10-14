@@ -24,14 +24,6 @@ set +u
 export PATH=$CARGO_INSTALL_ROOT/bin/:$PATH
 set -u
 
-# Add SSH identity so that `cargo build`
-# can successfully download dependencies
-# from private github repos.
-source .buildkite/scripts/common.sh
-eval `ssh-agent -s`
-trap_add "kill ${SSH_AGENT_PID}" EXIT
-ssh-add || true
-
 ################################################################################
 # Now we can start the build.
 ################################################################################
@@ -54,12 +46,12 @@ npm run lint
 
 # Compile the contracts.
 npm run compile:truffle
-npm run compile:mantle
+npm run compile:oasis
 
 # Finally move the build to the out directory.
 zip -r build.zip build
 mkdir -p $out_dir
 mv build.zip $out_dir
 
-zip -r mantle.zip mantle
-mv mantle.zip $out_dir
+zip -r services.zip services
+mv services.zip $out_dir

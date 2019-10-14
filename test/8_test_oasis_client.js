@@ -11,9 +11,9 @@ if (truffleConfig.shouldRun(__filename)) {
     const services = [
       {
         idl: undefined,
-        bytecode: oasis.workspace.MantleCounter.bytecode,
+        bytecode: oasis.workspace.OasisCounter.bytecode,
         coder: undefined,
-        label: 'mantle'
+        label: 'oasis'
       }
     ];
     const gateways = [
