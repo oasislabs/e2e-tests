@@ -73,9 +73,6 @@ function providerUrl () {
   if (truffleConfig.NETWORK === 'devnet') {
     return truffleConfig.DEVNET_HTTPS_PROVIDER_URL;
   }
-  if (truffleConfig.NETWORK === 'staging') {
-    return truffleConfig.STAGING_HTTPS_PROVIDER_URL;
-  }
   return truffleConfig.HTTPS_PROVIDER_URL;
 }
 
@@ -84,9 +81,6 @@ function wsProviderUrl () {
   // definition by a client running the tests.
   if (providerUrl() === truffleConfig.DEVNET_HTTPS_PROVIDER_URL) {
     return truffleConfig.DEVNET_WS_PROVIDER_URL;
-  }
-  if (providerUrl() === truffleConfig.STAGING_HTTPS_PROVIDER_URL) {
-    return truffleConfig.STAGING_WS_PROVIDER_URL;
   }
   if (truffleConfig.WS_PROVIDER_URL === undefined) {
     throw new Error('You must define the WS_PROVIDER_URL environment variable.');
