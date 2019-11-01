@@ -15,7 +15,7 @@ fi
 
 mkdir tmp
 pushd tmp
-    git clone https://github.com/oasislabs/oasis.js.git
+    git clone https://github.com/oasislabs/oasis.js.git --branch fix-types
     pushd oasis.js
       yarn
       yarn build
